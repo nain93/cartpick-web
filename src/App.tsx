@@ -17,7 +17,8 @@ function App() {
 }
 
 const Container = styled.div`
-    width: 768px;
+    min-width: 360px;
+	max-width: 768px;
     height: 100vh;
     margin: 0 auto;
 `
