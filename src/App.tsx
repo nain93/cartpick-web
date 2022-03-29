@@ -1,15 +1,25 @@
-import style from "App.module.scss"
+import GlobalStyles from "Globalstyles";
 import Main from "pages/main";
 import { Route, Routes } from "react-router-dom";
+import styled from "styled-components";
 
 function App() {
 	return (
-		<div className={style.container}>
-			<Routes>
-				<Route path="/" element={<Main />} />
-			</Routes>
-		</div>
+		<>
+			<GlobalStyles />
+			<Container>
+				<Routes>
+					<Route path="/" element={<Main />} />
+				</Routes>
+			</Container>
+		</>
 	);
 }
+
+const Container = styled.div`
+    width: 768px;
+    height: 100vh;
+    margin: 0 auto;
+`
 
 export default App;
