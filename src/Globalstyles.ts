@@ -3,6 +3,7 @@ import reset from "styled-reset";
 
 const GlobalStyles = createGlobalStyle`
     ${reset}
+	@import url(//fonts.googleapis.com/earlyaccess/notosanskr.css);
 
 	
     a{
@@ -13,7 +14,7 @@ const GlobalStyles = createGlobalStyle`
     *{
         box-sizing:border-box;
 		::-webkit-scrollbar{
-		display: none;
+			display: none;
 		}
     }
 
@@ -21,6 +22,7 @@ const GlobalStyles = createGlobalStyle`
 		
 		font-size: 14px;
 		font-family: "NotoSansKR-Regular";
+		font-family: "Noto Sans KR", sans-serif;
     }
 
 	button{

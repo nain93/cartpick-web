@@ -24,33 +24,28 @@ interface MarketInfoprops {
 function Main() {
 	const [marketInfo, setMarketInfo] = useState<Array<MarketInfoprops>>([])
 	const [selectedIndex, setSelectedIndex] = useState(0)
-	const [selectedListIndex, setSelectedListIndex] = useState(-1)
-	const [dummy, setDummy] = useState([
-        {
-            id: 0,
-            name: "마켓컬리"
-        }, 
-        {
-            id: 1,
-            name: "SSG 이마트"
-        }, 
-        {
-            id: 2,
-            name: "쿠캣마켓"
-        },
-        {
-            id: 3,
-            name: "쿠캣마켓"
-        },
-        {
-            id: 4,
-            name: "쿠캣마켓"
-        },
-        {
-            id: 5,
-            name: "쿠캣마켓"
-        }
-    ])
+	const [dummy, setDummy] = useState([{
+		id: 0,
+		name: "마켓컬리"
+	}, {
+		id: 1,
+		name: "SSG 이마트"
+	}, {
+		id: 2,
+		name: "쿠캣마켓"
+	},
+	{
+		id: 3,
+		name: "쿠캣마켓"
+	},
+	{
+		id: 4,
+		name: "쿠캣마켓"
+	},
+	{
+		id: 5,
+		name: "쿠캣마켓"
+	}])
 
 	useEffect(() => {
 		setMarketInfo(dummy.map((v) => {
@@ -99,78 +94,38 @@ function Main() {
 							}))
 						}}>
 							{marketInfo.length !== 0 &&
-								<Marketbutton 
-                                    isClick={marketInfo[i].isClick} 
-                                    marketImage={marketInfo[i].image} 
-                                    marketColor={theme.color.marketColor.kurly} 
-                                />
-                            }
-
+								<Marketbutton isClick={marketInfo[i].isClick} marketImage={marketInfo[i].image} marketColor={theme.color.marketColor.kurly} />}
 						</div>
 					)}
 				</Slide>
 				<MainWrap>
 					{marketInfo.length !== 0 &&
-						<h1 style={{ fontSize: 16, fontWeight: "bold", color: marketInfo[selectedIndex].color }}>
-							{marketInfo[selectedIndex].name}
-						</h1>
-					}
+						<h1 style={{ fontSize: 16, fontWeight: "bold", color: marketInfo[selectedIndex].color }}>{marketInfo[selectedIndex].name}</h1>}
 					<ListView>
-                        {
-                            Array.from([
-                                {
-                                    idx: 1,
-                                    title: "[단백질과자점] 단백질 쿠키 프로틴 사브레 충분히 길어졌을때3종",
-                                    description: "",
-                                    tag : 3
-                                },
-                                {
-                                    idx: 2,
-                                    title: "[창억]호박인절미",
-                                    description: "",
-                                    tag : 11
-                                },
-                                {
-                                    idx: 3,
-                                    title: "[네떼] 간편 양상추",
-                                    description: "",
-                                    tag : 3
-                                },
-                                
-                            ])
-                            .map((arrayItem, arrayIndex)=> {
-                                return (
-                                    <div key={`listitem_` + arrayIndex}>
-                                        <ListItem
-                                            onClick={()=> {
-                                                setSelectedListIndex(arrayIndex);
-                                            }}
-											style={{
-												backgroundColor: selectedListIndex == arrayIndex ? '#f5f5f5' : '#ffffff',
-											}}
-                                        >
-                                        <div>
-                                            <span style={{ fontSize: 16, lineHeight: 1.5, color: theme.color.grayscale.C_4C5463 }}>
-                                                {arrayItem.title}
-                                                <Tag>{arrayItem.tag}</Tag>
-                                            </span>
-                                        </div>
-                                        <img src={downIcon} style={{ objectFit: "cover", }} width={20} height={20} alt="downIcon" />
-
-                                        {
-                                            selectedListIndex == arrayIndex &&
-
-                                            <ListMore>
-                                                <div className="top_border"></div>
-
-                                            </ListMore>
-                                        }
-                                        </ListItem>
-                                    </div>
-
-                                )
-                            }) 
-                        }
+						<ListItem>
+							<div>
+								<span style={{ fontSize: 16, lineHeight: 1.5, color: theme.color.grayscale.C_4C5463 }}>[단백질과자점] 단백질 쿠키 프로틴 사브레 충분히 길어졌을때3종
+									<Tag>3</Tag>
+								</span>
+							</div>
+							<img src={downIcon} style={{ objectFit: "cover", }} width={20} height={20} alt="downIcon" />
+						</ListItem>
+						<ListItem>
+							<div>
+								<span style={{ fontSize: 16, lineHeight: 1.5, color: theme.color.grayscale.C_4C5463 }}>[창억]호박인절미</span>
+								<Tag>11</Tag>
+							</div>
+							<img src={downIcon} style={{ objectFit: "cover" }} width={20} height={20} alt="downIcon" />
+						</ListItem>
+						<ListItem>
+							<div>
+								<span style={{ fontSize: 16, lineHeight: 1.5, color: theme.color.grayscale.C_4C5463 }}>[네떼] 간편 양상추</span>
+								<Tag>
+									<img src={cameraIcon} style={{ objectFit: "contain" }} alt="cameraIcon" width={10.6} height={9.5} />
+								</Tag>
+							</div>
+							<img src={downIcon} style={{ objectFit: "cover" }} width={20} height={20} alt="downIcon" />
+						</ListItem>
 					</ListView>
 				</MainWrap>
 				<div style={{ padding: "40px 0", backgroundColor: theme.color.grayscale.F5F5F5 }}>
@@ -248,26 +203,7 @@ const ListItem = styled.div`
 	img{
 		margin-left: auto;
 	}
-	
-	flex-wrap: wrap;
 `
-const ListMore = styled.div`
-
-	.top_border {
-		width: calc(100% - 40px);
-		height: 1px;
-		background-color: #b7c3d4;
-		margin-top: 19.5px;
-		margin-bottom: 19.5px;
-	}
-
-	width: 100%;
-    display: flex;
-    align-items: center;
-	background-color: #f5f5f5;
-
-
-`;
 
 const Tag = styled.span`
 	height: 20px;

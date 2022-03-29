@@ -111,10 +111,7 @@ function Main() {
 				</Slide>
 				<MainWrap>
 					{marketInfo.length !== 0 &&
-						<h1 style={{ fontSize: 16, fontWeight: "bold", color: marketInfo[selectedIndex].color }}>
-							{marketInfo[selectedIndex].name}
-						</h1>
-					}
+						<h1 style={{ fontSize: 16, fontWeight: "bold", color: marketInfo[selectedIndex].color }}>{marketInfo[selectedIndex].name}</h1>}
 					<ListView>
                         {
                             Array.from([
@@ -145,9 +142,6 @@ function Main() {
                                             onClick={()=> {
                                                 setSelectedListIndex(arrayIndex);
                                             }}
-											style={{
-												backgroundColor: selectedListIndex == arrayIndex ? '#f5f5f5' : '#ffffff',
-											}}
                                         >
                                         <div>
                                             <span style={{ fontSize: 16, lineHeight: 1.5, color: theme.color.grayscale.C_4C5463 }}>
@@ -156,16 +150,15 @@ function Main() {
                                             </span>
                                         </div>
                                         <img src={downIcon} style={{ objectFit: "cover", }} width={20} height={20} alt="downIcon" />
-
+                                        </ListItem>
                                         {
                                             selectedListIndex == arrayIndex &&
 
                                             <ListMore>
-                                                <div className="top_border"></div>
+                                                asd
 
                                             </ListMore>
                                         }
-                                        </ListItem>
                                     </div>
 
                                 )
@@ -248,24 +241,10 @@ const ListItem = styled.div`
 	img{
 		margin-left: auto;
 	}
-	
-	flex-wrap: wrap;
 `
 const ListMore = styled.div`
-
-	.top_border {
-		width: calc(100% - 40px);
-		height: 1px;
-		background-color: #b7c3d4;
-		margin-top: 19.5px;
-		margin-bottom: 19.5px;
-	}
-
-	width: 100%;
     display: flex;
     align-items: center;
-	background-color: #f5f5f5;
-
 
 `;
 
