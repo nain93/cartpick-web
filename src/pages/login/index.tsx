@@ -78,7 +78,7 @@ function Main() {
 			<Container>
 				<Header>
 					<TitleWrap>
-						<div style={{ fontSize: 24, fontWeight: "bold", lineHeight: 1.25 }}>오늘의 추천템</div>
+						<div style={{ fontSize: 24, fontWeight: "bold", lineHeight: 1.25 }}>로그인</div>
 						<button style={{ color: theme.color.main }}>로그인</button>
 					</TitleWrap>
 					<span>
@@ -155,8 +155,6 @@ function Main() {
                                             selectedListIndex == arrayIndex &&
 
                                             <ListMore>
-                                                asd
-
                                             </ListMore>
                                         }
                                     </div>
@@ -223,6 +221,7 @@ const ListView = styled.div`
 	height: calc(100vh - 370px);
 	margin-top: 15.5px;
 `
+
 
 const ListItem = styled.div`
 	cursor: pointer;

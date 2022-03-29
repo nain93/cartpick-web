@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import styled from "styled-components"
+import { Link } from "react-router-dom";
 
 import theme from "styles/theme"
 import { dateSimpleFormat } from "utils"
@@ -85,7 +86,12 @@ function Main() {
 						<span style={{ fontWeight: "bold" }}>{dateSimpleFormat()}</span>
 						에 나온 추천템이에요
 					</span>
-					<LastItemButton>{`지난 추천템 보기 >`}</LastItemButton>
+      				<Link to="/past">
+						<LastItemButton
+						>
+							{`지난 추천템 보기 >`}
+						</LastItemButton>
+					</Link>
 				</Header>
 				<Slide>
 					{dummy.map((v, i) =>
@@ -115,6 +121,13 @@ function Main() {
 							{marketInfo[selectedIndex].name}
 						</h1>
 					}
+					{/* 없을때 */}
+					{/* <EmptyView>
+						<div className="icon0">	&#128514;</div>
+						<div className="label0">오늘은 추천템이 없어요</div>
+					</EmptyView> */}
+
+					{/* 있을때 */}
 					<ListView>
                         {
                             Array.from([
@@ -136,6 +149,36 @@ function Main() {
                                     description: "",
                                     tag : 3
                                 },
+                                {
+                                    idx: 3,
+                                    title: "[네떼] 간편 양상추",
+                                    description: "",
+                                    tag : 3
+                                },
+                                {
+                                    idx: 3,
+                                    title: "[네떼] 간편 양상추",
+                                    description: "",
+                                    tag : 3
+                                },
+                                {
+                                    idx: 3,
+                                    title: "[네떼] 간편 양상추",
+                                    description: "",
+                                    tag : 3
+                                },
+                                {
+                                    idx: 3,
+                                    title: "[네떼] 간편 양상추",
+                                    description: "",
+                                    tag : 3
+                                },
+                                {
+                                    idx: 3,
+                                    title: "[네떼] 간편 양상추",
+                                    description: "",
+                                    tag : 3
+                                },
                                 
                             ])
                             .map((arrayItem, arrayIndex)=> {
@@ -143,28 +186,70 @@ function Main() {
                                     <div key={`listitem_` + arrayIndex}>
                                         <ListItem
                                             onClick={()=> {
-                                                setSelectedListIndex(arrayIndex);
+												if (selectedListIndex == arrayIndex) {
+													setSelectedListIndex(-1);
+												} else {
+													setSelectedListIndex(arrayIndex);
+												}
                                             }}
 											style={{
 												backgroundColor: selectedListIndex == arrayIndex ? '#f5f5f5' : '#ffffff',
 											}}
                                         >
-                                        <div>
-                                            <span style={{ fontSize: 16, lineHeight: 1.5, color: theme.color.grayscale.C_4C5463 }}>
-                                                {arrayItem.title}
-                                                <Tag>{arrayItem.tag}</Tag>
-                                            </span>
-                                        </div>
-                                        <img src={downIcon} style={{ objectFit: "cover", }} width={20} height={20} alt="downIcon" />
+											<div className="text1">
+												<span 
+													style={{ 
+														fontSize: 16, 
+														lineHeight: 1.5, 
+														color: theme.color.grayscale.C_4C5463,
+														fontWeight: selectedListIndex == arrayIndex ? '900' : '500',
+													}}
+												>
+													{arrayItem.title}
+													<Tag>{arrayItem.tag}</Tag>
+												</span>
+											</div>
+                                        	<img src={downIcon} style={{ objectFit: "cover", }} width={20} height={20} alt="downIcon" />
+											{
+												selectedListIndex == arrayIndex &&
 
-                                        {
-                                            selectedListIndex == arrayIndex &&
-
-                                            <ListMore>
-                                                <div className="top_border"></div>
-
-                                            </ListMore>
-                                        }
+												<ListMore>
+													<div className="top_border"></div>
+													<div className="chat_row0 chat_row1">
+														<div className="icon0 icon1">&#9829;</div>
+														<div className="label0 label1">
+															<span className="font_bold">33/직장인/마켓컬리</span>&nbsp;님이&nbsp;<span className="font_active">처음 추천</span>&nbsp;하셨어요!
+														</div>
+													</div>
+													<div className="chat_row0 chat_row2">
+														<div className="balloon0 balloon1">
+														단백질 맛 안나고 일반 밀가루 쿠키보다 맛있음 + 가격 부담 살짝
+														</div>
+													</div>
+													<div className="chat_row0 chat_row1">
+														<div className="icon0 icon1">&#9829;</div>
+														<div className="label0 label1">
+															<span className="font_bold">33/직장인/마켓컬리</span>&nbsp;님이&nbsp;<span className="font_active">처음 추천</span>&nbsp;하셨어요!
+														</div>
+													</div>
+													<div className="chat_row0 chat_row2">
+														<div className="balloon0 balloon1">
+														다이어트 중에 부담없이 먹을 수 있음 일반 쿠키 느낌
+														</div>
+													</div>
+													<div className="chat_row0 chat_row1">
+														<div className="icon0 icon1">&#9829;</div>
+														<div className="label0 label1">
+															<span className="font_bold">33/직장인/마켓컬리</span>&nbsp;님이&nbsp;<span className="font_active">처음 추천</span>&nbsp;하셨어요!
+														</div>
+													</div>
+													<div className="chat_row0 chat_row2">
+														<div className="balloon0 balloon1">
+														조금 느끼함, 먹고 나면 입안에 텁텁함이 오래감
+														</div>
+													</div>
+												</ListMore>
+											}
                                         </ListItem>
                                     </div>
 
@@ -187,20 +272,20 @@ function Main() {
 const Container = styled.section`
 	position: relative;
 	height: 100vh;
-`
+`;
 
 const Header = styled.section`
 	display: flex;
 	flex-direction: column;
 	padding: 20px;
-`
+`;
 
 const TitleWrap = styled.div`
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 	margin-bottom: 10px;
-`
+`;
 
 const LastItemButton = styled.span`
 	line-height: 2;
@@ -209,7 +294,7 @@ const LastItemButton = styled.span`
 	color: ${theme.color.grayscale.B7C3D4};
 	text-decoration :underline ;
 	cursor: pointer;
-`
+`;
 
 const Slide = styled.div`
 	>div:first-child{
@@ -218,18 +303,46 @@ const Slide = styled.div`
 	display: flex;
 	overflow: scroll;
 	margin-top: 20px;
-`
+`;
 
 
 const MainWrap = styled.section`
 	padding: 20px 20px 0px 20px;
-`
+`;
 
 const ListView = styled.div`
 	overflow: scroll;
 	height: calc(100vh - 370px);
 	margin-top: 15.5px;
-`
+`;
+
+const EmptyView = styled.div`
+	overflow: hidden;
+	height: calc(100vh - 370px);
+	margin-top: 15.5px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+
+
+	.icon0 {
+		width: 30px;
+		height: 30px;
+		object-fit : contain;
+	}	
+	.label0 {
+		font-size: 14px;
+		font-weight: normal;
+		font-stretch: normal;
+		font-style: normal;
+		line-height: 1.29;
+		letter-spacing: normal;
+		text-align: center;
+		color: #4c5463;
+	}
+
+`;
 
 const ListItem = styled.div`
 	cursor: pointer;
@@ -238,33 +351,97 @@ const ListItem = styled.div`
 	display: flex;
 	align-items: center;
 	padding:14.5px 0;
+	position: relative;
+
 	>div:first-child{
 		display: flex;
 		align-items: center;
 		width: calc(100% - 40px);
 		word-break: break-word;
 	}
+	.text1 {
+		width: calc(100% - 140px);
+		margin-left: 20px;
+	}
 	
 	img{
-		margin-left: auto;
+		position: absolute;
+		right: 20px;
+		top: 20px;
 	}
 	
 	flex-wrap: wrap;
-`
+`;
+
 const ListMore = styled.div`
+
+	width: 100%;
+    display: flex;
+	flex-wrap: wrap;
+    align-items: center;
+	background-color: #f5f5f5;
 
 	.top_border {
 		width: calc(100% - 40px);
+		margin-left: 20px;
+		margin-right: 20px;
 		height: 1px;
 		background-color: #b7c3d4;
 		margin-top: 19.5px;
 		margin-bottom: 19.5px;
 	}
 
-	width: 100%;
-    display: flex;
-    align-items: center;
-	background-color: #f5f5f5;
+	.chat_row0 {
+		display: flex;
+		width: calc(100% - 40px);
+		margin-left: auto;
+		margin-right: auto;
+	}
+	.chat_row0 .icon0 {
+		
+	}
+	.chat_row0 .label0 {
+		display: flex;
+		width: calc(100% - 20px);
+		margin-left: 5px;
+	}
+	.chat_row0 .balloon0 {
+		display: flex;
+		width: calc(100% - 15px);
+		margin-left: auto;
+		padding: 10px 15px;
+		border-radius: 5px;
+		box-shadow: 0 2px 5px 0 rgba(183, 195, 212, 0.4);
+		border: solid 1px #dfe4ee;
+		background-color: #fff;
+		margin-top: 9px;
+		margin-bottom: 10px;
+		font-size: 14px;
+		font-weight: normal;
+		font-stretch: normal;
+		font-style: normal;
+		line-height: 1.29;
+		letter-spacing: normal;
+		text-align: left;
+		color: #4c5463;
+	}
+	.chat_row0 .font_bold {
+		font-weight : 700;
+	}
+	.chat_row0 .font_active {
+		color : #7857ff;
+	}
+		
+	.chat_row1 {
+		align-items: center;
+		justify-content: flex-start;
+		margin-top: 12px;
+	}
+	.chat_row2 {
+		align-items: center;
+		justify-content: flex-end;
+		
+	}
 
 
 `;
@@ -278,6 +455,6 @@ const Tag = styled.span`
 	border:1px solid ${theme.color.grayscale.DFE4EE};
 	margin-left: 5px;
 	font-size: 12px;
-`
+`;
 
 export default Main

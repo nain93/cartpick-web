@@ -27,90 +27,99 @@ function Past() {
 	const [marketInfo, setMarketInfo] = useState<Array<MarketInfoprops>>([])
 	const [selectedIndex, setSelectedIndex] = useState(0)
 
+	const [dummy, setDummy] = useState([
+        {
+            id: 0,
+            name: "마켓컬리"
+        }, 
+        {
+            id: 1,
+            name: "SSG 이마트"
+        }, 
+        {
+            id: 2,
+            name: "쿠캣마켓"
+        },
+        {
+            id: 3,
+            name: "쿠캣마켓"
+        },
+        {
+            id: 4,
+            name: "쿠캣마켓"
+        },
+        {
+            id: 5,
+            name: "쿠캣마켓"
+        }
+    ])
+
+	useEffect(() => {
+		setMarketInfo(dummy.map((v) => {
+			switch (v.name) {
+				case "마켓컬리":
+					return { name: v.name, color: theme.color.marketColor.kurly, isClick: false, image: kurlyImage }
+				case "쿠팡 로켓프레시":
+					return { name: v.name, color: theme.color.marketColor.roket, isClick: false, image: roketImage }
+				case "쿠캣마켓":
+					return { name: v.name, color: theme.color.marketColor.cookat, isClick: false, image: cookatImage }
+				case "네이버 쇼핑":
+					return { name: v.name, color: theme.color.marketColor.naver, isClick: false, image: naverImage }
+				case "SSG 이마트":
+					return { name: v.name, color: theme.color.marketColor.emart, isClick: false, image: emartImage }
+				case "기타(직접입력)":
+					return { name: v.name, color: theme.color.marketColor.other, isClick: false, image: etcImage }
+				default:
+					return { name: v.name, color: theme.color.marketColor.other, isClick: false, image: etcImage }
+			}
+		}))
+	}, [dummy])
+
 	return (
 		<>
 			<Container>
 				<Header>
 					<TitleWrap>
                         <img className="icon0" src={leftarrowIcon} />
-                        <div className="label0 label1">추천템 더보기</div>
+                        <div className="label0 label1">2022-03-17 추천템 리스트</div>
 					</TitleWrap>
-                    <div className="text0 text1">{`지난 추천템 모음`}</div>
-                    <div className="text0 text2">카톡방의 후기를 매일 매일 모았어요.<br/><span className="font_bold">매일 밤 9시</span>, 새로운 추천템이 업데이트됩니다.</div>
+                    <div className="text0 text1">{`3월 17일의 추천템`}</div>
+                    <div className="text0 text2"><span className="font_bold">3월 17일</span>에 올라온 추천템이에요</div>
 				</Header>
+				<Slide>
+					{dummy.map((v, i) =>
+						<div key={v.id} onClick={() => {
+							setSelectedIndex(i)
+							setMarketInfo(marketInfo.map((marketInfoV, marketInfoI) => {
+								if (i === marketInfoI) {
+									return { ...marketInfoV, isClick: true }
+								}
+								return { ...marketInfoV, isClick: false }
+							}))
+						}}>
+							{marketInfo.length !== 0 &&
+								<Marketbutton 
+                                    isClick={marketInfo[i].isClick} 
+                                    marketImage={marketInfo[i].image} 
+                                    marketColor={theme.color.marketColor.kurly} 
+                                />
+                            }
+
+						</div>
+					)}
+				</Slide>
 				<MainWrap>
+					{marketInfo.length !== 0 &&
+						<h1 style={{ fontSize: 16, fontWeight: "bold", color: marketInfo[selectedIndex].color }}>
+							{marketInfo[selectedIndex].name}
+						</h1>
+					}
 					<ListView>
                         {
                             Array.from([
                                 {
                                     idx: 1,
-                                    title: "2022-03-18 추천템 리스트",
-                                    description: "",
-                                    tag : 3
-                                },
-                                {
-                                    idx: 1,
-                                    title: "2022-03-18 추천템 리스트",
-                                    description: "",
-                                    tag : 3
-                                },
-                                {
-                                    idx: 1,
-                                    title: "2022-03-18 추천템 리스트",
-                                    description: "",
-                                    tag : 3
-                                },
-                                {
-                                    idx: 1,
-                                    title: "2022-03-18 추천템 리스트",
-                                    description: "",
-                                    tag : 3
-                                },
-                                {
-                                    idx: 1,
-                                    title: "2022-03-18 추천템 리스트",
-                                    description: "",
-                                    tag : 3
-                                },
-                                {
-                                    idx: 1,
-                                    title: "2022-03-18 추천템 리스트",
-                                    description: "",
-                                    tag : 3
-                                },
-                                {
-                                    idx: 1,
-                                    title: "2022-03-18 추천템 리스트",
-                                    description: "",
-                                    tag : 3
-                                },
-                                {
-                                    idx: 1,
-                                    title: "2022-03-18 추천템 리스트",
-                                    description: "",
-                                    tag : 3
-                                },
-                                {
-                                    idx: 1,
-                                    title: "2022-03-18 추천템 리스트",
-                                    description: "",
-                                    tag : 3
-                                },
-                                {
-                                    idx: 1,
-                                    title: "2022-03-18 추천템 리스트",
-                                    description: "",
-                                    tag : 3
-                                },
-                                {
-                                    idx: 1,
-                                    title: "2022-03-18 추천템 리스트",
-                                    description: "",
-                                    tag : 3
-                                },
-                                {
-                                    idx: 1,
-                                    title: "2022-03-18 추천템 리스트",
+                                    title: "쿠캣마켓 명란젓",
                                     description: "",
                                     tag : 3
                                 },
@@ -131,7 +140,7 @@ function Past() {
                                                     <span className="font_active" style={{ marginLeft: 8}}>NEW</span>
 												</span>
 											</div>
-                                        	<img src={rightIcon} style={{ objectFit: "cover", }} width={20} height={20} alt="rightIcon" />
+                                        	<img src={downIcon} style={{ objectFit: "cover", }} width={20} height={20} alt="downIcon" />
                                         </ListItem>
                                     </div>
 
@@ -140,12 +149,8 @@ function Past() {
                         }
 					</ListView>
 				</MainWrap>
-				<div style={{ padding: "40px 0",  }}>
-					<LongButton 
-                        onClick={() => console.log("click")} 
-                        buttonStyle={{ color: theme.color.main }} 
-                        color={theme.color.main}
-                    >
+				<div style={{ padding: "40px 0", backgroundColor: theme.color.grayscale.F5F5F5 }}>
+					<LongButton onClick={() => console.log("click")} buttonStyle={{ color: theme.color.grayscale.C_4C5463 }} color={theme.color.grayscale.B7C3D4}>
 						리스트 공유하기
 					</LongButton>
 				</div>

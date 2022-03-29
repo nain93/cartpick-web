@@ -14,125 +14,52 @@ import LongButton from "components/LongButton"
 import downIcon from "assets/icon/downIcon.png"
 import cameraIcon from "assets/icon/cameraIcon.png"
 
-interface MarketInfoprops {
-	isClick: boolean,
-	image: string,
-	color: string,
-	name: string
-}
+
+import PopupBlur1 from "components/Popup/PopupBlur1";
+import PopupFull1 from "components/Popup/PopupFull1";
+import PopupV1 from "components/Popup/PopupV1";
+
+
 
 function Main() {
-	const [marketInfo, setMarketInfo] = useState<Array<MarketInfoprops>>([])
 	const [selectedIndex, setSelectedIndex] = useState(0)
-	const [dummy, setDummy] = useState([{
-		id: 0,
-		name: "마켓컬리"
-	}, {
-		id: 1,
-		name: "SSG 이마트"
-	}, {
-		id: 2,
-		name: "쿠캣마켓"
-	},
-	{
-		id: 3,
-		name: "쿠캣마켓"
-	},
-	{
-		id: 4,
-		name: "쿠캣마켓"
-	},
-	{
-		id: 5,
-		name: "쿠캣마켓"
-	}])
-
-	useEffect(() => {
-		setMarketInfo(dummy.map((v) => {
-			switch (v.name) {
-				case "마켓컬리":
-					return { name: v.name, color: theme.color.marketColor.kurly, isClick: false, image: kurlyImage }
-				case "쿠팡 로켓프레시":
-					return { name: v.name, color: theme.color.marketColor.roket, isClick: false, image: roketImage }
-				case "쿠캣마켓":
-					return { name: v.name, color: theme.color.marketColor.cookat, isClick: false, image: cookatImage }
-				case "네이버 쇼핑":
-					return { name: v.name, color: theme.color.marketColor.naver, isClick: false, image: naverImage }
-				case "SSG 이마트":
-					return { name: v.name, color: theme.color.marketColor.emart, isClick: false, image: emartImage }
-				case "기타(직접입력)":
-					return { name: v.name, color: theme.color.marketColor.other, isClick: false, image: etcImage }
-				default:
-					return { name: v.name, color: theme.color.marketColor.other, isClick: false, image: etcImage }
-			}
-		}))
-	}, [dummy])
+	const [boolOpenPopup1, setBoolOpenPopup1] = useState(true)
 
 	return (
 		<>
 			<Container>
 				<Header>
 					<TitleWrap>
-						<div style={{ fontSize: 24, fontWeight: "bold", lineHeight: 1.25 }}>오늘의 추천템</div>
+						<div style={{ fontSize: 24, fontWeight: "bold", lineHeight: 1.25 }}>테스트</div>
 						<button style={{ color: theme.color.main }}>로그인</button>
 					</TitleWrap>
-					<span>
-						<span style={{ fontWeight: "bold" }}>{dateSimpleFormat()}</span>
-						에 나온 추천템이에요
-					</span>
-					<LastItemButton>{`지난 추천템 보기 >`}</LastItemButton>
 				</Header>
-				<Slide>
-					{dummy.map((v, i) =>
-						<div key={v.id} onClick={() => {
-							setSelectedIndex(i)
-							setMarketInfo(marketInfo.map((marketInfoV, marketInfoI) => {
-								if (i === marketInfoI) {
-									return { ...marketInfoV, isClick: true }
-								}
-								return { ...marketInfoV, isClick: false }
-							}))
-						}}>
-							{marketInfo.length !== 0 &&
-								<Marketbutton isClick={marketInfo[i].isClick} marketImage={marketInfo[i].image} marketColor={theme.color.marketColor.kurly} />}
-						</div>
-					)}
-				</Slide>
 				<MainWrap>
-					{marketInfo.length !== 0 &&
-						<h1 style={{ fontSize: 16, fontWeight: "bold", color: marketInfo[selectedIndex].color }}>{marketInfo[selectedIndex].name}</h1>}
-					<ListView>
-						<ListItem>
-							<div>
-								<span style={{ fontSize: 16, lineHeight: 1.5, color: theme.color.grayscale.C_4C5463 }}>[단백질과자점] 단백질 쿠키 프로틴 사브레 충분히 길어졌을때3종
-									<Tag>3</Tag>
-								</span>
-							</div>
-							<img src={downIcon} style={{ objectFit: "cover", }} width={20} height={20} alt="downIcon" />
-						</ListItem>
-						<ListItem>
-							<div>
-								<span style={{ fontSize: 16, lineHeight: 1.5, color: theme.color.grayscale.C_4C5463 }}>[창억]호박인절미</span>
-								<Tag>11</Tag>
-							</div>
-							<img src={downIcon} style={{ objectFit: "cover" }} width={20} height={20} alt="downIcon" />
-						</ListItem>
-						<ListItem>
-							<div>
-								<span style={{ fontSize: 16, lineHeight: 1.5, color: theme.color.grayscale.C_4C5463 }}>[네떼] 간편 양상추</span>
-								<Tag>
-									<img src={cameraIcon} style={{ objectFit: "contain" }} alt="cameraIcon" width={10.6} height={9.5} />
-								</Tag>
-							</div>
-							<img src={downIcon} style={{ objectFit: "cover" }} width={20} height={20} alt="downIcon" />
-						</ListItem>
-					</ListView>
 				</MainWrap>
-				<div style={{ padding: "40px 0", backgroundColor: theme.color.grayscale.F5F5F5 }}>
-					<LongButton onClick={() => console.log("click")} buttonStyle={{ color: theme.color.grayscale.C_4C5463 }} color={theme.color.grayscale.B7C3D4}>
-						리스트 공유하기
-					</LongButton>
-				</div>
+
+            {boolOpenPopup1 == true && (
+                <PopupFull1>
+                    <PopupBlur1
+                        paramObject={null}
+                        onClick={() => {
+                            setBoolOpenPopup1(false)
+                            // setBoolPopup1({ open: false, text: "" });
+                        }}
+                    ></PopupBlur1>
+                    <PopupV1 setBoolPopup1={()=> {}}>
+                        <div className="popup_container0">
+                            <div className="label0">
+                            로그인이 필요한 서비스입니다.<br/>로그인 하시겠어요?
+                            </div>
+                            <div className="bottomrow0">
+                                <div className="button0 button1">취소</div>
+                                <div className="button0 button2">로그인 하기</div>
+                            </div>
+                        </div>
+                    </PopupV1>
+                </PopupFull1>
+            )
+            }
 			</Container>
 
 		</>
@@ -142,6 +69,83 @@ function Main() {
 const Container = styled.section`
 	position: relative;
 	height: 100vh;
+
+    .popup_container0 {
+
+        width: calc(100% - 80px);
+        margin-left: auto;
+        margin-right: auto;
+        min-width: 280px;
+
+        height: 150px;
+        border-radius: 10px;
+        background-color: #fff;
+
+        display: flex;
+        flex-direction: column;
+        position: relative;
+    }
+    .popup_container0 .label0 {
+
+        font-size: 14px;
+        font-weight: normal;
+        font-stretch: normal;
+        font-style: normal;
+        line-height: 1.43;
+        letter-spacing: normal;
+        text-align: center;
+        color: #4c5463;
+
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 35px;
+
+        display: flex;
+    }
+    .bottomrow0 {
+        display: flex;
+        align-items: center;
+
+        position: absolute;
+        height: 44.5px;
+        width: 100%;
+        bottom: 0;
+
+        border-top: 1px solid #f2f3f6;
+    }
+    .button1 {
+        width: 50%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        font-size: 14px;
+        font-weight: normal;
+        font-stretch: normal;
+        font-style: normal;
+        line-height: 1.43;
+        letter-spacing: normal;
+        text-align: center;
+        color: #ff6767;
+        border-right: 1px solid #f2f3f6;
+    }
+    .button2 {
+        width: 50%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        font-size: 14px;
+        font-weight: normal;
+        font-stretch: normal;
+        font-style: normal;
+        line-height: 1.71;
+        letter-spacing: normal;
+        text-align: center;
+        color: #7857ff;
+    }
 `
 
 const Header = styled.section`
