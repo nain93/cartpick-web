@@ -21,10 +21,12 @@ import wingItImage from "assets/image/wingItImage.png"
 import etcImage from "assets/image/etcImage.png"
 import { useState } from 'react'
 import LongButton from 'components/longButton'
+import LoginLoading from './loginLoading'
 
 
 function Onboarding() {
 	const navigate = useNavigate()
+	const [loginLoading, setLoginLoading] = useState(false)
 	const [market, setMarket] = useState<Array<{ image: string, name: string, isClick: boolean }>>(
 		[
 			{
@@ -72,7 +74,16 @@ function Onboarding() {
 
 	const handleSignIn = () => {
 		// todo api 호출하고, 토큰 넣고 로그인
-		navigate("/")
+		setLoginLoading(true)
+
+		setTimeout(() => {
+			// setLoginLoading(false)
+			navigate("/")
+		}, 3000)
+	}
+
+	if (loginLoading) {
+		return <LoginLoading />
 	}
 
 
