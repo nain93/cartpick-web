@@ -1,5 +1,5 @@
 import GlobalStyles from "Globalstyles";
-import { Route,  Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import styled from "styled-components";
 
 
@@ -10,6 +10,7 @@ import MyUpdate from "pages/my/update";
 import Past from "pages/past";
 import PastDetail from "pages/past/detail";
 import Test from "pages/test";
+import Onboarding from "pages/onboarding";
 
 function App() {
 	return (
@@ -17,12 +18,13 @@ function App() {
 			<GlobalStyles />
 			<Container>
 				<Routes>
-					<Route path="/"  element={<Main />} />
+					<Route path="/" element={<Main />} />
 					<Route path="/login" element={<Login />} />
+					<Route path="/onboarding" element={<Onboarding />} />
 					<Route path="/my" element={<My />} />
 					<Route path="/my/update" element={<MyUpdate />} />
-					<Route path="/past"  element={<Past />} />
-					<Route path="/past/detail/:id"  element={<PastDetail />} />
+					<Route path="/past" element={<Past />} />
+					<Route path="/past/detail/:id" element={<PastDetail />} />
 					<Route path="/test" element={<Test />} />
 				</Routes>
 			</Container>

@@ -4,7 +4,6 @@ import reset from "styled-reset";
 const GlobalStyles = createGlobalStyle`
     ${reset}
 	@import url(//fonts.googleapis.com/earlyaccess/notosanskr.css);
-
 	
     a{
         text-decoration:none;

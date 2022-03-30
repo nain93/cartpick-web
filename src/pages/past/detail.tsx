@@ -2,7 +2,6 @@ import { useEffect, useState } from "react"
 import styled from "styled-components"
 
 import theme from "styles/theme"
-import { dateSimpleFormat } from "utils"
 import Marketbutton from "components/marketbutton"
 import kurlyImage from "assets/image/kurlyImage.png"
 import cookatImage from "assets/image/cookatImage.png"
@@ -10,11 +9,9 @@ import emartImage from "assets/image/emartImage.png"
 import roketImage from "assets/image/roketImage.png"
 import naverImage from "assets/image/naverImage.png"
 import etcImage from "assets/image/etcImage.png"
-import LongButton from "components/LongButton"
+import LongButton from "components/longButton"
 import downIcon from "assets/icon/downIcon.png"
-import cameraIcon from "assets/icon/cameraIcon.png"
 import leftarrowIcon from "assets/icon/leftarrowIcon.png"
-import rightIcon from "assets/icon/rightIcon.png"
 
 interface MarketInfoprops {
 	isClick: boolean,
@@ -28,31 +25,31 @@ function Past() {
 	const [selectedIndex, setSelectedIndex] = useState(0)
 
 	const [dummy, setDummy] = useState([
-        {
-            id: 0,
-            name: "마켓컬리"
-        }, 
-        {
-            id: 1,
-            name: "SSG 이마트"
-        }, 
-        {
-            id: 2,
-            name: "쿠캣마켓"
-        },
-        {
-            id: 3,
-            name: "쿠캣마켓"
-        },
-        {
-            id: 4,
-            name: "쿠캣마켓"
-        },
-        {
-            id: 5,
-            name: "쿠캣마켓"
-        }
-    ])
+		{
+			id: 0,
+			name: "마켓컬리"
+		},
+		{
+			id: 1,
+			name: "SSG 이마트"
+		},
+		{
+			id: 2,
+			name: "쿠캣마켓"
+		},
+		{
+			id: 3,
+			name: "쿠캣마켓"
+		},
+		{
+			id: 4,
+			name: "쿠캣마켓"
+		},
+		{
+			id: 5,
+			name: "쿠캣마켓"
+		}
+	])
 
 	useEffect(() => {
 		setMarketInfo(dummy.map((v) => {
@@ -80,11 +77,11 @@ function Past() {
 			<Container>
 				<Header>
 					<TitleWrap>
-                        <img className="icon0" src={leftarrowIcon} />
-                        <div className="label0 label1">2022-03-17 추천템 리스트</div>
+						<img className="icon0" src={leftarrowIcon} alt="leftarrowIcon" />
+						<div className="label0 label1">2022-03-17 추천템 리스트</div>
 					</TitleWrap>
-                    <div className="text0 text1">{`3월 17일의 추천템`}</div>
-                    <div className="text0 text2"><span className="font_bold">3월 17일</span>에 올라온 추천템이에요</div>
+					<div className="text0 text1">{`3월 17일의 추천템`}</div>
+					<div className="text0 text2"><span className="font_bold">3월 17일</span>에 올라온 추천템이에요</div>
 				</Header>
 				<Slide>
 					{dummy.map((v, i) =>
@@ -98,12 +95,12 @@ function Past() {
 							}))
 						}}>
 							{marketInfo.length !== 0 &&
-								<Marketbutton 
-                                    isClick={marketInfo[i].isClick} 
-                                    marketImage={marketInfo[i].image} 
-                                    marketColor={theme.color.marketColor.kurly} 
-                                />
-                            }
+								<Marketbutton
+									isClick={marketInfo[i].isClick}
+									marketImage={marketInfo[i].image}
+									marketColor={theme.color.marketColor.kurly}
+								/>
+							}
 
 						</div>
 					)}
@@ -115,38 +112,38 @@ function Past() {
 						</h1>
 					}
 					<ListView>
-                        {
-                            Array.from([
-                                {
-                                    idx: 1,
-                                    title: "쿠캣마켓 명란젓",
-                                    description: "",
-                                    tag : 3
-                                },
-                                
-                            ])
-                            .map((arrayItem, arrayIndex)=> {
-                                return (
-                                    <div key={`listitem_` + arrayIndex}>
-                                        <ListItem
-                                        >
-											<div className="text1">
-												<span 
-													style={{ 
-														color: theme.color.grayscale.C_4C5463,
-													}}
-												>
-													{arrayItem.title}
-                                                    <span className="font_active" style={{ marginLeft: 8}}>NEW</span>
-												</span>
-											</div>
-                                        	<img src={downIcon} style={{ objectFit: "cover", }} width={20} height={20} alt="downIcon" />
-                                        </ListItem>
-                                    </div>
+						{
+							Array.from([
+								{
+									idx: 1,
+									title: "쿠캣마켓 명란젓",
+									description: "",
+									tag: 3
+								},
 
-                                )
-                            }) 
-                        }
+							])
+								.map((arrayItem, arrayIndex) => {
+									return (
+										<div key={`listitem_` + arrayIndex}>
+											<ListItem
+											>
+												<div className="text1">
+													<span
+														style={{
+															color: theme.color.grayscale.C_4C5463,
+														}}
+													>
+														{arrayItem.title}
+														<span className="font_active" style={{ marginLeft: 8 }}>NEW</span>
+													</span>
+												</div>
+												<img src={downIcon} style={{ objectFit: "cover", }} width={20} height={20} alt="downIcon" />
+											</ListItem>
+										</div>
+
+									)
+								})
+						}
 					</ListView>
 				</MainWrap>
 				<div style={{ padding: "40px 0", backgroundColor: theme.color.grayscale.F5F5F5 }}>

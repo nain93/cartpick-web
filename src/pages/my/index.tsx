@@ -1,27 +1,9 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import styled from "styled-components"
 
 import theme from "styles/theme"
-import { dateSimpleFormat } from "utils"
-import Marketbutton from "components/marketbutton"
-import kurlyImage from "assets/image/kurlyImage.png"
-import cookatImage from "assets/image/cookatImage.png"
-import emartImage from "assets/image/emartImage.png"
-import roketImage from "assets/image/roketImage.png"
-import naverImage from "assets/image/naverImage.png"
-import etcImage from "assets/image/etcImage.png"
-import LongButton from "components/LongButton"
-import downIcon from "assets/icon/downIcon.png"
-import cameraIcon from "assets/icon/cameraIcon.png"
+import LongButton from "components/longButton"
 import leftarrowIcon from "assets/icon/leftarrowIcon.png"
-import rightIcon from "assets/icon/rightIcon.png"
-
-interface MarketInfoprops {
-	isClick: boolean,
-	image: string,
-	color: string,
-	name: string
-}
 
 function Past() {
 	const [selectedIndex, setSelectedIndex] = useState(0)
@@ -32,77 +14,77 @@ function Past() {
 			<Container>
 				<Header>
 					<TitleWrap>
-                        <img className="icon0" src={leftarrowIcon} />
-                        <div className="label0 label1">내 프로필</div>
+						<img className="icon0" alt="leftarrowIcon" src={leftarrowIcon} />
+						<div className="label0 label1">내 프로필</div>
 					</TitleWrap>
-                    <div className="profile_header_row0 profile_header_row1">
-                        <div className="image_wrapper0">
-                            <img />
-                        </div>
-                        <div className="text_wrapper0">
-                            <div className="text0 text1">카카오계정으로 로그인하셨어요!</div>
-                            <div className="text0 text2">로그아웃</div>
-                        </div>
-                    </div>
+					<div className="profile_header_row0 profile_header_row1">
+						<div className="image_wrapper0">
+							<img />
+						</div>
+						<div className="text_wrapper0">
+							<div className="text0 text1">카카오계정으로 로그인하셨어요!</div>
+							<div className="text0 text2">로그아웃</div>
+						</div>
+					</div>
 				</Header>
 				<MainWrap>
 					<ListView>
-                        {
-                            Array.from([
-                                {
-                                    idx: 1,
-                                    title: "별명",
-                                    value: "배고픈강아지123"
-                                },
-                                {
-                                    idx: 2,
-                                    title: "직업 ",
-                                    value: "직장인"
-                                },
-                                {
-                                    idx: 3,
-                                    title: "주거형태 ",
-                                    value: "1인 가구"
-                                },
-                                {
-                                    idx: 3,
-                                    title: "자주 이용하는 마켓 ",
-                                    value: "마켓컬리"
-                                },
-                            ])
-                            .map((arrayItem, arrayIndex)=> {
-                                return (
-                                    <div key={`listitem_` + arrayIndex}>
-                                        <ListItem
-                                        >
-											<div className="text0 text1">
-												<span 
-													style={{ 
-														color: theme.color.grayscale.C_4C5463,
-													}}
-												>
-													{arrayItem.title}
-												</span>
-											</div>
-                                            <div className="text0 text2">
-												{arrayItem.value}
-                                            </div>
-                                        </ListItem>
-                                    </div>
+						{
+							Array.from([
+								{
+									idx: 1,
+									title: "별명",
+									value: "배고픈강아지123"
+								},
+								{
+									idx: 2,
+									title: "직업 ",
+									value: "직장인"
+								},
+								{
+									idx: 3,
+									title: "주거형태 ",
+									value: "1인 가구"
+								},
+								{
+									idx: 3,
+									title: "자주 이용하는 마켓 ",
+									value: "마켓컬리"
+								},
+							])
+								.map((arrayItem, arrayIndex) => {
+									return (
+										<div key={`listitem_` + arrayIndex}>
+											<ListItem
+											>
+												<div className="text0 text1">
+													<span
+														style={{
+															color: theme.color.grayscale.C_4C5463,
+														}}
+													>
+														{arrayItem.title}
+													</span>
+												</div>
+												<div className="text0 text2">
+													{arrayItem.value}
+												</div>
+											</ListItem>
+										</div>
 
-                                )
-                            }) 
-                        }
+									)
+								})
+						}
 					</ListView>
 				</MainWrap>
 				<div style={{ padding: "40px 0", backgroundColor: theme.color.grayscale.F5F5F5, }}>
 					<LongButton onClick={() => console.log("click")} buttonStyle={{ color: theme.color.main }} color={theme.color.main}>
 						프로필 수정
 					</LongButton>
-                    <div className="bottom_wrapper0">
-                        <div className="text0 text1 font_underline">회원 탈퇴</div>
-                        <div className="text0 text2"><span className="font_underline">이용약관</span>&nbsp;및&nbsp;<span className="font_underline">개인정보처리방침</span></div>
-                    </div>
+					<div className="bottom_wrapper0">
+						<div className="text0 text1 font_underline">회원 탈퇴</div>
+						<div className="text0 text2"><span className="font_underline">이용약관</span>&nbsp;및&nbsp;<span className="font_underline">개인정보처리방침</span></div>
+					</div>
 				</div>
 			</Container>
 

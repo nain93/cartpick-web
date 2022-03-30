@@ -10,7 +10,7 @@ import emartImage from "assets/image/emartImage.png"
 import roketImage from "assets/image/roketImage.png"
 import naverImage from "assets/image/naverImage.png"
 import etcImage from "assets/image/etcImage.png"
-import LongButton from "components/LongButton"
+import LongButton from "components/longButton"
 import downIcon from "assets/icon/downIcon.png"
 import cameraIcon from "assets/icon/cameraIcon.png"
 
@@ -37,29 +37,29 @@ function Main() {
 				<MainWrap>
 				</MainWrap>
 
-            {boolOpenPopup1 == true && (
-                <PopupFull1>
-                    <PopupBlur1
-                        paramObject={null}
-                        onClick={() => {
-                            setBoolOpenPopup1(false)
-                            // setBoolPopup1({ open: false, text: "" });
-                        }}
-                    ></PopupBlur1>
-                    <PopupV1 setBoolPopup1={()=> {}}>
-                        <div className="popup_container0">
-                            <div className="label0">
-                            로그인이 필요한 서비스입니다.<br/>로그인 하시겠어요?
-                            </div>
-                            <div className="bottomrow0">
-                                <div className="button0 button1">취소</div>
-                                <div className="button0 button2">로그인 하기</div>
-                            </div>
-                        </div>
-                    </PopupV1>
-                </PopupFull1>
-            )
-            }
+				{boolOpenPopup1 == true && (
+					<PopupFull1>
+						<PopupBlur1
+							paramObject={null}
+							onClick={() => {
+								setBoolOpenPopup1(false)
+								// setBoolPopup1({ open: false, text: "" });
+							}}
+						></PopupBlur1>
+						<PopupV1 setBoolPopup1={() => { }}>
+							<div className="popup_container0">
+								<div className="label0">
+									로그인이 필요한 서비스입니다.<br />로그인 하시겠어요?
+								</div>
+								<div className="bottomrow0">
+									<div className="button0 button1">취소</div>
+									<div className="button0 button2">로그인 하기</div>
+								</div>
+							</div>
+						</PopupV1>
+					</PopupFull1>
+				)
+				}
 			</Container>
 
 		</>

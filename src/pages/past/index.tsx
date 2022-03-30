@@ -1,151 +1,133 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import styled from "styled-components"
 
 import theme from "styles/theme"
-import { dateSimpleFormat } from "utils"
-import Marketbutton from "components/marketbutton"
-import kurlyImage from "assets/image/kurlyImage.png"
-import cookatImage from "assets/image/cookatImage.png"
-import emartImage from "assets/image/emartImage.png"
-import roketImage from "assets/image/roketImage.png"
-import naverImage from "assets/image/naverImage.png"
-import etcImage from "assets/image/etcImage.png"
-import LongButton from "components/LongButton"
-import downIcon from "assets/icon/downIcon.png"
-import cameraIcon from "assets/icon/cameraIcon.png"
+import LongButton from "components/longButton"
 import leftarrowIcon from "assets/icon/leftarrowIcon.png"
 import rightIcon from "assets/icon/rightIcon.png"
 
-interface MarketInfoprops {
-	isClick: boolean,
-	image: string,
-	color: string,
-	name: string
-}
-
 function Past() {
-	const [marketInfo, setMarketInfo] = useState<Array<MarketInfoprops>>([])
-	const [selectedIndex, setSelectedIndex] = useState(0)
+
 
 	return (
 		<>
 			<Container>
 				<Header>
 					<TitleWrap>
-                        <img className="icon0" src={leftarrowIcon} />
-                        <div className="label0 label1">추천템 더보기</div>
+						<img className="icon0" alt="leftarrowIcon" src={leftarrowIcon} />
+						<div className="label0 label1">추천템 더보기</div>
 					</TitleWrap>
-                    <div className="text0 text1">{`지난 추천템 모음`}</div>
-                    <div className="text0 text2">카톡방의 후기를 매일 매일 모았어요.<br/><span className="font_bold">매일 밤 9시</span>, 새로운 추천템이 업데이트됩니다.</div>
+					<div className="text0 text1">{`지난 추천템 모음`}</div>
+					<div className="text0 text2">카톡방의 후기를 매일 매일 모았어요.<br /><span className="font_bold">매일 밤 9시</span>, 새로운 추천템이 업데이트됩니다.</div>
 				</Header>
 				<MainWrap>
 					<ListView>
-                        {
-                            Array.from([
-                                {
-                                    idx: 1,
-                                    title: "2022-03-18 추천템 리스트",
-                                    description: "",
-                                    tag : 3
-                                },
-                                {
-                                    idx: 1,
-                                    title: "2022-03-18 추천템 리스트",
-                                    description: "",
-                                    tag : 3
-                                },
-                                {
-                                    idx: 1,
-                                    title: "2022-03-18 추천템 리스트",
-                                    description: "",
-                                    tag : 3
-                                },
-                                {
-                                    idx: 1,
-                                    title: "2022-03-18 추천템 리스트",
-                                    description: "",
-                                    tag : 3
-                                },
-                                {
-                                    idx: 1,
-                                    title: "2022-03-18 추천템 리스트",
-                                    description: "",
-                                    tag : 3
-                                },
-                                {
-                                    idx: 1,
-                                    title: "2022-03-18 추천템 리스트",
-                                    description: "",
-                                    tag : 3
-                                },
-                                {
-                                    idx: 1,
-                                    title: "2022-03-18 추천템 리스트",
-                                    description: "",
-                                    tag : 3
-                                },
-                                {
-                                    idx: 1,
-                                    title: "2022-03-18 추천템 리스트",
-                                    description: "",
-                                    tag : 3
-                                },
-                                {
-                                    idx: 1,
-                                    title: "2022-03-18 추천템 리스트",
-                                    description: "",
-                                    tag : 3
-                                },
-                                {
-                                    idx: 1,
-                                    title: "2022-03-18 추천템 리스트",
-                                    description: "",
-                                    tag : 3
-                                },
-                                {
-                                    idx: 1,
-                                    title: "2022-03-18 추천템 리스트",
-                                    description: "",
-                                    tag : 3
-                                },
-                                {
-                                    idx: 1,
-                                    title: "2022-03-18 추천템 리스트",
-                                    description: "",
-                                    tag : 3
-                                },
-                                
-                            ])
-                            .map((arrayItem, arrayIndex)=> {
-                                return (
-                                    <div key={`listitem_` + arrayIndex}>
-                                        <ListItem
-                                        >
-											<div className="text1">
-												<span 
-													style={{ 
-														color: theme.color.grayscale.C_4C5463,
-													}}
-												>
-													{arrayItem.title}
-                                                    <span className="font_active" style={{ marginLeft: 8}}>NEW</span>
-												</span>
-											</div>
-                                        	<img src={rightIcon} style={{ objectFit: "cover", }} width={20} height={20} alt="rightIcon" />
-                                        </ListItem>
-                                    </div>
+						{
+							Array.from([
+								{
+									idx: 1,
+									title: "2022-03-18 추천템 리스트",
+									description: "",
+									tag: 3
+								},
+								{
+									idx: 1,
+									title: "2022-03-18 추천템 리스트",
+									description: "",
+									tag: 3
+								},
+								{
+									idx: 1,
+									title: "2022-03-18 추천템 리스트",
+									description: "",
+									tag: 3
+								},
+								{
+									idx: 1,
+									title: "2022-03-18 추천템 리스트",
+									description: "",
+									tag: 3
+								},
+								{
+									idx: 1,
+									title: "2022-03-18 추천템 리스트",
+									description: "",
+									tag: 3
+								},
+								{
+									idx: 1,
+									title: "2022-03-18 추천템 리스트",
+									description: "",
+									tag: 3
+								},
+								{
+									idx: 1,
+									title: "2022-03-18 추천템 리스트",
+									description: "",
+									tag: 3
+								},
+								{
+									idx: 1,
+									title: "2022-03-18 추천템 리스트",
+									description: "",
+									tag: 3
+								},
+								{
+									idx: 1,
+									title: "2022-03-18 추천템 리스트",
+									description: "",
+									tag: 3
+								},
+								{
+									idx: 1,
+									title: "2022-03-18 추천템 리스트",
+									description: "",
+									tag: 3
+								},
+								{
+									idx: 1,
+									title: "2022-03-18 추천템 리스트",
+									description: "",
+									tag: 3
+								},
+								{
+									idx: 1,
+									title: "2022-03-18 추천템 리스트",
+									description: "",
+									tag: 3
+								},
 
-                                )
-                            }) 
-                        }
+							])
+								.map((arrayItem, arrayIndex) => {
+									return (
+										<div key={`listitem_` + arrayIndex}>
+											<ListItem
+											>
+												<div className="text1">
+													<span
+														style={{
+															color: theme.color.grayscale.C_4C5463,
+														}}
+													>
+														{arrayItem.title}
+														<span className="font_active" style={{ marginLeft: 8 }}>NEW</span>
+													</span>
+												</div>
+												<img src={rightIcon} style={{ objectFit: "cover", }} width={20} height={20} alt="rightIcon" />
+											</ListItem>
+										</div>
+
+									)
+								})
+						}
 					</ListView>
 				</MainWrap>
-				<div style={{ padding: "40px 0",  }}>
-					<LongButton 
-                        onClick={() => console.log("click")} 
-                        buttonStyle={{ color: theme.color.main }} 
-                        color={theme.color.main}
-                    >
+				<div style={{ padding: "40px 0", }}>
+					<LongButton
+						onClick={() => console.log("click")}
+						buttonStyle={{ color: theme.color.main }}
+						color={theme.color.main}
+					>
 						리스트 공유하기
 					</LongButton>
 				</div>

@@ -5,13 +5,13 @@ import { Link } from "react-router-dom";
 import theme from "styles/theme"
 import { dateSimpleFormat } from "utils"
 import Marketbutton from "components/marketbutton"
+import LongButton from "components/longButton";
 import kurlyImage from "assets/image/kurlyImage.png"
 import cookatImage from "assets/image/cookatImage.png"
 import emartImage from "assets/image/emartImage.png"
 import roketImage from "assets/image/roketImage.png"
 import naverImage from "assets/image/naverImage.png"
 import etcImage from "assets/image/etcImage.png"
-import LongButton from "components/LongButton"
 import downIcon from "assets/icon/downIcon.png"
 import cameraIcon from "assets/icon/cameraIcon.png"
 
@@ -27,31 +27,31 @@ function Main() {
 	const [selectedIndex, setSelectedIndex] = useState(0)
 	const [selectedListIndex, setSelectedListIndex] = useState(-1)
 	const [dummy, setDummy] = useState([
-        {
-            id: 0,
-            name: "마켓컬리"
-        }, 
-        {
-            id: 1,
-            name: "SSG 이마트"
-        }, 
-        {
-            id: 2,
-            name: "쿠캣마켓"
-        },
-        {
-            id: 3,
-            name: "쿠캣마켓"
-        },
-        {
-            id: 4,
-            name: "쿠캣마켓"
-        },
-        {
-            id: 5,
-            name: "쿠캣마켓"
-        }
-    ])
+		{
+			id: 0,
+			name: "마켓컬리"
+		},
+		{
+			id: 1,
+			name: "SSG 이마트"
+		},
+		{
+			id: 2,
+			name: "쿠캣마켓"
+		},
+		{
+			id: 3,
+			name: "쿠캣마켓"
+		},
+		{
+			id: 4,
+			name: "쿠캣마켓"
+		},
+		{
+			id: 5,
+			name: "쿠캣마켓"
+		}
+	])
 
 	useEffect(() => {
 		setMarketInfo(dummy.map((v) => {
@@ -80,13 +80,13 @@ function Main() {
 				<Header>
 					<TitleWrap>
 						<div style={{ fontSize: 24, fontWeight: "bold", lineHeight: 1.25 }}>오늘의 추천템</div>
-						<button style={{ color: theme.color.main }}>로그인</button>
+						<Link to="/login" style={{ color: theme.color.main }}>로그인</Link>
 					</TitleWrap>
 					<span>
 						<span style={{ fontWeight: "bold" }}>{dateSimpleFormat()}</span>
 						에 나온 추천템이에요
 					</span>
-      				<Link to="/past">
+					<Link to="/past">
 						<LastItemButton
 						>
 							{`지난 추천템 보기 >`}
@@ -105,19 +105,19 @@ function Main() {
 							}))
 						}}>
 							{marketInfo.length !== 0 &&
-								<Marketbutton 
-                                    isClick={marketInfo[i].isClick} 
-                                    marketImage={marketInfo[i].image} 
-                                    marketColor={theme.color.marketColor.kurly} 
-                                />
-                            }
+								<Marketbutton
+									isClick={marketInfo[i].isClick}
+									marketImage={marketInfo[i].image}
+									marketColor={theme.color.marketColor.kurly}
+								/>
+							}
 
 						</div>
 					)}
 				</Slide>
 				<MainWrap>
 					{marketInfo.length !== 0 &&
-						<h1 style={{ fontSize: 16, fontWeight: "bold", color: marketInfo[selectedIndex].color }}>
+						<h1 style={{ marginLeft: 20, fontSize: 16, fontWeight: "bold", color: marketInfo[selectedIndex].color }}>
 							{marketInfo[selectedIndex].name}
 						</h1>
 					}
@@ -129,133 +129,132 @@ function Main() {
 
 					{/* 있을때 */}
 					<ListView>
-                        {
-                            Array.from([
-                                {
-                                    idx: 1,
-                                    title: "[단백질과자점] 단백질 쿠키 프로틴 사브레 충분히 길어졌을때3종",
-                                    description: "",
-                                    tag : 3
-                                },
-                                {
-                                    idx: 2,
-                                    title: "[창억]호박인절미",
-                                    description: "",
-                                    tag : 11
-                                },
-                                {
-                                    idx: 3,
-                                    title: "[네떼] 간편 양상추",
-                                    description: "",
-                                    tag : 3
-                                },
-                                {
-                                    idx: 3,
-                                    title: "[네떼] 간편 양상추",
-                                    description: "",
-                                    tag : 3
-                                },
-                                {
-                                    idx: 3,
-                                    title: "[네떼] 간편 양상추",
-                                    description: "",
-                                    tag : 3
-                                },
-                                {
-                                    idx: 3,
-                                    title: "[네떼] 간편 양상추",
-                                    description: "",
-                                    tag : 3
-                                },
-                                {
-                                    idx: 3,
-                                    title: "[네떼] 간편 양상추",
-                                    description: "",
-                                    tag : 3
-                                },
-                                {
-                                    idx: 3,
-                                    title: "[네떼] 간편 양상추",
-                                    description: "",
-                                    tag : 3
-                                },
-                                
-                            ])
-                            .map((arrayItem, arrayIndex)=> {
-                                return (
-                                    <div key={`listitem_` + arrayIndex}>
-                                        <ListItem
-                                            onClick={()=> {
-												if (selectedListIndex == arrayIndex) {
-													setSelectedListIndex(-1);
-												} else {
-													setSelectedListIndex(arrayIndex);
+						{
+							Array.from([
+								{
+									idx: 1,
+									title: "[단백질과자점] 단백질 쿠키 프로틴 사브레 충분히 길어졌을때3종",
+									description: "",
+									tag: 3
+								},
+								{
+									idx: 2,
+									title: "[창억]호박인절미",
+									description: "",
+									tag: 11
+								},
+								{
+									idx: 3,
+									title: "[네떼] 간편 양상추",
+									description: "",
+									tag: 3
+								},
+								{
+									idx: 3,
+									title: "[네떼] 간편 양상추",
+									description: "",
+									tag: 3
+								},
+								{
+									idx: 3,
+									title: "[네떼] 간편 양상추",
+									description: "",
+									tag: 3
+								},
+								{
+									idx: 3,
+									title: "[네떼] 간편 양상추",
+									description: "",
+									tag: 3
+								},
+								{
+									idx: 3,
+									title: "[네떼] 간편 양상추",
+									description: "",
+									tag: 3
+								},
+								{
+									idx: 3,
+									title: "[네떼] 간편 양상추",
+									description: "",
+									tag: 3
+								},
+
+							])
+								.map((arrayItem, arrayIndex) => {
+									return (
+										<div key={`listitem_` + arrayIndex}>
+											<ListItem
+												onClick={() => {
+													if (selectedListIndex === arrayIndex) {
+														setSelectedListIndex(-1);
+													} else {
+														setSelectedListIndex(arrayIndex);
+													}
+												}}
+												style={{
+													backgroundColor: selectedListIndex === arrayIndex ? theme.color.grayscale.F5F5F5 : '#ffffff',
+												}}
+											>
+												<div className="text1">
+													<span
+														style={{
+															fontSize: 16,
+															lineHeight: 1.5,
+															color: theme.color.grayscale.C_4C5463,
+															fontWeight: selectedListIndex === arrayIndex ? '900' : '500',
+														}}
+													>
+														{arrayItem.title}
+														<Tag>{arrayItem.tag}</Tag>
+													</span>
+												</div>
+												<img src={downIcon} style={{ objectFit: "cover", }} width={20} height={20} alt="downIcon" />
+												{
+													selectedListIndex === arrayIndex &&
+													<ListMore>
+														<div className="top_border"></div>
+														<div className="chat_row0 chat_row1">
+															<div className="icon0 icon1">&#9829;</div>
+															<div className="label0 label1">
+																<span className="font_bold">33/직장인/마켓컬리</span>&nbsp;님이&nbsp;<span className="font_active">처음 추천</span>&nbsp;하셨어요!
+															</div>
+														</div>
+														<div className="chat_row0 chat_row2">
+															<div className="balloon0 balloon1">
+																단백질 맛 안나고 일반 밀가루 쿠키보다 맛있음 + 가격 부담 살짝
+															</div>
+														</div>
+														<div className="chat_row0 chat_row1">
+															<div className="icon0 icon1">&#9829;</div>
+															<div className="label0 label1">
+																<span className="font_bold">33/직장인/마켓컬리</span>&nbsp;님이&nbsp;<span className="font_active">처음 추천</span>&nbsp;하셨어요!
+															</div>
+														</div>
+														<div className="chat_row0 chat_row2">
+															<div className="balloon0 balloon1">
+																다이어트 중에 부담없이 먹을 수 있음 일반 쿠키 느낌
+															</div>
+														</div>
+														<div className="chat_row0 chat_row1">
+															<div className="icon0 icon1">&#9829;</div>
+															<div className="label0 label1">
+																<span className="font_bold">33/직장인/마켓컬리</span>&nbsp;님이&nbsp;<span className="font_active">처음 추천</span>&nbsp;하셨어요!
+															</div>
+														</div>
+														<div className="chat_row0 chat_row2">
+															<div className="balloon0 balloon1">
+																조금 느끼함, 먹고 나면 입안에 텁텁함이 오래감
+															</div>
+														</div>
+													</ListMore>
 												}
-                                            }}
-											style={{
-												backgroundColor: selectedListIndex == arrayIndex ? '#f5f5f5' : '#ffffff',
-											}}
-                                        >
-											<div className="text1">
-												<span 
-													style={{ 
-														fontSize: 16, 
-														lineHeight: 1.5, 
-														color: theme.color.grayscale.C_4C5463,
-														fontWeight: selectedListIndex == arrayIndex ? '900' : '500',
-													}}
-												>
-													{arrayItem.title}
-													<Tag>{arrayItem.tag}</Tag>
-												</span>
-											</div>
-                                        	<img src={downIcon} style={{ objectFit: "cover", }} width={20} height={20} alt="downIcon" />
-											{
-												selectedListIndex == arrayIndex &&
+											</ListItem>
+										</div>
 
-												<ListMore>
-													<div className="top_border"></div>
-													<div className="chat_row0 chat_row1">
-														<div className="icon0 icon1">&#9829;</div>
-														<div className="label0 label1">
-															<span className="font_bold">33/직장인/마켓컬리</span>&nbsp;님이&nbsp;<span className="font_active">처음 추천</span>&nbsp;하셨어요!
-														</div>
-													</div>
-													<div className="chat_row0 chat_row2">
-														<div className="balloon0 balloon1">
-														단백질 맛 안나고 일반 밀가루 쿠키보다 맛있음 + 가격 부담 살짝
-														</div>
-													</div>
-													<div className="chat_row0 chat_row1">
-														<div className="icon0 icon1">&#9829;</div>
-														<div className="label0 label1">
-															<span className="font_bold">33/직장인/마켓컬리</span>&nbsp;님이&nbsp;<span className="font_active">처음 추천</span>&nbsp;하셨어요!
-														</div>
-													</div>
-													<div className="chat_row0 chat_row2">
-														<div className="balloon0 balloon1">
-														다이어트 중에 부담없이 먹을 수 있음 일반 쿠키 느낌
-														</div>
-													</div>
-													<div className="chat_row0 chat_row1">
-														<div className="icon0 icon1">&#9829;</div>
-														<div className="label0 label1">
-															<span className="font_bold">33/직장인/마켓컬리</span>&nbsp;님이&nbsp;<span className="font_active">처음 추천</span>&nbsp;하셨어요!
-														</div>
-													</div>
-													<div className="chat_row0 chat_row2">
-														<div className="balloon0 balloon1">
-														조금 느끼함, 먹고 나면 입안에 텁텁함이 오래감
-														</div>
-													</div>
-												</ListMore>
-											}
-                                        </ListItem>
-                                    </div>
-
-                                )
-                            }) 
-                        }
+									)
+								})
+						}
 					</ListView>
 				</MainWrap>
 				<div style={{ padding: "40px 0", backgroundColor: theme.color.grayscale.F5F5F5 }}>
@@ -307,13 +306,13 @@ const Slide = styled.div`
 
 
 const MainWrap = styled.section`
-	padding: 20px 20px 0px 20px;
+	padding-top: 20px;
 `;
 
 const ListView = styled.div`
 	overflow: scroll;
 	height: calc(100vh - 370px);
-	margin-top: 15.5px;
+	margin-top: 15px;
 `;
 
 const EmptyView = styled.div`
@@ -358,16 +357,17 @@ const ListItem = styled.div`
 		align-items: center;
 		width: calc(100% - 40px);
 		word-break: break-word;
+		padding:0 20px;
 	}
-	.text1 {
+	// ! 모바일화면에서 style 깨져서 주석처리 해뒀습니다
+	/* .text1 {
 		width: calc(100% - 140px);
 		margin-left: 20px;
-	}
+	} */
 	
 	img{
 		position: absolute;
 		right: 20px;
-		top: 20px;
 	}
 	
 	flex-wrap: wrap;
@@ -379,23 +379,19 @@ const ListMore = styled.div`
     display: flex;
 	flex-wrap: wrap;
     align-items: center;
-	background-color: #f5f5f5;
+	padding:0 20px;
 
 	.top_border {
-		width: calc(100% - 40px);
-		margin-left: 20px;
-		margin-right: 20px;
+		width: 100%;
 		height: 1px;
-		background-color: #b7c3d4;
-		margin-top: 19.5px;
-		margin-bottom: 19.5px;
+		background-color: ${theme.color.grayscale.B7C3D4};
+		margin-top: 14.5px;
+		margin-bottom: 14.5px;
 	}
 
 	.chat_row0 {
 		display: flex;
-		width: calc(100% - 40px);
-		margin-left: auto;
-		margin-right: auto;
+		width: 100%;
 	}
 	.chat_row0 .icon0 {
 		
@@ -412,8 +408,8 @@ const ListMore = styled.div`
 		padding: 10px 15px;
 		border-radius: 5px;
 		box-shadow: 0 2px 5px 0 rgba(183, 195, 212, 0.4);
-		border: solid 1px #dfe4ee;
-		background-color: #fff;
+		border: solid 1px ${theme.color.grayscale.DFE4EE};
+		background-color:${theme.color.grayscale.FFFFF};
 		margin-top: 9px;
 		margin-bottom: 10px;
 		font-size: 14px;
