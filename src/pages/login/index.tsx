@@ -3,12 +3,63 @@ import partyIcon from "assets/icon/partyIcon.png"
 import kakaoIcon from "assets/icon/kakaoIcon.png"
 import theme from 'styles/theme'
 import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
+import queryString from 'query-string';
+import { useEffect } from 'react'
+
+const query = queryString.parse(window.location.search);
+const kakaoUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_RESTAPI_KEY}&redirect_uri=${process.env.REACT_APP_REDIRECT_URI}&response_type=code`
 
 function Login() {
 	const navigate = useNavigate()
-	const handleKakaoLogin = () => {
-		navigate("/onboarding")
+
+	const getKakaoTokenHandler = async (code: string) => {
+		const data: any = {
+			grant_type: "authorization_code",
+			client_id: process.env.REACT_APP_RESTAPI_KEY,
+			redirect_uri: process.env.REACT_APP_REDIRECT_URI,
+			code: code
+		};
+		const queryString = Object.keys(data)
+			.map((k: any) => encodeURIComponent(k) + '=' + encodeURIComponent(data[k]))
+			.join('&');
+
+		//토큰 발급 REST API
+		axios.post('https://kauth.kakao.com/oauth/token', queryString, {
+			headers: {
+				'Content-type': 'application/x-www-form-urlencoded;charset=utf-8'
+			}
+		}).then((res) => {
+			//서버에 토큰 전송
+			console.log(res.data, "res.data.access_token");
+			sendKakaoTokenToServer(res.data.access_token)
+		});
 	}
+
+	const sendKakaoTokenToServer = async (token: string) => {
+		console.log("send");
+		try {
+			const data = await axios.post("http://10.70.176.128:8000/auth/login/kakao/ ", {}, {
+				headers: {
+					"Authorization": `${token}`
+				}
+			})
+			console.log(data, "data");
+		}
+		catch (e) {
+			console.error(e)
+		}
+		finally {
+			console.log("finally");
+		}
+
+	}
+
+	useEffect(() => {
+		if (query.code) {
+			getKakaoTokenHandler(query.code.toString());
+		}
+	}, []);
 
 	return (
 		<Container>
@@ -19,7 +70,7 @@ function Login() {
 			<Main>
 				<h1>여기서 <span>추천템</span><br />더 편하게 보세요! </h1>
 			</Main>
-			<Kakaobutton onClick={handleKakaoLogin}>
+			<Kakaobutton href={kakaoUrl}>
 				<img src={kakaoIcon} style={{ objectFit: "contain", marginRight: "auto" }} width={18} height={16} alt="kakaoIcon" />
 				<span style={{ marginRight: "auto" }}>
 					카카오로 시작하기
@@ -55,7 +106,7 @@ const Main = styled.div`
 	};
 `
 
-const Kakaobutton = styled.button`
+const Kakaobutton = styled.a`
 	width: 100%;
 	display: flex;
 	padding:14.2px 25px;

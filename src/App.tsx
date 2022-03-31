@@ -7,8 +7,8 @@ import Main from "pages/main";
 import Login from "pages/login";
 import My from "pages/my";
 import MyUpdate from "pages/my/update";
-import Past from "pages/past";
-import PastDetail from "pages/past/detail";
+import PastItemList from "pages/PastItemList";
+import PastDetail from "pages/PastItemList/detail";
 import Test from "pages/test";
 import Onboarding from "pages/onboarding";
 
@@ -23,8 +23,8 @@ function App() {
 					<Route path="/onboarding" element={<Onboarding />} />
 					<Route path="/my" element={<My />} />
 					<Route path="/my/update" element={<MyUpdate />} />
-					<Route path="/past" element={<Past />} />
-					<Route path="/past/detail/:id" element={<PastDetail />} />
+					<Route path="/pastItemList" element={<PastItemList />} />
+					<Route path="/pastItemList/:id" element={<PastDetail />} />
 					<Route path="/test" element={<Test />} />
 				</Routes>
 			</Container>

@@ -4,7 +4,7 @@ import closeIcon from "assets/icon/closeIcon.png"
 import theme from 'styles/theme';
 
 interface TopHeaderProps {
-	children: string;
+	children: JSX.Element | string;
 	backButton?: () => void;
 	closeButton?: () => void;
 }

@@ -86,12 +86,10 @@ function Main() {
 						<span style={{ fontWeight: "bold" }}>{dateSimpleFormat()}</span>
 						에 나온 추천템이에요
 					</span>
-					<Link to="/past">
-						<LastItemButton
-						>
-							{`지난 추천템 보기 >`}
-						</LastItemButton>
-					</Link>
+					<LastItemButton to="/pastItemList"
+					>
+						{`지난 추천템 보기 >`}
+					</LastItemButton>
 				</Header>
 				<Slide>
 					{dummy.map((v, i) =>
@@ -208,8 +206,8 @@ function Main() {
 														{arrayItem.title}
 														<Tag>{arrayItem.tag}</Tag>
 													</span>
+													<img src={downIcon} style={{ objectFit: "cover", transform: selectedIndex === arrayIndex ? "rotate(180deg)" : "" }} width={20} height={20} alt="downIcon" />
 												</div>
-												<img src={downIcon} style={{ objectFit: "cover", }} width={20} height={20} alt="downIcon" />
 												{
 													selectedListIndex === arrayIndex &&
 													<ListMore>
@@ -251,7 +249,6 @@ function Main() {
 												}
 											</ListItem>
 										</div>
-
 									)
 								})
 						}
@@ -286,10 +283,11 @@ const TitleWrap = styled.div`
 	margin-bottom: 10px;
 `;
 
-const LastItemButton = styled.span`
+const LastItemButton = styled(Link)`
 	line-height: 2;
 	font-size: 12px;
 	margin-top: 5px;
+	max-width: 100px;
 	color: ${theme.color.grayscale.B7C3D4};
 	text-decoration :underline ;
 	cursor: pointer;
@@ -312,7 +310,7 @@ const MainWrap = styled.section`
 const ListView = styled.div`
 	overflow: scroll;
 	height: calc(100vh - 370px);
-	margin-top: 15px;
+	margin-top: 20px;
 `;
 
 const EmptyView = styled.div`
@@ -359,12 +357,6 @@ const ListItem = styled.div`
 		word-break: break-word;
 		padding:0 20px;
 	}
-	// ! 모바일화면에서 style 깨져서 주석처리 해뒀습니다
-	/* .text1 {
-		width: calc(100% - 140px);
-		margin-left: 20px;
-	} */
-	
 	img{
 		position: absolute;
 		right: 20px;
@@ -374,13 +366,11 @@ const ListItem = styled.div`
 `;
 
 const ListMore = styled.div`
-
 	width: 100%;
     display: flex;
 	flex-wrap: wrap;
     align-items: center;
 	padding:0 20px;
-
 	.top_border {
 		width: 100%;
 		height: 1px;
@@ -388,13 +378,9 @@ const ListMore = styled.div`
 		margin-top: 14.5px;
 		margin-bottom: 14.5px;
 	}
-
 	.chat_row0 {
 		display: flex;
 		width: 100%;
-	}
-	.chat_row0 .icon0 {
-		
 	}
 	.chat_row0 .label0 {
 		display: flex;
@@ -413,19 +399,15 @@ const ListMore = styled.div`
 		margin-top: 9px;
 		margin-bottom: 10px;
 		font-size: 14px;
-		font-weight: normal;
-		font-stretch: normal;
-		font-style: normal;
 		line-height: 1.29;
-		letter-spacing: normal;
 		text-align: left;
-		color: #4c5463;
+		color: ${theme.color.grayscale.C_4C5463};
 	}
 	.chat_row0 .font_bold {
 		font-weight : 700;
 	}
 	.chat_row0 .font_active {
-		color : #7857ff;
+		color : ${theme.color.main}
 	}
 		
 	.chat_row1 {

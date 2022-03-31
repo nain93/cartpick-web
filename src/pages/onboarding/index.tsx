@@ -22,6 +22,7 @@ import etcImage from "assets/image/etcImage.png"
 import { useState } from 'react'
 import LongButton from 'components/longButton'
 import LoginLoading from './loginLoading'
+import axios from 'axios'
 
 
 function Onboarding() {
@@ -72,7 +73,7 @@ function Onboarding() {
 		]
 	)
 
-	const handleSignIn = () => {
+	const handleSignIn = async () => {
 		// todo api 호출하고, 토큰 넣고 로그인
 		setLoginLoading(true)
 
@@ -89,7 +90,9 @@ function Onboarding() {
 
 	return (
 		<Container>
-			<TopHeader children={"추가 정보 기입"} closeButton={() => navigate("/")} />
+			<TopHeader closeButton={() => navigate("/")} >
+				추가 정보 기입
+			</TopHeader>
 			<MainWrap>
 				<h1 style={{ display: "inline-block", marginBottom: 20 }}>현재 카톡방의 닉네임처럼<br />본인을 소개해주세요!</h1>
 				<InfoTitle>
