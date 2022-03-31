@@ -1,7 +1,7 @@
 const main = "#7857FF"
 
 const grayscale = {
-	FFFFF: '#FFFFF',
+	FFFFF: '#FFFFFF',
 	F5F5F5: "#F5F5F5",
 	F2F3F6: "#F2F3F6",
 	DFE4EE: "#DFE4EE",
