@@ -2,15 +2,14 @@ import GlobalStyles from "Globalstyles";
 import { Route, Routes } from "react-router-dom";
 import styled from "styled-components";
 
-
 import Main from "pages/main";
 import Login from "pages/login";
-import My from "pages/my";
-import MyUpdate from "pages/my/update";
+import Mypage from "pages/mypage";
+import EditMypage from "pages/mypage/editMypage";
 import PastItemList from "pages/PastItemList";
 import PastDetail from "pages/PastItemList/detail";
-import Test from "pages/test";
 import Onboarding from "pages/onboarding";
+import Search from "pages/search";
 
 function App() {
 	return (
@@ -21,11 +20,11 @@ function App() {
 					<Route path="/" element={<Main />} />
 					<Route path="/login" element={<Login />} />
 					<Route path="/onboarding" element={<Onboarding />} />
-					<Route path="/my" element={<My />} />
-					<Route path="/my/update" element={<MyUpdate />} />
+					<Route path="/mypage" element={<Mypage />} />
+					<Route path="/mypage/edit" element={<EditMypage />} />
 					<Route path="/pastItemList" element={<PastItemList />} />
 					<Route path="/pastItemList/:id" element={<PastDetail />} />
-					<Route path="/test" element={<Test />} />
+					<Route path="/search" element={<Search />} />
 				</Routes>
 			</Container>
 		</>

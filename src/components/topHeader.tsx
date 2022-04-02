@@ -1,15 +1,19 @@
 import styled from 'styled-components'
 import leftarrowIcon from "assets/icon/leftarrowIcon.png"
 import closeIcon from "assets/icon/closeIcon.png"
+import searchIcon from "assets/icon/searchIcon.png"
 import theme from 'styles/theme';
+import { useNavigate } from 'react-router-dom';
 
 interface TopHeaderProps {
 	children: JSX.Element | string;
 	backButton?: () => void;
 	closeButton?: () => void;
+	searchButton?: boolean
 }
 
-function TopHeader({ children, backButton, closeButton }: TopHeaderProps) {
+function TopHeader({ children, backButton, closeButton, searchButton }: TopHeaderProps) {
+	const navigate = useNavigate()
 	return (
 		<Container>
 			{backButton ?
@@ -19,13 +23,21 @@ function TopHeader({ children, backButton, closeButton }: TopHeaderProps) {
 				:
 				<div />
 			}
-			<h1>{children}</h1>
+			<h1 style={{
+				marginRight: (backButton && !closeButton && !searchButton) ? 18 : 0,
+				marginLeft: (!backButton && closeButton && !searchButton) ? 16 : 0,
+			}}>{children}</h1>
 			{closeButton ?
 				<button onClick={closeButton}>
 					<img src={closeIcon} width={16} height={16} alt="closeIcon" />
 				</button>
 				:
-				<div />
+				searchButton ?
+					<button onClick={() => navigate("/search")}>
+						<img src={searchIcon} width={19} height={19} alt="searchIcon" />
+					</button>
+					:
+					<div />
 			}
 		</Container>
 	)
