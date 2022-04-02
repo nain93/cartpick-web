@@ -4,9 +4,21 @@ import styled from 'styled-components'
 import defaultImg from "assets/image/defaultImage.png"
 import theme from 'styles/theme'
 import LongButton from 'components/longButton'
+import { useRecoilState } from 'recoil'
+import { modalState } from 'recoil/atoms'
 
 function Mypage() {
 	const navigate = useNavigate()
+	const [modal, setModal] = useRecoilState(modalState)
+
+	const handleDeleteModal = () => {
+		setModal({
+			okButton: () => console.log("dd"),
+			content: "탈퇴시 모든 정보는 저장되지 않습니다.\n정말 탈퇴하시겠어요?",
+			isOpen: true
+		})
+	}
+
 	return (
 		<Container>
 			<TopHeader backButton={() => navigate(-1)}>
@@ -47,7 +59,7 @@ function Mypage() {
 				<LongButton buttonStyle={{ color: theme.color.main }} color={theme.color.main} onClick={() => navigate("/mypage/edit")}>
 					프로필 수정
 				</LongButton>
-				<button style={{ color: theme.color.grayscale.B7C3D4, marginTop: 15, textDecoration: "underline" }}>
+				<button onClick={handleDeleteModal} style={{ color: theme.color.grayscale.B7C3D4, marginTop: 15, textDecoration: "underline" }}>
 					회원 탈퇴</button>
 				<button style={{ color: theme.color.grayscale.B7C3D4, margin: "auto 0 14px 0", textDecoration: "underline" }}>
 					이용약관 및 개인정보처리방침
