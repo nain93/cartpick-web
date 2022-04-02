@@ -1,5 +1,5 @@
 import TopHeader from 'components/topHeader'
-import React, { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import theme from 'styles/theme'
@@ -13,7 +13,7 @@ function PastItemList() {
 
 	return (
 		<Container>
-			<TopHeader backButton={() => navigate(-1)}>
+			<TopHeader backButton={() => navigate(-1)} searchButton={true}>
 				추천템 더보기
 			</TopHeader>
 			<MainWrap>
