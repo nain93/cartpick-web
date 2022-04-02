@@ -10,8 +10,12 @@ import PastItemList from "pages/PastItemList";
 import PastDetail from "pages/PastItemList/detail";
 import Onboarding from "pages/onboarding";
 import Search from "pages/search";
+import CustomModal from "components/customModal";
+import { useRecoilValue } from "recoil";
+import { modalState } from "recoil/atoms";
 
 function App() {
+	const isModalOpen = useRecoilValue(modalState)
 	return (
 		<>
 			<GlobalStyles />
@@ -26,6 +30,8 @@ function App() {
 					<Route path="/pastItemList/:id" element={<PastDetail />} />
 					<Route path="/search" element={<Search />} />
 				</Routes>
+				{isModalOpen.isOpen &&
+					<CustomModal />}
 			</Container>
 		</>
 	);

@@ -13,7 +13,6 @@ import roketImage from "assets/image/roketImage.png"
 import naverImage from "assets/image/naverImage.png"
 import etcImage from "assets/image/etcImage.png"
 import downIcon from "assets/icon/downIcon.png"
-import defaultImg from "assets/image/defaultImage.png"
 import cameraIcon from "assets/icon/cameraIcon.png"
 
 interface MarketInfoprops {
@@ -81,10 +80,7 @@ function Main() {
 				<Header>
 					<TitleWrap>
 						<div style={{ fontSize: 24, fontWeight: "bold", lineHeight: 1.25 }}>오늘의 추천템</div>
-						{/* <Link to="/login" style={{ color: theme.color.main }}>로그인</Link> */}
-						<Link to="/mypage">
-							<img src={defaultImg} alt="defaultImg" width={30} height={30} />
-						</Link>
+						<Link to="/login" style={{ color: theme.color.main }}>로그인</Link>
 					</TitleWrap>
 					<span>
 						<span style={{ fontWeight: "bold" }}>{dateSimpleFormat()}</span>
@@ -402,7 +398,6 @@ const ListMore = styled.div`
 		background-color:${theme.color.grayscale.FFFFF};
 		margin-top: 9px;
 		margin-bottom: 10px;
-		font-size: 14px;
 		line-height: 1.29;
 		text-align: left;
 		color: ${theme.color.grayscale.C_4C5463};
