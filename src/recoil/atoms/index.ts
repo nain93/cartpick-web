@@ -10,6 +10,7 @@ interface modalStateProps {
 	isOpen: boolean;
 	content: string;
 	okButton: () => void;
+	okText: string;
 }
 
 export const modalState = atom<modalStateProps>({
@@ -17,6 +18,7 @@ export const modalState = atom<modalStateProps>({
 	default: {
 		isOpen: false,
 		content: "",
-		okButton: () => null
+		okButton: () => null,
+		okText: ""
 	}
 })

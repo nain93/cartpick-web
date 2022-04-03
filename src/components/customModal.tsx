@@ -1,4 +1,5 @@
-import { useRecoilState, useSetRecoilState } from 'recoil'
+import React from 'react'
+import { useRecoilState } from 'recoil'
 import { modalState } from 'recoil/atoms'
 import styled from 'styled-components'
 import theme from 'styles/theme'
@@ -11,13 +12,22 @@ function CustomModal() {
 			<Container>
 				<ModalWrap>
 					<Content>
-						{modal.content}
+						{React.Children.toArray(modal.content.split("\n").map(text => (
+							<>
+								{text}
+								<br />
+							</>
+						)))}
 					</Content>
 					<div style={{ height: "100%" }}>
-						<button style={{ color: theme.color.NegativeRed, height: "100%", width: "50%", borderRight: `1px solid ${theme.color.grayscale.F2F3F6}` }}>
+						<button
+							onClick={() => setModal({ ...modal, isOpen: false })}
+							style={{ color: theme.color.NegativeRed, height: "100%", width: "50%", borderRight: `1px solid ${theme.color.grayscale.F2F3F6}` }}>
 							취소</button>
-						<button style={{ color: theme.color.main, height: "100%", width: "50%", }}>
-							탈퇴하기</button>
+						<button
+							onClick={modal.okButton}
+							style={{ color: theme.color.main, height: "100%", width: "50%", }}>
+							{modal.okText}</button>
 					</div>
 				</ModalWrap>
 			</Container>
@@ -40,10 +50,10 @@ const BackDrop = styled.div`
 const Container = styled.div`
 	position: absolute;
 	top:0;
-	left:0;
 	display: flex;
 	align-items: center;
 	width: 100%;
+	max-width: 768px;
 	height: 100%;
 `
 

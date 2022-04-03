@@ -4,16 +4,17 @@ import styled from 'styled-components'
 import defaultImg from "assets/image/defaultImage.png"
 import theme from 'styles/theme'
 import LongButton from 'components/longButton'
-import { useRecoilState } from 'recoil'
+import { useSetRecoilState } from 'recoil'
 import { modalState } from 'recoil/atoms'
 
 function Mypage() {
 	const navigate = useNavigate()
-	const [modal, setModal] = useRecoilState(modalState)
+	const setModal = useSetRecoilState(modalState)
 
 	const handleDeleteModal = () => {
 		setModal({
-			okButton: () => console.log("dd"),
+			okText: "탈퇴하기",
+			okButton: () => console.log("탈퇴하기 api"),
 			content: "탈퇴시 모든 정보는 저장되지 않습니다.\n정말 탈퇴하시겠어요?",
 			isOpen: true
 		})
