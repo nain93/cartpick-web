@@ -1,11 +1,11 @@
-import axios, { AxiosResponse } from "axios"
+import axios from "axios"
 
-export const baseURL = "https://"
+export const baseURL = "http://13.125.245.232:8000/"
 
 const token = ""
 
 const api = axios.create({
-	baseURL: "https://",
+	baseURL,
 	headers: {
 		"Authorization": `Bearer ${token}`,
 		"Content-Type": "application/json"

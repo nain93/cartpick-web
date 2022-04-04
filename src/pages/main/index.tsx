@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import styled from "styled-components"
-import { Link } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
+import queryString from 'query-string';
 
 import theme from "styles/theme"
 import { dateSimpleFormat } from "utils"
@@ -14,11 +15,7 @@ import naverImage from "assets/image/naverImage.png"
 import etcImage from "assets/image/etcImage.png"
 import downIcon from "assets/icon/downIcon.png"
 import defaultImg from "assets/image/defaultImage.png"
-import cameraIcon from "assets/icon/cameraIcon.png"
 import reviewHeart from "assets/icon/reviewIcon/reviewHeartIcon.png"
-import reviewRound from "assets/icon/reviewIcon/reviewRoundIcon.png"
-import reviewTriangle from "assets/icon/reviewIcon/reviewTriangleIcon.png"
-import reviewClose from "assets/icon/reviewIcon/reviewCloseIcon.png"
 
 interface MarketInfoprops {
 	isClick: boolean,
@@ -30,6 +27,7 @@ interface MarketInfoprops {
 const url = window.location.href
 
 function Main() {
+	const location = useLocation()
 	const [marketInfo, setMarketInfo] = useState<Array<MarketInfoprops>>([])
 	const [selectedIndex, setSelectedIndex] = useState(0)
 	const [selectedListIndex, setSelectedListIndex] = useState(-1)
@@ -59,6 +57,7 @@ function Main() {
 			name: "쿠캣마켓"
 		}
 	])
+	// console.log(location.state.userData, "params");
 
 	useEffect(() => {
 		setMarketInfo(dummy.map((v) => {

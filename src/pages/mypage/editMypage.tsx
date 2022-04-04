@@ -42,7 +42,7 @@ function EditMypage() {
 				</Nickname>
 			</Title>
 			<ErrorMsg>{errorMsg}</ErrorMsg>
-			<UserInputForm />
+			{/* <UserInputForm /> */}
 			<div style={{ paddingBottom: 60 }}>
 				<LongButton disabled={false} onClick={() => console.log("save")} buttonStyle={{ backgroundColor: theme.color.main, color: theme.color.grayscale.FFFFF }} color={theme.color.main}>
 					프로필 저장

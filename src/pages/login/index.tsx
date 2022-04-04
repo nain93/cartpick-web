@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import queryString from 'query-string';
 import { useEffect } from 'react'
+import { baseURL } from 'api'
 
 const query = queryString.parse(window.location.search);
 const kakaoUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_RESTAPI_KEY}&redirect_uri=${process.env.REACT_APP_REDIRECT_URI}&response_type=code`
@@ -31,20 +32,23 @@ function Login() {
 			}
 		}).then((res) => {
 			//서버에 토큰 전송
-			console.log(res.data, "res.data.access_token");
 			sendKakaoTokenToServer(res.data.access_token)
 		});
 	}
 
 	const sendKakaoTokenToServer = async (token: string) => {
-		console.log("send");
 		try {
-			const data = await axios.post("http://10.70.176.128:8000/auth/login/kakao/ ", {}, {
+			const res = await axios.post(`${baseURL}auth/login/kakao/`, {}, {
 				headers: {
 					"Authorization": `${token}`
 				}
 			})
-			console.log(data, "data");
+			if (res) {
+				console.log(res.data, "data")
+				navigate("/onboarding", { state: { userData: res.data } })
+			}
+			// todo data에 유저정보 받은후 유저정보로 회원가입 api post
+			// todo 회원가입후 토큰을 받아서 쿠키에 저장 후 recoil로 isLogin설정
 		}
 		catch (e) {
 			console.error(e)

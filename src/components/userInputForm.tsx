@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { ChangeEvent, KeyboardEvent, useState } from 'react'
 import styled from 'styled-components'
 import theme from 'styles/theme'
 import backpackIcon from "assets/icon/backpackIcon.png"
@@ -18,8 +18,37 @@ import wingItImage from "assets/image/wingItImage.png"
 import etcImage from "assets/image/etcImage.png"
 import Marketbutton from 'components/marketbutton'
 
-function UserInputForm() {
-	const [errorMsg, setErrorMsg] = useState("해당하는 항목을 선택해주세요")
+interface SignUpType {
+	job: string,
+	household: string,
+	market: Array<string>
+}
+
+interface UserInputProps {
+	signUpData: SignUpType;
+	setSignUpData: (data: SignUpType) => void;
+}
+
+const jobs = [
+	{ icon: backpackIcon, name: "학생" },
+	{ icon: ringIcon, name: "주부" },
+	{ icon: laptopIcon, name: "직장인" },
+	{ icon: "", name: "기타(직접입력)" }]
+
+const house = [
+	{ icon: peopleIcon, name: "1인 가구" },
+	{ icon: personIcon, name: "2인 가구" },
+	{ icon: familyIcon, name: "3~4인 가구" },
+	{ icon: smilingIcon, name: "5인 이상 대가구" }
+]
+
+function UserInputForm({ signUpData, setSignUpData }: UserInputProps) {
+	//"해당하는 항목을 선택해주세요"
+	const [errorMsg, setErrorMsg] = useState("")
+	const [jobSelect, setJobSelect] = useState<number>()
+	const [houseSelect, setHouseSelect] = useState<number>()
+	const [marketText, setMarketText] = useState<string>("")
+	const [marketOthers, setMarketOthers] = useState<Array<string>>([])
 	const [market, setMarket] = useState<Array<{ image: string, name: string, isClick: boolean }>>(
 		[
 			{
@@ -64,7 +93,14 @@ function UserInputForm() {
 			}
 		]
 	)
-	console.log(window.location.href, "location");
+
+	const handleEnter = (e: KeyboardEvent<HTMLInputElement>) => {
+		if (e.key === "Enter" && marketText) {
+			setMarketOthers(marketOthers.concat(marketText))
+			setMarketText("")
+		}
+	}
+
 	return (
 		<>
 			<InfoTitle errorMsg={errorMsg}>
@@ -72,46 +108,47 @@ function UserInputForm() {
 			</InfoTitle>
 			<div style={{ position: "relative" }}>
 				<Slide>
-					<div>
-						<img src={backpackIcon} width={18} height={18} alt="backpackIcon" />
-						<span>학생</span>
-					</div>
-					<div>
-						<img src={ringIcon} width={18} height={18} alt="ringIcon" />
-						<span>주부</span>
-					</div>
-					<div>
-						<img src={laptopIcon} width={18} height={18} alt="laptopIcon" />
-						<span>직장인</span>
-					</div>
-					<div>
-						<span>기타(직접입력)</span>
-					</div>
+					{React.Children.toArray(jobs.map((v, i) =>
+						<div onClick={() => {
+							setJobSelect(i)
+							if (i === jobs.length - 1) {
+								setSignUpData({ ...signUpData, job: "" })
+							}
+							else {
+								setSignUpData({ ...signUpData, job: v.name })
+							}
+						}}
+							style={(jobSelect === i) ? { color: theme.color.main, border: `1px solid ${theme.color.main}` } :
+								{ color: theme.color.grayscale.B7C3D4, border: `1px solid ${theme.color.grayscale.F2F3F6}` }
+							}>
+							{v.icon &&
+								<img src={v.icon} width={18} height={18} alt={v.name} />
+							}
+							<span>{v.name}</span>
+						</div>
+					))}
 					<ErrorMsg>{errorMsg}</ErrorMsg>
 				</Slide>
 			</div>
-			{/* <MarketInput style={{ marginBottom: 0 }} placeholder="직업을 입력해주세요" /> */}
+			{jobSelect === jobs.length - 1 &&
+				<MarketInput value={signUpData.job} onChange={(e) => setSignUpData({ ...signUpData, job: e.target.value })} placeholder="직업을 입력해주세요" />}
 			<InfoTitle errorMsg={errorMsg}>
 				<h1>주거형태</h1>
 			</InfoTitle>
 			<div style={{ position: "relative" }}>
 				<Slide>
-					<div>
-						<img src={peopleIcon} width={18} height={18} alt="peopleIcon" />
-						<span>1인 가구</span>
-					</div>
-					<div>
-						<img src={personIcon} width={18} height={18} alt="personIcon" />
-						<span>2인 가구</span>
-					</div>
-					<div>
-						<img src={familyIcon} width={18} height={18} alt="familyIcon" />
-						<span>3~4인 가구</span>
-					</div>
-					<div>
-						<img src={smilingIcon} width={18} height={18} alt="smilingIcon" />
-						<span>5인 이상 대가구</span>
-					</div>
+					{React.Children.toArray(house.map((v, i) =>
+						<div onClick={() => {
+							setHouseSelect(i)
+							setSignUpData({ ...signUpData, household: v.name })
+						}}
+							style={(houseSelect === i) ? { color: theme.color.main, border: `1px solid ${theme.color.main}` } :
+								{ color: theme.color.grayscale.B7C3D4, border: `1px solid ${theme.color.grayscale.F2F3F6}` }
+							}>
+							<img src={v.icon} width={18} height={18} alt={v.name} />
+							<span>{v.name}</span>
+						</div>
+					))}
 				</Slide>
 				<ErrorMsg>{errorMsg}</ErrorMsg>
 			</div>
@@ -120,12 +157,19 @@ function UserInputForm() {
 			</InfoTitle>
 			<div style={{ position: "relative" }}>
 				<MarketSlide>
-					{market.map(v =>
-						<div key={v.image}>
+					{market.map((v, i) =>
+						<div key={v.image} onClick={() => setMarket(market.map((marketV, marketI) => {
+							if (marketI === i) {
+								return { ...marketV, isClick: !marketV.isClick }
+							}
+							else {
+								return marketV
+							}
+						}))}>
 							<Marketbutton
-								isClick={false}
+								isClick={v.isClick}
 								marketImage={v.image}
-								marketColor={""}
+								marketColor={theme.color.main}
 							/>
 							<span>{v.name}</span>
 						</div>
@@ -133,7 +177,17 @@ function UserInputForm() {
 				</MarketSlide>
 				<ErrorMsg style={{ bottom: -20 }}>{errorMsg}</ErrorMsg>
 			</div>
-			<MarketInput placeholder="마켓명을 입력해주세요" />
+			{market[market.length - 1].isClick &&
+				<>
+					<MarketInput value={marketText} onChange={(e) => setMarketText(e.target.value)} onKeyDown={handleEnter} placeholder="마켓명을 입력해주세요" />
+					<OtherMarket>
+						{React.Children.toArray(marketOthers.map((v, i) =>
+							<div>
+								{v}
+							</div>
+						))}
+					</OtherMarket>
+				</>}
 		</>
 	)
 }
@@ -145,9 +199,9 @@ const Slide = styled.div`
 		margin-left: 20px;
 	}
 	>div{
+		cursor: pointer;
 		height: 40px;
 		border-radius: 20px;
-		border:1px solid ${theme.color.grayscale.F2F3F6};
 		margin-right: 10px;
 		display: flex;
 		justify-content: center;
@@ -159,7 +213,6 @@ const Slide = styled.div`
 		}
 		span{
 			white-space:nowrap;
-			color:${theme.color.grayscale.B7C3D4};
 			margin-top: 15px;
 			margin-bottom: 10px;
 		}
@@ -198,7 +251,7 @@ const MarketInput = styled.input`
 	};
 	width: calc(100% - 40px);
 	padding: 9.5px 0;
-	margin: 15px 20px 60px 20px;
+	margin: 15px 20px 0 20px;
 `
 
 const ErrorMsg = styled.span`
@@ -208,6 +261,25 @@ const ErrorMsg = styled.span`
 	font-size: 12px;
 	line-height: 2.33;
 	color:${theme.color.ErrorTextColor};
+`
+
+const OtherMarket = styled.div`
+display: flex;
+padding:0 20px;
+margin-top: 10px;
+flex-wrap: wrap;
+>div{
+	margin: 0 10px 10px 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-width: 100px;
+	padding: 0 15px;
+	height: 40px;
+	border-radius: 10px;
+	border:1px solid ${theme.color.grayscale.DFE4EE};
+}
+
 `
 
 
