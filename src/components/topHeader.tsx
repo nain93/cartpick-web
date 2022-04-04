@@ -43,7 +43,7 @@ function TopHeader({ children, backButton, closeButton, searchButton }: TopHeade
 	)
 }
 
-const Container = styled.div`
+const Container = styled.header`
 	position: fixed;
 	top:0;
 	background-color: ${theme.color.grayscale.FFFFF};

@@ -60,11 +60,16 @@ function Mypage() {
 				<LongButton buttonStyle={{ color: theme.color.main }} color={theme.color.main} onClick={() => navigate("/mypage/edit")}>
 					프로필 수정
 				</LongButton>
-				<button onClick={handleDeleteModal} style={{ color: theme.color.grayscale.B7C3D4, marginTop: 15, textDecoration: "underline" }}>
-					회원 탈퇴</button>
-				<button style={{ color: theme.color.grayscale.B7C3D4, margin: "auto 0 14px 0", textDecoration: "underline" }}>
-					이용약관 및 개인정보처리방침
-				</button>
+				<div style={{ textAlign: "center", marginTop: 15 }}>
+					<button onClick={handleDeleteModal} style={{ color: theme.color.grayscale.B7C3D4, textDecoration: "underline" }}>
+						회원 탈퇴
+					</button>
+				</div>
+				<div style={{ textAlign: "center", margin: "auto 0 14px 0", }}>
+					<button style={{ color: theme.color.grayscale.B7C3D4, textDecoration: "underline" }}>
+						이용약관 및 개인정보처리방침
+					</button>
+				</div>
 			</ButtonWrap>
 		</Container>
 	)

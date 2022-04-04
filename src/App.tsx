@@ -13,6 +13,7 @@ import Search from "pages/search";
 import CustomModal from "components/customModal";
 import { useRecoilValue } from "recoil";
 import { modalState } from "recoil/atoms";
+import NotFound from "pages/notFound";
 
 function App() {
 	const isModalOpen = useRecoilValue(modalState)
@@ -21,6 +22,7 @@ function App() {
 			<GlobalStyles />
 			<Container>
 				<Routes>
+					<Route path='*' element={<NotFound />} />
 					<Route path="/" element={<Main />} />
 					<Route path="/login" element={<Login />} />
 					<Route path="/onboarding" element={<Onboarding />} />
