@@ -6,11 +6,14 @@ interface LoginButtonProps {
 	color: string;
 	buttonStyle?: CSSProperties;
 	onClick: () => void;
+	disabled?: boolean;
 }
 
-function LongButton({ children, color, buttonStyle, onClick }: LoginButtonProps) {
+function LongButton({ children, color, buttonStyle, onClick, disabled }: LoginButtonProps) {
 	return (
-		<Container onClick={onClick} buttonStyle={buttonStyle} color={color}>{children}</Container>
+		<Container onClick={disabled ? () => null : onClick}
+			buttonStyle={disabled ? { color: theme.color.grayscale.B7C3D4, backgroundColor: theme.color.grayscale.F2F3F6, border: "none" } : buttonStyle}
+			color={color}>{children}</Container>
 	)
 }
 

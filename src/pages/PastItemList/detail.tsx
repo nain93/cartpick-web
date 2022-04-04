@@ -14,6 +14,8 @@ import etcImage from "assets/image/etcImage.png"
 import downIcon from "assets/icon/downIcon.png"
 import LongButton from 'components/longButton'
 
+const url = window.location.href
+
 function PastDetail() {
 	const navigation = useNavigate()
 	const params = useParams()
@@ -47,6 +49,20 @@ function PastDetail() {
 
 	const month = Number(params.id?.slice(5, 7))
 	const date = Number(params.id?.slice(8, 10))
+
+	const handleShareList = () => {
+		// ! https에서만 공유가능
+		if (navigator.share) {
+			navigator.share({
+				title: "맛추픽추",
+				text: "hello world",
+				url
+			})
+		}
+		else {
+			alert("공유하기가 지원되지 않는 환경 입니다.")
+		}
+	}
 
 	return (
 		<Cotainer>
@@ -85,7 +101,7 @@ function PastDetail() {
 					)}
 				</ListView>
 				<div style={{ marginTop: "auto", padding: "40px 0", backgroundColor: theme.color.grayscale.F5F5F5 }}>
-					<LongButton color={theme.color.grayscale.B7C3D4} onClick={() => console.log("click")} buttonStyle={{ color: theme.color.grayscale.B7C3D4 }}>
+					<LongButton onClick={handleShareList} color={theme.color.grayscale.B7C3D4} buttonStyle={{ color: theme.color.grayscale.B7C3D4 }}>
 						리스트 공유하기
 					</LongButton>
 				</div>

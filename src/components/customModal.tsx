@@ -31,15 +31,13 @@ function CustomModal() {
 					</div>
 				</ModalWrap>
 			</Container>
-
 		</>
-
 	)
 }
 
 const BackDrop = styled.div`
 	position: absolute;
-	z-index: 1;
+	z-index: 10;
 	top:0;
 	left:0;
 	width: 100%;
@@ -60,7 +58,7 @@ const Container = styled.div`
 const ModalWrap = styled.div`
 	display: flex;
 	flex-direction: column;
-	z-index: 2;
+	z-index: 11;
 	width: calc(100% - 80px);
 	margin: 0 40px;
 	height: 150px;

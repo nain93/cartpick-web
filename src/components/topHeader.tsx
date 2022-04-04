@@ -56,6 +56,7 @@ const Container = styled.header`
 	padding:15px 20px;
 	height: 50px;
 	border-bottom: 1px solid ${theme.color.grayscale.F2F3F6};
+	z-index: 9;
 `
 
 export default TopHeader

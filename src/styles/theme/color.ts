@@ -14,6 +14,8 @@ const PositiveGreen = "#8EC285"
 
 const NegativeRed = "#FFA4A1"
 
+const ErrorTextColor = "#FF6767"
+
 const marketColor = {
 	kurly: "#965FCC",
 	cookat: "#EB5500",
@@ -30,7 +32,8 @@ const color = {
 	grayscale,
 	PositiveGreen,
 	NegativeRed,
-	marketColor
+	marketColor,
+	ErrorTextColor
 };
 
 export default color;
