@@ -20,7 +20,7 @@ export function datebarFormat() {
 	return list;
 }
 
-export function dateFormat() {
+export function dateFormatForSendBack() {
 	const formatDate = new Date();
 	let month: string | number = formatDate.getMonth() + 1;
 	let day: string | number = formatDate.getDate();
@@ -36,5 +36,5 @@ export function dateFormat() {
 	second = second >= 10 ? second : '0' + second;
 	const amPm = hour > 12 ? "오후" : "오전";
 
-	return formatDate.getFullYear() + '.' + month + '.' + day + ' ' + amPm + ' ' + hour + ':' + minute;
+	return formatDate.getFullYear() + String(month) + String(day);
 }

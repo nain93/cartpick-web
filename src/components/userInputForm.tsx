@@ -1,4 +1,4 @@
-import React, { ChangeEvent, KeyboardEvent, useState } from 'react'
+import React, { ChangeEvent, KeyboardEvent, RefObject, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import theme from 'styles/theme'
 import backpackIcon from "assets/icon/backpackIcon.png"
@@ -17,6 +17,7 @@ import naverImage from "assets/image/naverImage.png"
 import wingItImage from "assets/image/wingItImage.png"
 import etcImage from "assets/image/etcImage.png"
 import Marketbutton from 'components/marketbutton'
+import closeIcon from "assets/icon/closeIcon.png"
 
 interface SignUpType {
 	job: string,
@@ -27,6 +28,13 @@ interface SignUpType {
 interface UserInputProps {
 	signUpData: SignUpType;
 	setSignUpData: (data: SignUpType) => void;
+	setMarketOthers: (data: Array<string>) => void;
+	marketOthers: Array<string>;
+	errorMsg: {
+		text: string,
+		number: number
+	};
+	isEdit?: boolean
 }
 
 const jobs = [
@@ -42,13 +50,12 @@ const house = [
 	{ icon: smilingIcon, name: "5인 이상 대가구" }
 ]
 
-function UserInputForm({ signUpData, setSignUpData }: UserInputProps) {
-	//"해당하는 항목을 선택해주세요"
-	const [errorMsg, setErrorMsg] = useState("")
+function UserInputForm({ errorMsg, signUpData, setSignUpData, marketOthers, setMarketOthers, isEdit }: UserInputProps) {
 	const [jobSelect, setJobSelect] = useState<number>()
 	const [houseSelect, setHouseSelect] = useState<number>()
 	const [marketText, setMarketText] = useState<string>("")
-	const [marketOthers, setMarketOthers] = useState<Array<string>>([])
+	const jobInputRef = useRef<HTMLInputElement>(null)
+	const marketInputRef = useRef<HTMLInputElement>(null)
 	const [market, setMarket] = useState<Array<{ image: string, name: string, isClick: boolean }>>(
 		[
 			{
@@ -95,15 +102,72 @@ function UserInputForm({ signUpData, setSignUpData }: UserInputProps) {
 	)
 
 	const handleEnter = (e: KeyboardEvent<HTMLInputElement>) => {
-		if (e.key === "Enter" && marketText) {
+		// ! onKeyDown 한글입력시 2번 이벤트 발생해서 !e.nativeEvent.isComposing 처리
+		if (e.key === "Enter" && marketText && !e.nativeEvent.isComposing) {
 			setMarketOthers(marketOthers.concat(marketText))
 			setMarketText("")
 		}
 	}
 
+	useEffect(() => {
+		setSignUpData({
+			...signUpData, market: market.filter((v, i) => v.isClick && i !== market.length - 1).map(v => v.name)
+		})
+	}, [market])
+
+	useEffect(() => {
+		if (jobSelect === jobs.length - 1) {
+			jobInputRef.current?.focus()
+		}
+	}, [jobSelect])
+
+	useEffect(() => {
+		// * 마켓 기타입력 클릭시 input에 포커싱 언클릭시 데이터 없애주기
+		if (market[market.length - 1].isClick) {
+			marketInputRef.current?.focus()
+		}
+		else if (!market[market.length - 1].isClick) {
+			setMarketOthers([])
+		}
+	}, [market[market.length - 1].isClick])
+
+	useEffect(() => {
+		// * 프로필 수정시 데이터 받아오는 로직
+		if (isEdit) {
+			jobs.map((v, i) => {
+				if (v.name === signUpData.job) {
+					setJobSelect(i)
+				}
+				else {
+					setJobSelect(3)
+				}
+				return v
+			})
+
+			house.map((v, i) => {
+				if (v.name === signUpData.household) {
+					setHouseSelect(i)
+				}
+				return v
+			})
+
+
+			signUpData.market.map((v) => {
+				setMarket(
+					market.map((marketV) => {
+						if (v === marketV.name && !marketV.isClick) {
+							return { ...marketV, isClick: true }
+						}
+						return marketV
+					})
+				)
+			})
+		}
+	}, [isEdit])
+
 	return (
 		<>
-			<InfoTitle errorMsg={errorMsg}>
+			<InfoTitle errorMsg={true}>
 				<h1>직업</h1>
 			</InfoTitle>
 			<div style={{ position: "relative" }}>
@@ -127,12 +191,17 @@ function UserInputForm({ signUpData, setSignUpData }: UserInputProps) {
 							<span>{v.name}</span>
 						</div>
 					))}
-					<ErrorMsg>{errorMsg}</ErrorMsg>
+					{errorMsg.number === 1 &&
+						<ErrorMsg>{errorMsg.text}</ErrorMsg>}
 				</Slide>
 			</div>
 			{jobSelect === jobs.length - 1 &&
-				<MarketInput value={signUpData.job} onChange={(e) => setSignUpData({ ...signUpData, job: e.target.value })} placeholder="직업을 입력해주세요" />}
-			<InfoTitle errorMsg={errorMsg}>
+				<MarketInput
+					ref={jobInputRef}
+					value={signUpData.job}
+					onChange={(e) => setSignUpData({ ...signUpData, job: e.target.value })}
+					placeholder="직업을 입력해주세요" />}
+			<InfoTitle errorMsg={errorMsg.number === 1}>
 				<h1>주거형태</h1>
 			</InfoTitle>
 			<div style={{ position: "relative" }}>
@@ -150,9 +219,10 @@ function UserInputForm({ signUpData, setSignUpData }: UserInputProps) {
 						</div>
 					))}
 				</Slide>
-				<ErrorMsg>{errorMsg}</ErrorMsg>
+				{errorMsg.number === 2 &&
+					<ErrorMsg>{errorMsg.text}</ErrorMsg>}
 			</div>
-			<InfoTitle errorMsg={errorMsg}>
+			<InfoTitle errorMsg={errorMsg.number === 2}>
 				<h1>자주 이용하는 마켓 <span style={{ fontWeight: "normal" }}>(복수선택 가능)</span></h1>
 			</InfoTitle>
 			<div style={{ position: "relative" }}>
@@ -175,15 +245,21 @@ function UserInputForm({ signUpData, setSignUpData }: UserInputProps) {
 						</div>
 					)}
 				</MarketSlide>
-				<ErrorMsg style={{ bottom: -20 }}>{errorMsg}</ErrorMsg>
+				{errorMsg.number === 3 &&
+					<ErrorMsg style={{ bottom: -20 }}>{errorMsg.text}</ErrorMsg>}
 			</div>
 			{market[market.length - 1].isClick &&
 				<>
-					<MarketInput value={marketText} onChange={(e) => setMarketText(e.target.value)} onKeyDown={handleEnter} placeholder="마켓명을 입력해주세요" />
+					<MarketInput ref={marketInputRef} value={marketText} onChange={(e) => setMarketText(e.target.value)} onKeyDown={handleEnter} placeholder="마켓명을 입력해주세요" />
 					<OtherMarket>
 						{React.Children.toArray(marketOthers.map((v, i) =>
-							<div>
-								{v}
+							<div style={{ position: "relative" }}>
+								<button onClick={() => setMarketOthers(marketOthers.filter((_, filterI) => filterI !== i))} style={{ position: "absolute", right: 5, top: 0 }}>
+									<img src={closeIcon} width={8} height={8} alt="closeIcon" />
+								</button>
+								<span>
+									{v}
+								</span>
 							</div>
 						))}
 					</OtherMarket>
@@ -219,7 +295,7 @@ const Slide = styled.div`
 	}
 `
 
-const InfoTitle = styled.div<{ errorMsg: string }>`
+const InfoTitle = styled.div<{ errorMsg: boolean }>`
 	margin: 40px 20px 14px 20px;
 	margin-top: ${props => props.errorMsg ? "60px" : "40px"};
 	font-weight	:bold;
@@ -273,7 +349,7 @@ flex-wrap: wrap;
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	min-width: 100px;
+	min-width: 80px;
 	padding: 0 15px;
 	height: 40px;
 	border-radius: 10px;

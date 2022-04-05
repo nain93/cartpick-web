@@ -1,21 +1,29 @@
 import { useEffect, useState } from "react"
 import styled from "styled-components"
-import { Link, useLocation, useParams } from "react-router-dom";
-import queryString from 'query-string';
+import { Link } from "react-router-dom";
 
 import theme from "styles/theme"
-import { dateSimpleFormat } from "utils"
+import { dateFormatForSendBack, dateSimpleFormat } from "utils"
 import Marketbutton from "components/marketbutton"
 import LongButton from "components/longButton";
 import kurlyImage from "assets/image/kurlyImage.png"
 import cookatImage from "assets/image/cookatImage.png"
 import emartImage from "assets/image/emartImage.png"
 import roketImage from "assets/image/roketImage.png"
+import wingItImage from "assets/image/wingItImage.png"
 import naverImage from "assets/image/naverImage.png"
+import oasisImage from "assets/image/oasisImage.png"
 import etcImage from "assets/image/etcImage.png"
 import downIcon from "assets/icon/downIcon.png"
 import defaultImg from "assets/image/defaultImage.png"
 import reviewHeart from "assets/icon/reviewIcon/reviewHeartIcon.png"
+import grinningIcon from "assets/icon/grinningIcon.png"
+
+import { getUserProfile } from "api/user";
+import { useCookies } from "react-cookie";
+import { getMarketList, getMarketProduct } from "api/market";
+import { useQuery } from "react-query"
+import { UserDataType } from "types/user";
 
 interface MarketInfoprops {
 	isClick: boolean,
@@ -24,61 +32,68 @@ interface MarketInfoprops {
 	name: string
 }
 
+interface MarketProductType {
+	id: number,
+	name: string,
+	reviews: Array<{
+		id: number,
+		author: string,
+		content: string,
+		images: Array<{
+			id: number,
+			priority: number,
+			image: string
+		}>,
+		isPositive: boolean
+	}>,
+	reviewCount: number,
+	created: string
+}
 const url = window.location.href
+const date = dateFormatForSendBack()
 
 function Main() {
-	const location = useLocation()
+	const [cookies] = useCookies(['token']);
 	const [marketInfo, setMarketInfo] = useState<Array<MarketInfoprops>>([])
 	const [selectedIndex, setSelectedIndex] = useState(0)
 	const [selectedListIndex, setSelectedListIndex] = useState(-1)
-	const [dummy, setDummy] = useState([
-		{
-			id: 0,
-			name: "마켓컬리"
-		},
-		{
-			id: 1,
-			name: "SSG 이마트"
-		},
-		{
-			id: 2,
-			name: "쿠캣마켓"
-		},
-		{
-			id: 3,
-			name: "쿠캣마켓"
-		},
-		{
-			id: 4,
-			name: "쿠캣마켓"
-		},
-		{
-			id: 5,
-			name: "쿠캣마켓"
-		}
-	])
-	// console.log(location.state.userData, "params");
+	const [marketProduct, setMarketProduct] = useState<Array<MarketProductType>>([])
+
+	const userQuery = useQuery<UserDataType, Error>("userData", () => getUserProfile(cookies.token))
+	const marketListQuery = useQuery<Array<{ id: number, name: string }>, Error>("marketList", () => getMarketList(cookies.token))
+
 
 	useEffect(() => {
-		setMarketInfo(dummy.map((v) => {
-			switch (v.name) {
-				case "마켓컬리":
-					return { name: v.name, color: theme.color.marketColor.kurly, isClick: false, image: kurlyImage }
-				case "쿠팡 로켓프레시":
-					return { name: v.name, color: theme.color.marketColor.roket, isClick: false, image: roketImage }
-				case "쿠캣마켓":
-					return { name: v.name, color: theme.color.marketColor.cookat, isClick: false, image: cookatImage }
-				case "네이버 쇼핑":
-					return { name: v.name, color: theme.color.marketColor.naver, isClick: false, image: naverImage }
-				case "SSG 이마트":
-					return { name: v.name, color: theme.color.marketColor.emart, isClick: false, image: emartImage }
-				case "기타(직접입력)":
-					return { name: v.name, color: theme.color.marketColor.other, isClick: false, image: etcImage }
-				default:
-					return { name: v.name, color: theme.color.marketColor.other, isClick: false, image: etcImage }
-			}
-		}))
-	}, [dummy])
+		if (marketListQuery.data) {
+			setMarketInfo(marketListQuery.data.map((v) => {
+				switch (v.name) {
+					case "마켓컬리":
+						return { name: v.name, color: theme.color.marketColor.kurly, isClick: false, image: kurlyImage }
+					case "쿠팡 로켓프레시":
+						return { name: v.name, color: theme.color.marketColor.roket, isClick: false, image: roketImage }
+					case "쿠캣마켓":
+						return { name: v.name, color: theme.color.marketColor.cookat, isClick: false, image: cookatImage }
+					case "네이버 쇼핑":
+						return { name: v.name, color: theme.color.marketColor.naver, isClick: false, image: naverImage }
+					case "SSG 이마트":
+						return { name: v.name, color: theme.color.marketColor.emart, isClick: false, image: emartImage }
+					case "윙잇":
+						return { name: v.name, color: theme.color.marketColor.wingIt, isClick: false, image: wingItImage }
+					case "오아시스마켓":
+						return { name: v.name, color: theme.color.marketColor.oasis, isClick: false, image: oasisImage }
+					case "기타(직접입력)":
+						return { name: v.name, color: theme.color.marketColor.other, isClick: false, image: etcImage }
+					default:
+						return { name: v.name, color: theme.color.marketColor.other, isClick: false, image: etcImage }
+				}
+			}).map((v, i) => {
+				if (i === 0) {
+					return { ...v, isClick: true }
+				}
+				return v
+			}))
+		}
+	}, [marketListQuery.data])
 
 	const handleShareList = () => {
 		// ! https에서만 공유가능
@@ -94,16 +109,33 @@ function Main() {
 		}
 	}
 
+	useEffect(() => {
+		const getMarket = async () => {
+			// * 마켓 리스트를 불러오고 첫번째 마켓 상품데이터 
+			if (marketListQuery.data) {
+				const firstProductData = await getMarketProduct(cookies.token, marketListQuery.data[0].id, date)
+				if (firstProductData) {
+					setMarketProduct(firstProductData)
+				}
+			}
+		}
+		getMarket()
+	}, [])
+
+
 	return (
 		<>
 			<Container>
 				<Header>
 					<TitleWrap>
 						<div style={{ fontSize: 24, fontWeight: "bold", lineHeight: 1.25 }}>오늘의 추천템</div>
-						{/* <Link to="/login" style={{ color: theme.color.main }}>로그인</Link> */}
-						<Link to="/mypage">
-							<img src={defaultImg} width={30} height={30} alt="defaultImg" />
-						</Link>
+						{cookies.token ?
+							<Link to="/mypage">
+								<img style={{ borderRadius: 20 }} src={userQuery.data?.profileImage ? userQuery.data.profileImage : defaultImg} width={30} height={30} alt="defaultImg" />
+							</Link>
+							:
+							<Link to="/login" style={{ color: theme.color.main }}>로그인</Link>
+						}
 					</TitleWrap>
 					<span>
 						<span style={{ fontWeight: "bold" }}>{dateSimpleFormat()}</span>
@@ -115,9 +147,14 @@ function Main() {
 					</LastItemButton>
 				</Header>
 				<Slide>
-					{dummy.map((v, i) =>
-						<div key={v.id} onClick={() => {
+					{marketListQuery.data?.map((v, i) =>
+						<div key={v.id} onClick={async () => {
 							setSelectedIndex(i)
+							// * 마켓 클릭할때마다 새 데이터 호출
+							const data = await getMarketProduct(cookies.token, marketListQuery.data[selectedIndex].id, date)
+							if (data) {
+								setMarketProduct(data)
+							}
 							setMarketInfo(marketInfo.map((marketInfoV, marketInfoI) => {
 								if (i === marketInfoI) {
 									return { ...marketInfoV, isClick: true }
@@ -144,39 +181,12 @@ function Main() {
 					}
 					<ListView>
 						{
-							Array.from([
-								{
-									idx: 1,
-									title: "[단백질과자점] 단백질 쿠키 프로틴 사브레 충분히 길어졌을때3종",
-									description: "",
-									tag: 3
-								},
-								{
-									idx: 2,
-									title: "[창억]호박인절미",
-									description: "",
-									tag: 11
-								},
-								{
-									idx: 3,
-									title: "[네떼] 간편 양상추",
-									description: "",
-									tag: 3
-								},
-								{
-									idx: 3,
-									title: "[네떼] 간편 양상추",
-									description: "",
-									tag: 3
-								},
-								{
-									idx: 1,
-									title: "[단백질과자점] 단백질 쿠키 프로틴 사브레 충분히 길어졌을때3종",
-									description: "",
-									tag: 3
-								},
-							])
-								.map((arrayItem, arrayIndex) => {
+							marketProduct.length === 0 ?
+								<div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%" }}>
+									<img style={{ marginBottom: 10 }} src={grinningIcon} width={30} height={30} alt="grinningIcon" />
+									<span style={{ color: theme.color.grayscale.C_4C5463 }}>오늘은 추천템이 없어요</span>
+								</div> :
+								marketProduct.map((arrayItem, arrayIndex) => {
 									return (
 										<div key={arrayIndex}>
 											<ListItem
@@ -202,8 +212,8 @@ function Main() {
 															fontWeight: selectedListIndex === arrayIndex ? 'bold' : 'normal',
 														}}
 													>
-														{arrayItem.title}
-														<Tag>{arrayItem.tag}</Tag>
+														{arrayItem.name}
+														<Tag>{arrayItem.reviewCount}</Tag>
 													</span>
 													<UpDownIcon src={downIcon}
 														style={{ transform: selectedListIndex === arrayIndex ? "rotate(180deg)" : "", objectFit: "cover" }}

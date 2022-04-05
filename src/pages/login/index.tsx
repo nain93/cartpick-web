@@ -44,11 +44,10 @@ function Login() {
 				}
 			})
 			if (res) {
-				console.log(res.data, "data")
-				navigate("/onboarding", { state: { userData: res.data } })
+				// todo res에 토큰이 있으면 "/"으로  ( 토큰안에 유저정보가있나? )
+				// todo email, kakaoCode, nickname, profileImage 유저정보가 들어오면 "/onboarding"으로 가서 회원가입
+				navigate("/onboarding", { state: res.data })
 			}
-			// todo data에 유저정보 받은후 유저정보로 회원가입 api post
-			// todo 회원가입후 토큰을 받아서 쿠키에 저장 후 recoil로 isLogin설정
 		}
 		catch (e) {
 			console.error(e)

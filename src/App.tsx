@@ -14,9 +14,12 @@ import CustomModal from "components/customModal";
 import { useRecoilValue } from "recoil";
 import { modalState } from "recoil/atoms";
 import NotFound from "pages/notFound";
+import { useCookies } from "react-cookie";
 
 function App() {
 	const isModalOpen = useRecoilValue(modalState)
+	const [cookies] = useCookies()
+
 	return (
 		<>
 			<GlobalStyles />
@@ -24,8 +27,12 @@ function App() {
 				<Routes>
 					<Route path='*' element={<NotFound />} />
 					<Route path="/" element={<Main />} />
-					<Route path="/login" element={<Login />} />
-					<Route path="/onboarding" element={<Onboarding />} />
+					{!cookies &&
+						<>
+							<Route path="/login" element={<Login />} />
+							<Route path="/onboarding" element={<Onboarding />} />
+						</>
+					}
 					<Route path="/mypage" element={<Mypage />} />
 					<Route path="/mypage/edit" element={<EditMypage />} />
 					<Route path="/pastItemList" element={<PastItemList />} />

@@ -1,5 +1,5 @@
 import TopHeader from 'components/topHeader'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import defaultImg from "assets/image/defaultImage.png"
 import plusIcon from "assets/icon/plusIcon.png"
@@ -7,20 +7,34 @@ import theme from 'styles/theme'
 import UserInputForm from 'components/userInputForm'
 import LongButton from 'components/longButton'
 import { useEffect, useState } from 'react'
+import { SignUpType, UserDataType } from 'types/user'
 
 const regex = /^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|]+$/;
 
 function EditMypage() {
 	const navigate = useNavigate()
-	const [errorMsg, setErrorMsg] = useState("")
-	const [input, setInput] = useState("배고픈강아지123")
+	const location = useLocation()
+	const { profileImage, nickname, household, job, market } = location.state as UserDataType
+	const [input, setInput] = useState(nickname)
+	const [titleErrorMsg, setTitleErrorMsg] = useState("")
+	const [errorMsg, setErrorMsg] = useState({
+		text: "",
+		number: 0
+	})
+	const [signUpData, setSignUpData] = useState<SignUpType>({
+		job,
+		household,
+		market: market.split("·")
+	})
+	const [marketOthers, setMarketOthers] = useState<Array<string>>([])
+
 
 	useEffect(() => {
 		if (!regex.test(input)) {
-			setErrorMsg("한글, 영문, 숫자만 입력해주세요")
+			setTitleErrorMsg("한글, 영문, 숫자만 입력해주세요")
 		}
 		else {
-			setErrorMsg("")
+			setTitleErrorMsg("")
 		}
 	}, [input])
 
@@ -32,17 +46,23 @@ function EditMypage() {
 			<Title>
 				<ProfileImg>
 					<div style={{ position: "relative", zIndex: -1, width: 60, height: 60 }}>
-						<img src={defaultImg} width={60} height={60} alt="defaultImg" />
+						<img src={profileImage ? profileImage : defaultImg} style={{ borderRadius: 30 }} width={60} height={60} alt="defaultImg" />
 						<img src={plusIcon} style={{ bottom: 0, right: 0, position: "absolute" }} width={15} height={15} alt="plusIcon" />
 					</div>
 				</ProfileImg>
-				<Nickname errorMsg={errorMsg}>
+				<Nickname errorMsg={titleErrorMsg}>
 					<span style={{ fontSize: 12 }}>별명</span>
 					<input value={input} name={input} onChange={e => setInput(e.target.value)} />
 				</Nickname>
 			</Title>
-			<ErrorMsg>{errorMsg}</ErrorMsg>
-			{/* <UserInputForm /> */}
+			<ErrorMsg>{titleErrorMsg}</ErrorMsg>
+			<UserInputForm
+				isEdit={true}
+				errorMsg={errorMsg}
+				marketOthers={marketOthers}
+				setMarketOthers={(data: Array<string>) => setMarketOthers(data)}
+				signUpData={signUpData}
+				setSignUpData={(data: SignUpType) => setSignUpData(data)} />
 			<div style={{ paddingBottom: 60 }}>
 				<LongButton disabled={false} onClick={() => console.log("save")} buttonStyle={{ backgroundColor: theme.color.main, color: theme.color.grayscale.FFFFF }} color={theme.color.main}>
 					프로필 저장

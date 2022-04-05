@@ -6,10 +6,16 @@ import theme from 'styles/theme'
 import LongButton from 'components/longButton'
 import { useSetRecoilState } from 'recoil'
 import { modalState } from 'recoil/atoms'
+import { useQuery } from 'react-query'
+import { getUserProfile } from 'api/user'
+import { useCookies } from 'react-cookie'
+import { UserDataType } from 'types/user'
 
 function Mypage() {
 	const navigate = useNavigate()
 	const setModal = useSetRecoilState(modalState)
+	const [cookies] = useCookies()
+	const { data } = useQuery<UserDataType, Error>("userData", () => getUserProfile(cookies.token))
 
 	const handleDeleteModal = () => {
 		setModal({
@@ -27,7 +33,7 @@ function Mypage() {
 			</TopHeader>
 			<MainWrap>
 				<Title>
-					<img src={defaultImg} style={{ marginRight: 20 }} alt="defaultImg" width={60} height={60} />
+					<img src={data?.profileImage ? data.profileImage : defaultImg} style={{ marginRight: 20, borderRadius: 30 }} alt="defaultImg" width={60} height={60} />
 					<div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
 						<span style={{ color: theme.color.grayscale.C_4C5463 }}>
 							카카오계정으로 로그인하셨어요!
@@ -40,24 +46,24 @@ function Mypage() {
 				<MyInfo>
 					<li>
 						<span>별명</span>
-						<span>배고픈강아지123</span>
+						<span>{data?.nickname}</span>
 					</li>
 					<li>
 						<span>직업</span>
-						<span>직장인</span>
+						<span>{data?.job}</span>
 					</li>
 					<li>
 						<span>주거형태</span>
-						<span>1인 가구</span>
+						<span>{data?.household}</span>
 					</li>
 					<li>
 						<span>자주 이용하는 마켓</span>
-						<span>마켓컬리 · 쿠캣마켓</span>
+						<span>{data?.market}</span>
 					</li>
 				</MyInfo>
 			</MainWrap>
 			<ButtonWrap>
-				<LongButton buttonStyle={{ color: theme.color.main }} color={theme.color.main} onClick={() => navigate("/mypage/edit")}>
+				<LongButton buttonStyle={{ color: theme.color.main }} color={theme.color.main} onClick={() => navigate("/mypage/edit", { state: data })}>
 					프로필 수정
 				</LongButton>
 				<div style={{ textAlign: "center", marginTop: 15 }}>
