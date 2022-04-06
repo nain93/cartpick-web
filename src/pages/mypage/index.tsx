@@ -14,7 +14,7 @@ import { UserDataType } from 'types/user'
 function Mypage() {
 	const navigate = useNavigate()
 	const setModal = useSetRecoilState(modalState)
-	const [cookies] = useCookies()
+	const [cookies, setCookie, removeCookie] = useCookies(["token"])
 	const { data } = useQuery<UserDataType, Error>("userData", () => getUserProfile(cookies.token))
 
 	const handleDeleteModal = () => {
@@ -38,7 +38,10 @@ function Mypage() {
 						<span style={{ color: theme.color.grayscale.C_4C5463 }}>
 							카카오계정으로 로그인하셨어요!
 						</span>
-						<button style={{ color: theme.color.grayscale.B7C3D4, marginTop: 5, textDecoration: "underline" }}>
+						<button onClick={() => {
+							removeCookie("token")
+							navigate("/")
+						}} style={{ color: theme.color.grayscale.B7C3D4, marginTop: 5, textDecoration: "underline" }}>
 							로그아웃
 						</button>
 					</div>
@@ -63,7 +66,8 @@ function Mypage() {
 				</MyInfo>
 			</MainWrap>
 			<ButtonWrap>
-				<LongButton buttonStyle={{ color: theme.color.main }} color={theme.color.main} onClick={() => navigate("/mypage/edit", { state: data })}>
+				<LongButton buttonStyle={{ color: theme.color.main }} color={theme.color.main}
+					onClick={() => navigate("/mypage/edit", { state: data })}>
 					프로필 수정
 				</LongButton>
 				<div style={{ textAlign: "center", marginTop: 15 }}>

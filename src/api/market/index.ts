@@ -1,11 +1,10 @@
 import { baseURL } from "api";
 import axios from "axios";
 
-export async function getMarketList(token: string) {
+export async function getMarketList() {
 	try {
 		const res = await axios.get(baseURL + "market/", {
 			headers: {
-				"Authorization": `Bearer ${token}`,
 				"Content-Type": "application/json"
 			}
 		});
@@ -18,18 +17,34 @@ export async function getMarketList(token: string) {
 	}
 }
 
-export async function getMarketProduct(token: string, id: number, date: string) {
-	const res = await axios.get(baseURL + "market/product/", {
-		params: {
-			date,
-			market_id: id
-		},
-		headers: {
-			"Authorization": `Bearer ${token}`,
-			"Content-Type": "application/json"
+export async function getMarketProduct(id: number, date: string, token?: string) {
+	if (token) {
+		const res = await axios.get(baseURL + "market/product/", {
+			params: {
+				date,
+				market_id: id
+			},
+			headers: {
+				"Authorization": `Bearer ${token}`,
+				"Content-Type": "application/json"
+			}
+		});
+		if (res) {
+			return res.data
 		}
-	});
-	if (res) {
-		return res.data
+	}
+	else {
+		const res = await axios.get(baseURL + "market/product/", {
+			params: {
+				date,
+				market_id: id
+			},
+			headers: {
+				"Content-Type": "application/json"
+			}
+		});
+		if (res) {
+			return res.data
+		}
 	}
 }

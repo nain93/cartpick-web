@@ -18,22 +18,16 @@ import wingItImage from "assets/image/wingItImage.png"
 import etcImage from "assets/image/etcImage.png"
 import Marketbutton from 'components/marketbutton'
 import closeIcon from "assets/icon/closeIcon.png"
+import { SignUpType } from 'types/user'
+import { MarketErrorType } from 'types/market'
 
-interface SignUpType {
-	job: string,
-	household: string,
-	market: Array<string>
-}
 
 interface UserInputProps {
 	signUpData: SignUpType;
 	setSignUpData: (data: SignUpType) => void;
 	setMarketOthers: (data: Array<string>) => void;
 	marketOthers: Array<string>;
-	errorMsg: {
-		text: string,
-		number: number
-	};
+	errorMsg?: MarketErrorType;
 	isEdit?: boolean
 }
 
@@ -116,14 +110,14 @@ function UserInputForm({ errorMsg, signUpData, setSignUpData, marketOthers, setM
 	}, [market])
 
 	useEffect(() => {
-		if (jobSelect === jobs.length - 1) {
+		if (jobSelect === jobs.length - 1 && !isEdit) {
 			jobInputRef.current?.focus()
 		}
 	}, [jobSelect])
 
 	useEffect(() => {
 		// * 마켓 기타입력 클릭시 input에 포커싱 언클릭시 데이터 없애주기
-		if (market[market.length - 1].isClick) {
+		if (market[market.length - 1].isClick && !isEdit) {
 			marketInputRef.current?.focus()
 		}
 		else if (!market[market.length - 1].isClick) {
@@ -131,8 +125,9 @@ function UserInputForm({ errorMsg, signUpData, setSignUpData, marketOthers, setM
 		}
 	}, [market[market.length - 1].isClick])
 
+
+	// * 프로필 수정시 데이터 받아오는 로직
 	useEffect(() => {
-		// * 프로필 수정시 데이터 받아오는 로직
 		if (isEdit) {
 			jobs.map((v, i) => {
 				if (v.name === signUpData.job) {
@@ -151,19 +146,29 @@ function UserInputForm({ errorMsg, signUpData, setSignUpData, marketOthers, setM
 				return v
 			})
 
-
-			signUpData.market.map((v) => {
-				setMarket(
-					market.map((marketV) => {
-						if (v === marketV.name && !marketV.isClick) {
-							return { ...marketV, isClick: true }
-						}
-						return marketV
-					})
-				)
+			const copy = [...market]
+			market.forEach((v, i) => {
+				signUpData.market.forEach((marketName) => {
+					if (v.name === marketName) {
+						copy[i] = { ...v, isClick: true }
+					}
+				})
 			})
+			setMarket(copy)
+
+			if (signUpData.otherMarket && signUpData.otherMarket.length !== 0) {
+				setMarket(market.map((v, i) => {
+					if (i === (market.length - 1)) {
+						return { ...v, isClick: true }
+					}
+					return v
+				}))
+				setMarketOthers(signUpData.otherMarket)
+			}
+
 		}
 	}, [isEdit])
+
 
 	return (
 		<>
@@ -191,7 +196,7 @@ function UserInputForm({ errorMsg, signUpData, setSignUpData, marketOthers, setM
 							<span>{v.name}</span>
 						</div>
 					))}
-					{errorMsg.number === 1 &&
+					{errorMsg?.type === "job" &&
 						<ErrorMsg>{errorMsg.text}</ErrorMsg>}
 				</Slide>
 			</div>
@@ -200,8 +205,9 @@ function UserInputForm({ errorMsg, signUpData, setSignUpData, marketOthers, setM
 					ref={jobInputRef}
 					value={signUpData.job}
 					onChange={(e) => setSignUpData({ ...signUpData, job: e.target.value })}
-					placeholder="직업을 입력해주세요" />}
-			<InfoTitle errorMsg={errorMsg.number === 1}>
+					placeholder="직업을 입력해주세요" />
+			}
+			<InfoTitle errorMsg={errorMsg?.type === "household"}>
 				<h1>주거형태</h1>
 			</InfoTitle>
 			<div style={{ position: "relative" }}>
@@ -219,10 +225,10 @@ function UserInputForm({ errorMsg, signUpData, setSignUpData, marketOthers, setM
 						</div>
 					))}
 				</Slide>
-				{errorMsg.number === 2 &&
-					<ErrorMsg>{errorMsg.text}</ErrorMsg>}
+				{errorMsg?.type === "household" &&
+					<ErrorMsg>{errorMsg?.text}</ErrorMsg>}
 			</div>
-			<InfoTitle errorMsg={errorMsg.number === 2}>
+			<InfoTitle errorMsg={errorMsg?.type === "household"}>
 				<h1>자주 이용하는 마켓 <span style={{ fontWeight: "normal" }}>(복수선택 가능)</span></h1>
 			</InfoTitle>
 			<div style={{ position: "relative" }}>
@@ -245,12 +251,14 @@ function UserInputForm({ errorMsg, signUpData, setSignUpData, marketOthers, setM
 						</div>
 					)}
 				</MarketSlide>
-				{errorMsg.number === 3 &&
+				{errorMsg?.type === "market" &&
 					<ErrorMsg style={{ bottom: -20 }}>{errorMsg.text}</ErrorMsg>}
 			</div>
 			{market[market.length - 1].isClick &&
 				<>
-					<MarketInput ref={marketInputRef} value={marketText} onChange={(e) => setMarketText(e.target.value)} onKeyDown={handleEnter} placeholder="마켓명을 입력해주세요" />
+					<MarketInput ref={marketInputRef} value={marketText}
+						onChange={(e) => setMarketText(e.target.value)}
+						onKeyDown={handleEnter} placeholder="마켓명을 입력해주세요" />
 					<OtherMarket>
 						{React.Children.toArray(marketOthers.map((v, i) =>
 							<div style={{ position: "relative" }}>
