@@ -25,7 +25,10 @@ function CustomModal() {
 							style={{ color: theme.color.NegativeRed, height: "100%", width: "50%", borderRight: `1px solid ${theme.color.grayscale.F2F3F6}` }}>
 							취소</button>
 						<button
-							onClick={modal.okButton}
+							onClick={() => {
+								modal.okButton()
+								setModal({ ...modal, isOpen: false })
+							}}
 							style={{ color: theme.color.main, height: "100%", width: "50%", }}>
 							{modal.okText}</button>
 					</div>

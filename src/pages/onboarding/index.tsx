@@ -15,6 +15,7 @@ import { loginState } from 'recoil/atoms'
 import { useQuery } from 'react-query'
 import { getUserProfile } from 'api/user'
 import { SignUpType } from 'types/user'
+import { MarketErrorType } from 'types/market'
 
 
 interface UserDataProps {
@@ -29,9 +30,9 @@ function Onboarding() {
 	const location = useLocation()
 	const navigate = useNavigate()
 	const [cookies, setCookie] = useCookies(['token']);
-	const [errorMsg, setErrorMsg] = useState({
+	const [errorMsg, setErrorMsg] = useState<MarketErrorType>({
 		text: "",
-		number: 0
+		type: "job"
 	})
 	const [loginLoading, setLoginLoading] = useState(false)
 	const [signUpData, setSignUpData] = useState<SignUpType>({
@@ -48,21 +49,21 @@ function Onboarding() {
 		if (signUpData.job === "") {
 			setErrorMsg({
 				text: "해당하는 항목을 선택해주세요",
-				number: 1
+				type: "job"
 			})
 			return
 		}
 		if (signUpData.household === "") {
 			setErrorMsg({
 				text: "해당하는 항목을 선택해주세요",
-				number: 2
+				type: "household"
 			})
 			return
 		}
 		if (signUpData.market.concat(marketOthers).length === 0) {
 			setErrorMsg({
 				text: "해당하는 항목을 선택해주세요",
-				number: 3
+				type: "market"
 			})
 			return
 		}

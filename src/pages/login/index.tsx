@@ -7,13 +7,17 @@ import axios from 'axios'
 import queryString from 'query-string';
 import { useEffect } from 'react'
 import { baseURL } from 'api'
+import { useCookies } from 'react-cookie'
+import { useSetRecoilState } from 'recoil'
+import { loginState } from 'recoil/atoms'
 
 const query = queryString.parse(window.location.search);
 const kakaoUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_RESTAPI_KEY}&redirect_uri=${process.env.REACT_APP_REDIRECT_URI}&response_type=code`
 
 function Login() {
 	const navigate = useNavigate()
-
+	const [cookie, setCookie] = useCookies(["token"])
+	const setIsLogin = useSetRecoilState(loginState)
 	const getKakaoTokenHandler = async (code: string) => {
 		const data: any = {
 			grant_type: "authorization_code",
@@ -43,19 +47,20 @@ function Login() {
 					"Authorization": `${token}`
 				}
 			})
-			if (res) {
-				// todo res에 토큰이 있으면 "/"으로  ( 토큰안에 유저정보가있나? )
-				// todo email, kakaoCode, nickname, profileImage 유저정보가 들어오면 "/onboarding"으로 가서 회원가입
+
+			if (res.headers.accesstoken) {
+				setIsLogin(res.headers.accesstoken)
+				setCookie("token", res.headers.accesstoken,
+					process.env.NODE_ENV === "development" ? {} : { httpOnly: true, secure: true })
+				navigate("/")
+			}
+			if (res.data.kakaoCode) {
 				navigate("/onboarding", { state: res.data })
 			}
 		}
 		catch (e) {
 			console.error(e)
 		}
-		finally {
-			console.log("finally");
-		}
-
 	}
 
 	useEffect(() => {

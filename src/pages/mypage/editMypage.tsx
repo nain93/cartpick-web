@@ -8,35 +8,64 @@ import UserInputForm from 'components/userInputForm'
 import LongButton from 'components/longButton'
 import { useEffect, useState } from 'react'
 import { SignUpType, UserDataType } from 'types/user'
+import { useMutation, useQueryClient } from 'react-query'
+import { editUserProfile } from 'api/user'
+import { useCookies } from 'react-cookie'
+import { MarketErrorType } from 'types/market'
 
 const regex = /^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|]+$/;
 
 function EditMypage() {
 	const navigate = useNavigate()
 	const location = useLocation()
-	const { profileImage, nickname, household, job, market } = location.state as UserDataType
-	const [input, setInput] = useState(nickname)
+	const { profileImage, nickname, household, job, market, otherMarket } = location.state as UserDataType
+	const [nicknameInput, setNickNameInput] = useState(nickname)
 	const [titleErrorMsg, setTitleErrorMsg] = useState("")
-	const [errorMsg, setErrorMsg] = useState({
-		text: "",
-		number: 0
-	})
+	const [inputErrorMsg, setInputErrorMsg] = useState("")
+
 	const [signUpData, setSignUpData] = useState<SignUpType>({
 		job,
 		household,
-		market: market.split("·")
+		market: market.split("·"),
+		otherMarket
 	})
+	const [cookie] = useCookies(["token"])
 	const [marketOthers, setMarketOthers] = useState<Array<string>>([])
 
+	const queryClient = useQueryClient()
+	const userMutation = useMutation((userData: SignUpType) => editUserProfile(cookie.token, userData), {
+		onSuccess: () => {
+			queryClient.invalidateQueries("userData")
+		}
+	})
 
 	useEffect(() => {
-		if (!regex.test(input)) {
+		if (!regex.test(nicknameInput)) {
 			setTitleErrorMsg("한글, 영문, 숫자만 입력해주세요")
 		}
 		else {
 			setTitleErrorMsg("")
 		}
-	}, [input])
+	}, [nicknameInput])
+
+	const handleEditProfile = () => {
+		if (nicknameInput === "") {
+			setTitleErrorMsg("내용을 입력해주세요")
+			return
+		}
+
+		if (signUpData.job === "" || signUpData.market.concat(marketOthers).length === 0) {
+			setInputErrorMsg("비어있는 내용을 입력해주세요")
+			return
+		}
+
+		userMutation.mutate({
+			nickname: nicknameInput,
+			job: signUpData.job,
+			household: signUpData.household,
+			market: signUpData.market.concat(marketOthers)
+		})
+	}
 
 	return (
 		<Container>
@@ -47,24 +76,26 @@ function EditMypage() {
 				<ProfileImg>
 					<div style={{ position: "relative", zIndex: -1, width: 60, height: 60 }}>
 						<img src={profileImage ? profileImage : defaultImg} style={{ borderRadius: 30 }} width={60} height={60} alt="defaultImg" />
-						<img src={plusIcon} style={{ bottom: 0, right: 0, position: "absolute" }} width={15} height={15} alt="plusIcon" />
+						{/* todo profile사진 수정기능 추가후 주석해제 */}
+						{/* <img src={plusIcon} style={{ bottom: 0, right: 0, position: "absolute" }} width={15} height={15} alt="plusIcon" /> */}
 					</div>
 				</ProfileImg>
 				<Nickname errorMsg={titleErrorMsg}>
 					<span style={{ fontSize: 12 }}>별명</span>
-					<input value={input} name={input} onChange={e => setInput(e.target.value)} />
+					<input value={nicknameInput} name={nicknameInput} onChange={e => setNickNameInput(e.target.value)} />
 				</Nickname>
 			</Title>
 			<ErrorMsg>{titleErrorMsg}</ErrorMsg>
 			<UserInputForm
 				isEdit={true}
-				errorMsg={errorMsg}
 				marketOthers={marketOthers}
 				setMarketOthers={(data: Array<string>) => setMarketOthers(data)}
 				signUpData={signUpData}
 				setSignUpData={(data: SignUpType) => setSignUpData(data)} />
+			{inputErrorMsg &&
+				<ErrorMsg>{inputErrorMsg}</ErrorMsg>}
 			<div style={{ paddingBottom: 60 }}>
-				<LongButton disabled={false} onClick={() => console.log("save")} buttonStyle={{ backgroundColor: theme.color.main, color: theme.color.grayscale.FFFFF }} color={theme.color.main}>
+				<LongButton disabled={false} onClick={handleEditProfile} buttonStyle={{ marginTop: 60, backgroundColor: theme.color.main, color: theme.color.grayscale.FFFFF }} color={theme.color.main}>
 					프로필 저장
 				</LongButton>
 				<LongButton onClick={() => navigate(-1)} buttonStyle={{ marginTop: 10, color: theme.color.grayscale.C_4C5463 }} color={theme.color.grayscale.B7C3D4}>

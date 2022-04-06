@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import styled from "styled-components"
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import theme from "styles/theme"
 import { dateFormatForSendBack, dateSimpleFormat } from "utils"
@@ -24,31 +24,10 @@ import { useCookies } from "react-cookie";
 import { getMarketList, getMarketProduct } from "api/market";
 import { useQuery } from "react-query"
 import { UserDataType } from "types/user";
+import { MarketInfoprops, MarketProductType } from "types/market";
+import { modalState } from "recoil/atoms";
+import { useSetRecoilState } from "recoil";
 
-interface MarketInfoprops {
-	isClick: boolean,
-	image: string,
-	color: string,
-	name: string
-}
-
-interface MarketProductType {
-	id: number,
-	name: string,
-	reviews: Array<{
-		id: number,
-		author: string,
-		content: string,
-		images: Array<{
-			id: number,
-			priority: number,
-			image: string
-		}>,
-		isPositive: boolean
-	}>,
-	reviewCount: number,
-	created: string
-}
 const url = window.location.href
 const date = dateFormatForSendBack()
 
@@ -58,10 +37,26 @@ function Main() {
 	const [selectedIndex, setSelectedIndex] = useState(0)
 	const [selectedListIndex, setSelectedListIndex] = useState(-1)
 	const [marketProduct, setMarketProduct] = useState<Array<MarketProductType>>([])
+	const navigate = useNavigate()
+	const setModal = useSetRecoilState(modalState)
 
-	const userQuery = useQuery<UserDataType, Error>("userData", () => getUserProfile(cookies.token))
-	const marketListQuery = useQuery<Array<{ id: number, name: string }>, Error>("marketList", () => getMarketList(cookies.token))
+	const userQuery = useQuery<UserDataType | null, Error>("userData", () => cookies.token ? getUserProfile(cookies.token) : null)
+	const marketListQuery = useQuery<Array<{ id: number, name: string }>, Error>("marketList", () => getMarketList())
 
+
+	const handleGotoPastItem = () => {
+		if (cookies.token) {
+			navigate("/pastItemList")
+		}
+		else {
+			setModal({
+				okText: "로그인 하기",
+				okButton: () => navigate("/login"),
+				content: "로그인이 필요한 서비스입니다.\n로그인 하시겠어요?",
+				isOpen: true
+			})
+		}
+	}
 
 	useEffect(() => {
 		if (marketListQuery.data) {
@@ -113,7 +108,7 @@ function Main() {
 		const getMarket = async () => {
 			// * 마켓 리스트를 불러오고 첫번째 마켓 상품데이터 
 			if (marketListQuery.data) {
-				const firstProductData = await getMarketProduct(cookies.token, marketListQuery.data[0].id, date)
+				const firstProductData = await getMarketProduct(marketListQuery.data[0].id, date)
 				if (firstProductData) {
 					setMarketProduct(firstProductData)
 				}
@@ -141,7 +136,7 @@ function Main() {
 						<span style={{ fontWeight: "bold" }}>{dateSimpleFormat()}</span>
 						에 나온 추천템이에요
 					</span>
-					<LastItemButton to="/pastItemList"
+					<LastItemButton onClick={handleGotoPastItem}
 					>
 						{`지난 추천템 보기 >`}
 					</LastItemButton>
@@ -151,7 +146,7 @@ function Main() {
 						<div key={v.id} onClick={async () => {
 							setSelectedIndex(i)
 							// * 마켓 클릭할때마다 새 데이터 호출
-							const data = await getMarketProduct(cookies.token, marketListQuery.data[selectedIndex].id, date)
+							const data = await getMarketProduct(marketListQuery.data[selectedIndex].id, date)
 							if (data) {
 								setMarketProduct(data)
 							}
@@ -273,7 +268,7 @@ const TitleWrap = styled.div`
 	margin-bottom: 10px;
 `;
 
-const LastItemButton = styled(Link)`
+const LastItemButton = styled.div`
 	line-height: 2;
 	font-size: 12px;
 	margin-top: 5px;

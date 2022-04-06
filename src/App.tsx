@@ -18,7 +18,7 @@ import { useCookies } from "react-cookie";
 
 function App() {
 	const isModalOpen = useRecoilValue(modalState)
-	const [cookies] = useCookies()
+	const [cookies] = useCookies(["token"])
 
 	return (
 		<>
@@ -27,7 +27,7 @@ function App() {
 				<Routes>
 					<Route path='*' element={<NotFound />} />
 					<Route path="/" element={<Main />} />
-					{!cookies &&
+					{!cookies.token &&
 						<>
 							<Route path="/login" element={<Login />} />
 							<Route path="/onboarding" element={<Onboarding />} />

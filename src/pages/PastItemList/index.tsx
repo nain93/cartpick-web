@@ -7,9 +7,10 @@ import rightIcon from "assets/icon/rightIcon.png"
 import { datebarFormat } from 'utils'
 import LongButton from 'components/longButton'
 
+const lastList = datebarFormat()
+
 function PastItemList() {
 	const navigate = useNavigate()
-	const [lastList, setLastList] = useState<Array<string>>(datebarFormat())
 
 	return (
 		<Container>
