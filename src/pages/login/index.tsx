@@ -6,10 +6,11 @@ import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import queryString from 'query-string';
 import { useEffect } from 'react'
-import { baseURL } from 'api'
+import { baseURL, getUserCount } from 'api'
 import { useCookies } from 'react-cookie'
 import { useSetRecoilState } from 'recoil'
 import { loginState } from 'recoil/atoms'
+import { useQuery } from 'react-query'
 
 const query = queryString.parse(window.location.search);
 const kakaoUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_RESTAPI_KEY}&redirect_uri=${process.env.REACT_APP_REDIRECT_URI}&response_type=code`
@@ -18,6 +19,8 @@ function Login() {
 	const navigate = useNavigate()
 	const [cookie, setCookie] = useCookies(["token"])
 	const setIsLogin = useSetRecoilState(loginState)
+	const signCount = useQuery("signQuery", getUserCount)
+
 	const getKakaoTokenHandler = async (code: string) => {
 		const data: any = {
 			grant_type: "authorization_code",
@@ -73,7 +76,7 @@ function Login() {
 		<Container>
 			<Header>
 				<img src={partyIcon} alt="partyIcon" style={{ marginRight: 5 }} width={25} height={25} />
-				<span>지금 가입하면 <span style={{ fontWeight: "bold" }}>200번째!</span></span>
+				<span>지금 가입하면 <span style={{ fontWeight: "bold" }}>{signCount.data}번째!</span></span>
 			</Header>
 			<Main>
 				<h1>여기서 <span>추천템</span><br />더 편하게 보세요! </h1>
