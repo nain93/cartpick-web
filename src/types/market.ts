@@ -5,20 +5,22 @@ export interface MarketInfoprops {
 	name: string
 }
 
+export interface ReviewType {
+	id: number,
+	author: string,
+	content: string,
+	images: Array<{
+		id: number,
+		priority: number,
+		image: string
+	}>,
+	satisfaction: "best" | "better" | "good" | "bad"
+}
+
 export interface MarketProductType {
 	id: number,
 	name: string,
-	reviews: Array<{
-		id: number,
-		author: string,
-		content: string,
-		images: Array<{
-			id: number,
-			priority: number,
-			image: string
-		}>,
-		isPositive: boolean
-	}>,
+	reviews: Array<ReviewType>,
 	reviewCount: number,
 	created: string
 }

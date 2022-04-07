@@ -1,5 +1,4 @@
 import TopHeader from 'components/topHeader'
-import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import theme from 'styles/theme'
@@ -14,7 +13,7 @@ function PastItemList() {
 
 	return (
 		<Container>
-			<TopHeader backButton={() => navigate(-1)} searchButton={true}>
+			<TopHeader backButton={() => navigate(-1)} searchButton={false}>
 				추천템 더보기
 			</TopHeader>
 			<MainWrap>
@@ -25,15 +24,19 @@ function PastItemList() {
 					카톡방의 후기를 매일 매일 모았어요.<br /><span style={{ fontWeight: "bold" }}>매일 밤 9시,</span> 새로운 추천템이 업데이트됩니다.
 				</Desc>
 				<ListView>
-					{lastList.map((v) =>
+					{lastList.map((v, i) =>
 						<Link to={`/pastItemList/${v}`} key={v}>
-							<div style={{ display: "flex", justifyContent: "space-between", minWidth: 195 }}>
+							<div style={{ display: "flex", minWidth: 155 }}>
 								<span>
 									{v}
 								</span>
-								<span>
-									추천템 리스트
-									<span style={{ fontWeight: "bold", marginLeft: 10, color: theme.color.main }}>NEW</span>
+								<span style={{ marginLeft: "auto" }}>
+									&nbsp;추천템 리스트
+									{i === 0 &&
+										<span
+											style={{ fontWeight: "bold", marginLeft: 5, color: theme.color.main }}>
+											NEW</span>
+									}
 								</span>
 							</div>
 							<img src={rightIcon} alt="rightIcon" width={20} height={20} />
@@ -46,7 +49,7 @@ function PastItemList() {
 					</LongButton>
 				</div>
 			</MainWrap>
-		</Container>
+		</Container >
 	)
 }
 
