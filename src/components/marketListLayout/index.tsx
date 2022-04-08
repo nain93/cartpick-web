@@ -96,8 +96,8 @@ function MarketListLayout({ marketData, date, isPastItem = false }: MarketListLa
 	return (
 		<>
 			<Slide>
-				{marketData?.map((v, i) =>
-					<div key={v.id} onClick={async () => {
+				{React.Children.toArray(marketData?.map((v, i) =>
+					<div onClick={async () => {
 						setSelectedIndex(i)
 						// * 마켓 클릭할때마다 새 데이터 호출
 						const data = await getMarketProduct(marketData[i].id, date, isPastItem ? cookie.token : "")
@@ -119,7 +119,7 @@ function MarketListLayout({ marketData, date, isPastItem = false }: MarketListLa
 							/>
 						}
 					</div>
-				)}
+				))}
 			</Slide>
 			{marketInfo.length !== 0 &&
 				<h1 style={{ marginTop: 20, marginLeft: 20, fontSize: 16, fontWeight: "bold", color: marketInfo[selectedIndex].color }}>

@@ -94,7 +94,7 @@ const LastItemButton = styled.div`
 	line-height: 2;
 	font-size: 12px;
 	margin-top: 5px;
-	max-width: 100px;
+	max-width: 180px;
 	color: ${theme.color.grayscale.B7C3D4};
 	text-decoration :underline ;
 	cursor: pointer;
