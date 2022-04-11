@@ -36,10 +36,15 @@ function Login() {
 		axios.post('https://kauth.kakao.com/oauth/token', queryString, {
 			headers: {
 				'Content-type': 'application/x-www-form-urlencoded;charset=utf-8'
-			}
+			},
 		}).then((res) => {
 			//서버에 토큰 전송
-			sendKakaoTokenToServer(res.data.access_token)
+			sendKakaoTokenToServer(res.data.access_token).then(
+				// async () => {
+				// 	const accToken = await axios.get(baseURL + "auth/refresh/")
+				// 	console.log(accToken, 'accToken');
+				// }
+			)
 		});
 	}
 
@@ -48,13 +53,13 @@ function Login() {
 			const res = await axios.post(`${baseURL}auth/login/kakao/`, {}, {
 				headers: {
 					"Authorization": `${token}`
-				}
+				},
+				withCredentials: true
 			})
 
-			if (res.headers.accesstoken) {
-				setIsLogin(res.headers.accesstoken)
-				setCookie("token", res.headers.accesstoken,
-					process.env.NODE_ENV === "development" ? {} : { httpOnly: true, secure: true })
+			if (res.data.accessToken) {
+				setIsLogin(res.data.accessToken)
+				setCookie("token", res.data.accessToken)
 				navigate("/")
 			}
 			if (res.data.kakaoCode) {

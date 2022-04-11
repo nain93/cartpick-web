@@ -33,7 +33,7 @@ export async function editUserProfile(token: string, { nickname, job, household,
 	}
 	catch (e) {
 		if (axios.isAxiosError(e) && e.response) {
-			console.log((e.response?.data));
+			console.log(e.response?.data);
 		}
 	}
 }

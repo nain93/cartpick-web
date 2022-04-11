@@ -21,7 +21,7 @@ function Main() {
 	const navigate = useNavigate()
 	const setModal = useSetRecoilState(modalState)
 	const userQuery = useQuery<UserDataType | null, Error>("userData", () => cookies.token ? getUserProfile(cookies.token) : null)
-	const marketListQuery = useQuery<Array<{ id: number, name: string }>, Error>("marketList", () => getMarketList())
+	const { data } = useQuery<Array<{ id: number, name: string }>, Error>("marketList", () => getMarketList())
 
 
 	const handleGotoPastItem = () => {
@@ -37,10 +37,6 @@ function Main() {
 			})
 		}
 	}
-
-
-
-
 	return (
 		<>
 			<Container>
@@ -64,8 +60,8 @@ function Main() {
 						{`지난 추천템 보기 >`}
 					</LastItemButton>
 				</Header>
-				{marketListQuery.data &&
-					<MarketListLayout date={date} marketData={marketListQuery.data} />}
+				{data &&
+					<MarketListLayout date={date} marketData={data} />}
 			</Container>
 
 		</>

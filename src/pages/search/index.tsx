@@ -4,16 +4,36 @@ import styled from 'styled-components'
 import theme from 'styles/theme'
 import inputSearchIcon from "assets/icon/inputSearchIcon.png"
 import lightCloseIcon from "assets/icon/lightCloseIcon.png"
-import React, { useState } from 'react'
+import React, { KeyboardEvent, useState } from 'react'
+import { getSearchMarketData, getSearchMarketList } from 'api/search'
+import { useCookies } from 'react-cookie'
 
 function Search() {
 	const navigate = useNavigate()
+	const [cookie] = useCookies(["token"])
+	const [keyword, setKeyWord] = useState("")
 	const [recentKeywords, setRecentKeyWords] = useState<Array<string>>(
 		[
 			"베이글",
 			"잼",
 			"떡볶이"
 		])
+
+	const handleSearch = async (searchText: string) => {
+		console.log(searchText, 'searchText');
+		const list = await getSearchMarketList(keyword, cookie.token)
+		const market = await getSearchMarketData(1, keyword, cookie.token)
+		console.log(list, 'list');
+		setKeyWord("")
+	}
+
+	const searchEnter = (e: KeyboardEvent<HTMLInputElement>) => {
+		// ! onKeyDown 한글입력시 2번 이벤트 발생해서 !e.nativeEvent.isComposing 처리
+		if (e.key === "Enter" && keyword && !e.nativeEvent.isComposing) {
+			handleSearch(keyword)
+		}
+	}
+
 	return (
 		<Container>
 			<TopHeader backButton={() => navigate(-1)}>
@@ -21,8 +41,10 @@ function Search() {
 			</TopHeader>
 			<MainWrap>
 				<InputWrap>
-					<input placeholder="어떤 후기를 찾아볼까요?" />
-					<button onClick={() => console.log("search")}>
+					<input onKeyDown={searchEnter}
+						onChange={(e) => setKeyWord(e.target.value)}
+						value={keyword} placeholder="어떤 후기를 찾아볼까요?" />
+					<button onClick={() => handleSearch(keyword)}>
 						<img src={inputSearchIcon} width={19} height={19} alt="searchIcon" />
 					</button>
 				</InputWrap>

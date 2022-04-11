@@ -1,10 +1,10 @@
+import React from 'react'
 import TopHeader from 'components/topHeader'
 import { Link, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import theme from 'styles/theme'
 import rightIcon from "assets/icon/rightIcon.png"
 import { datebarFormat } from 'utils'
-import LongButton from 'components/longButton'
 
 const lastList = datebarFormat()
 
@@ -13,7 +13,7 @@ function PastItemList() {
 
 	return (
 		<Container>
-			<TopHeader backButton={() => navigate(-1)} searchButton={false}>
+			<TopHeader backButton={() => navigate(-1)} searchButton={true}>
 				추천템 더보기
 			</TopHeader>
 			<MainWrap>
@@ -24,30 +24,48 @@ function PastItemList() {
 					카톡방의 후기를 매일 매일 모았어요.<br /><span style={{ fontWeight: "bold" }}>매일 밤 9시,</span> 새로운 추천템이 업데이트됩니다.
 				</Desc>
 				<ListView>
-					{lastList.map((v, i) =>
-						<Link to={`/pastItemList/${v}`} key={v}>
-							<div style={{ display: "flex", minWidth: 155 }}>
-								<span>
-									{v}
-								</span>
-								<span style={{ marginLeft: "auto" }}>
-									&nbsp;추천템 리스트
-									{i === 0 &&
+					{React.Children.toArray(lastList.map((v, i) => {
+						if (i === 0) {
+							return (
+								<Link to={"/"}>
+									<div style={{ display: "flex", position: "relative", minWidth: 155, justifyContent: "center" }}>
+										<span>
+											{v}
+										</span>
+										<span style={{ marginLeft: "auto" }}>
+											&nbsp;추천템 리스트
+										</span>
 										<span
-											style={{ fontWeight: "bold", marginLeft: 5, color: theme.color.main }}>
+											style={{ position: "absolute", right: -40, fontWeight: "bold", marginLeft: 5, color: theme.color.main }}>
 											NEW</span>
-									}
-								</span>
-							</div>
-							<img src={rightIcon} alt="rightIcon" width={20} height={20} />
-						</Link>
+									</div>
+									<img src={rightIcon} alt="rightIcon" width={20} height={20} />
+								</Link>
+							)
+						}
+						else {
+							return (
+								<Link to={`/pastItemList/${v}`}>
+									<div style={{ display: "flex", minWidth: 155 }}>
+										<span>
+											{v}
+										</span>
+										<span style={{ marginLeft: "auto" }}>
+											&nbsp;추천템 리스트
+											{i === 0 &&
+												<span
+													style={{ fontWeight: "bold", marginLeft: 5, color: theme.color.main }}>
+													NEW</span>
+											}
+										</span>
+									</div>
+									<img src={rightIcon} alt="rightIcon" width={20} height={20} />
+								</Link>
+							)
+						}
+					})
 					)}
 				</ListView>
-				<div style={{ marginTop: "auto", padding: "40px 0 20px 0" }}>
-					<LongButton color={theme.color.main} onClick={() => console.log("click")} buttonStyle={{ color: theme.color.main, width: "100%" }}>
-						계속 보기
-					</LongButton>
-				</div>
 			</MainWrap>
 		</Container >
 	)
@@ -80,7 +98,6 @@ const Desc = styled.span`
 
 const ListView = styled.div`
 	overflow: scroll;
-	height: calc(100vh - 325px);
 	margin-top: 35.5px;
 	>a{
 		padding:14.5px 0;

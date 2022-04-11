@@ -46,5 +46,6 @@ export async function getMarketProduct(id: number, date: string, token?: string)
 		if (res) {
 			return res.data
 		}
+
 	}
 }
