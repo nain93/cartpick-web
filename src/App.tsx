@@ -27,17 +27,20 @@ function App() {
 				<Routes>
 					<Route path='*' element={<NotFound />} />
 					<Route path="/" element={<Main />} />
-					{!cookies.token &&
+					{!cookies.token ?
 						<>
 							<Route path="/login" element={<Login />} />
 							<Route path="/onboarding" element={<Onboarding />} />
 						</>
+						:
+						<>
+							<Route path="/mypage" element={<Mypage />} />
+							<Route path="/mypage/edit" element={<EditMypage />} />
+							<Route path="/pastItemList" element={<PastItemList />} />
+							<Route path="/pastItemList/:id" element={<PastDetail />} />
+							<Route path="/search" element={<Search />} />
+						</>
 					}
-					<Route path="/mypage" element={<Mypage />} />
-					<Route path="/mypage/edit" element={<EditMypage />} />
-					<Route path="/pastItemList" element={<PastItemList />} />
-					<Route path="/pastItemList/:id" element={<PastDetail />} />
-					<Route path="/search" element={<Search />} />
 				</Routes>
 				{isModalOpen.isOpen &&
 					<CustomModal />}

@@ -19,7 +19,7 @@ function CustomModal() {
 							</>
 						)))}
 					</Content>
-					<div style={{ height: "100%" }}>
+					<div style={{ height: 45, marginTop: "auto", borderTop: `1px solid ${theme.color.grayscale.F2F3F6}` }}>
 						<button
 							onClick={() => setModal({ ...modal, isOpen: false })}
 							style={{ color: theme.color.NegativeRed, height: "100%", width: "50%", borderRight: `1px solid ${theme.color.grayscale.F2F3F6}` }}>
@@ -70,11 +70,14 @@ const ModalWrap = styled.div`
 `
 
 const Content = styled.div`
+	display: flex;
+	justify-content: center;
+	align-items: center;
 	text-align: center;
-	border-bottom: 1px solid ${theme.color.grayscale.F2F3F6};
+	height: 105px;
 	padding: 30px; 
 	color: ${theme.color.grayscale.C_4C5463};
-	line-height: 1.43
+	line-height: 1.43;
 `
 
 export default CustomModal

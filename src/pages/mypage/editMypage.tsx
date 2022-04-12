@@ -11,7 +11,6 @@ import { SignUpType, UserDataType } from 'types/user'
 import { useMutation, useQueryClient } from 'react-query'
 import { editUserProfile } from 'api/user'
 import { useCookies } from 'react-cookie'
-import { MarketErrorType } from 'types/market'
 
 const regex = /^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|]+$/;
 
@@ -65,7 +64,9 @@ function EditMypage() {
 			household: signUpData.household,
 			market: signUpData.market.concat(marketOthers)
 		})
+		navigate(-1)
 	}
+
 
 	return (
 		<Container>
@@ -95,7 +96,8 @@ function EditMypage() {
 			{inputErrorMsg &&
 				<ErrorMsg>{inputErrorMsg}</ErrorMsg>}
 			<div style={{ paddingBottom: 60 }}>
-				<LongButton disabled={false} onClick={handleEditProfile} buttonStyle={{ marginTop: 60, backgroundColor: theme.color.main, color: theme.color.grayscale.FFFFF }} color={theme.color.main}>
+				<LongButton disabled={false} onClick={handleEditProfile}
+					buttonStyle={{ marginTop: 60, backgroundColor: theme.color.main, color: theme.color.grayscale.FFFFF }} color={theme.color.main}>
 					프로필 저장
 				</LongButton>
 				<LongButton onClick={() => navigate(-1)} buttonStyle={{ marginTop: 10, color: theme.color.grayscale.C_4C5463 }} color={theme.color.grayscale.B7C3D4}>

@@ -45,7 +45,7 @@ const house = [
 ]
 
 function UserInputForm({ errorMsg, signUpData, setSignUpData, marketOthers, setMarketOthers, isEdit }: UserInputProps) {
-	const [jobSelect, setJobSelect] = useState<number>()
+	const [jobSelect, setJobSelect] = useState<number>(3)
 	const [houseSelect, setHouseSelect] = useState<number>()
 	const [marketText, setMarketText] = useState<string>("")
 	const jobInputRef = useRef<HTMLInputElement>(null)
@@ -129,40 +129,34 @@ function UserInputForm({ errorMsg, signUpData, setSignUpData, marketOthers, setM
 	// * 프로필 수정시 데이터 받아오는 로직
 	useEffect(() => {
 		if (isEdit) {
-			jobs.map((v, i) => {
+			jobs.forEach((v, i) => {
 				if (v.name === signUpData.job) {
 					setJobSelect(i)
 				}
-				else {
-					setJobSelect(3)
-				}
-				return v
 			})
 
-			house.map((v, i) => {
+			house.forEach((v, i) => {
 				if (v.name === signUpData.household) {
 					setHouseSelect(i)
 				}
-				return v
 			})
 
-			const copy = [...market]
+			const copy: Array<{ image: string, name: string, isClick: boolean }> = []
 			market.forEach((v, i) => {
-				signUpData.market.forEach((marketName) => {
-					if (v.name === marketName) {
-						copy[i] = { ...v, isClick: true }
-					}
-				})
+				if (i === (market.length - 1) && signUpData.otherMarket?.length !== 0) {
+					copy.push({ ...v, isClick: true })
+				}
+				else if (!signUpData.market.every(marketName => v.name !== marketName)) {
+					copy.push({ ...v, isClick: true })
+				}
+				else {
+					copy.push(v)
+				}
+
 			})
 			setMarket(copy)
 
 			if (signUpData.otherMarket && signUpData.otherMarket.length !== 0) {
-				setMarket(market.map((v, i) => {
-					if (i === (market.length - 1)) {
-						return { ...v, isClick: true }
-					}
-					return v
-				}))
 				setMarketOthers(signUpData.otherMarket)
 			}
 
@@ -258,11 +252,24 @@ function UserInputForm({ errorMsg, signUpData, setSignUpData, marketOthers, setM
 				<>
 					<MarketInput ref={marketInputRef} value={marketText}
 						onChange={(e) => setMarketText(e.target.value)}
-						onKeyDown={handleEnter} placeholder="마켓명을 입력해주세요" />
+						onKeyDown={handleEnter} placeholder="마켓명을 입력해주세요 (입력후 엔터)" />
 					<OtherMarket>
 						{React.Children.toArray(marketOthers.map((v, i) =>
 							<div style={{ position: "relative" }}>
-								<button onClick={() => setMarketOthers(marketOthers.filter((_, filterI) => filterI !== i))} style={{ position: "absolute", right: 5, top: 0 }}>
+								<button onClick={() => {
+									// * 기타 마켓 필터 처리
+									const filterData = marketOthers.filter((_, filterI) => filterI !== i)
+									if (filterData.length === 0) {
+										// * 전부 지우면 클릭 상태 false처리
+										setMarket(market.map((marketValue, marketIndex) => {
+											if (marketIndex === market.length - 1) {
+												return { ...marketValue, isClick: false }
+											}
+											return marketValue
+										}))
+									}
+									setMarketOthers(filterData)
+								}} style={{ position: "absolute", right: 5, top: 0 }}>
 									<img src={closeIcon} width={8} height={8} alt="closeIcon" />
 								</button>
 								<span>
