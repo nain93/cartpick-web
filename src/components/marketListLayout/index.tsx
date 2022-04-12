@@ -64,8 +64,8 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 			return mutationData
 		}
 	}, {
-		onSuccess: () => {
-			queryClient.invalidateQueries("marketData")
+		onSuccess: (data) => {
+			queryClient.setQueryData("marketData", () => data)
 		}
 	})
 
@@ -115,47 +115,59 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 		}
 	}
 
+	// * marketData 캐싱 데이터삭제 (ui상 문제)
+	useEffect(() => {
+		return () => queryClient.removeQueries("marketData", { exact: true })
+	}, [queryClient])
+
 	console.log(marketQuery.data, 'marketQuery.data');
 
 	return (
 		<>
-			<Slide>
-				{React.Children.toArray(marketData?.map((v, i) =>
-					<div onClick={async () => {
-						setSelectedIndex(i)
-						// * 마켓 클릭할때마다 새 데이터 호출
-						marketMutation.mutate(i)
-						setMarketInfo(marketInfo.map((marketInfoV, marketInfoI) => {
-							if (i === marketInfoI) {
-								return { ...marketInfoV, isClick: true }
+			{marketQuery.isLoading ?
+				<Slide>
+					<EmptyDiv />
+				</Slide>
+				:
+				<Slide>
+					{React.Children.toArray(marketData?.map((v, i) =>
+						<div onClick={async () => {
+							setSelectedIndex(i)
+							// * 마켓 클릭할때마다 새 데이터 호출
+							marketMutation.mutate(i)
+							setMarketInfo(marketInfo.map((marketInfoV, marketInfoI) => {
+								if (i === marketInfoI) {
+									return { ...marketInfoV, isClick: true }
+								}
+								return { ...marketInfoV, isClick: false }
+							}))
+						}}>
+							{marketInfo.length !== 0 &&
+								<Marketbutton
+									isClick={marketInfo[i].isClick}
+									marketImage={marketInfo[i].image}
+									marketColor={theme.color.marketColor.kurly}
+								/>
 							}
-							return { ...marketInfoV, isClick: false }
-						}))
-					}}>
-						{marketInfo.length !== 0 &&
-							<Marketbutton
-								isClick={marketInfo[i].isClick}
-								marketImage={marketInfo[i].image}
-								marketColor={theme.color.marketColor.kurly}
-							/>
-						}
-					</div>
-				))}
-			</Slide>
+						</div>
+					))}
+				</Slide>}
 			{marketInfo.length !== 0 &&
 				<h1 style={{ marginTop: 20, marginLeft: 20, fontSize: 16, fontWeight: "bold", color: marketInfo[selectedIndex].color }}>
 					{marketInfo[selectedIndex].name}
 				</h1>
 			}
 			<ListView isPastItem={isPastItem}>
-				{marketQuery.isLoading ?
-					<div />
+				{(marketQuery.isLoading || !marketQuery.data) ?
+					<div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%" }} />
 					:
-					!marketQuery.data ?
+					(marketQuery.data.length === 0 ?
 						// * 빈 요일별 화면 (요일별 추천템 없을때)
-						<div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%" }}>
+						<div style={{ position: "absolute", top: "50%", width: "100%", maxWidth: 768, display: "flex", flexDirection: "column", alignItems: "center" }}>
 							<img style={{ marginBottom: 10 }} src={grinningIcon} width={30} height={30} alt="grinningIcon" />
-							<span style={{ color: theme.color.grayscale.C_4C5463 }}>오늘은 추천템이 없어요</span>
+							<span style={{ color: theme.color.grayscale.C_4C5463 }}>
+								{isPastItem ? `${date?.slice(4, 6)}월 ${date?.slice(6, 8)}일 추천템이 없어요` : "오늘은 추천템이 없어요"}
+							</span>
 						</div>
 						:
 						React.Children.toArray(marketQuery.data.map((arrayItem, arrayIndex) => {
@@ -163,6 +175,10 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 								<div>
 									<ListItem
 										onClick={() => {
+											if (arrayItem.reviewCount === 0) {
+												// * 리뷰 없으면 열리는 ui 비활성화 처리
+												return
+											}
 											if (selectedListIndex === arrayIndex) {
 												setSelectedListIndex(-1);
 											} else {
@@ -200,11 +216,11 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 									</ListItem>
 								</div>
 							)
-						}))
+						})))
 				}
 			</ListView>
 			{date &&
-				<div style={{ padding: "40px 0", backgroundColor: theme.color.grayscale.F5F5F5 }}>
+				<div style={{ position: "absolute", bottom: 0, width: "100%", maxWidth: 768, padding: "40px 0", backgroundColor: theme.color.grayscale.F5F5F5 }}>
 					<LongButton onClick={handleShareList} buttonStyle={{ color: theme.color.grayscale.C_4C5463 }} color={theme.color.grayscale.B7C3D4}>
 						리스트 공유하기
 					</LongButton>
@@ -244,7 +260,7 @@ const Slide = styled.div`
 
 const ListView = styled.div<{ isPastItem: boolean }>`
 	overflow: scroll;
-	height: ${props => props.isPastItem ? "calc(100vh - 400px)" : "calc(100vh - 380px)"}; 
+	/* height: ${props => props.isPastItem ? "calc(100vh - 400px)" : "calc(100vh - 380px)"};  */
 	margin-top: 20px;
 `;
 
@@ -284,5 +300,12 @@ const Tag = styled.span`
 	font-weight:500;
 `;
 
+
+const EmptyDiv = styled.div`
+	@media screen and (max-width: 768px) {
+		height: 45px
+	}
+	height: 100px;
+`
 
 export default MarketListLayout

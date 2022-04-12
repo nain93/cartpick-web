@@ -15,7 +15,7 @@ function Marketbutton({ marketColor, marketImage, isClick }: MarketButtonProps) 
 	)
 }
 
-const Container = styled.div<{ marketColor: string, isClick: boolean }>`
+const Container = styled.button<{ marketColor: string, isClick: boolean }>`
 	width: 100px;
 	height: 45px;
 	border: solid 1px ${props => props.isClick ? props.marketColor : theme.color.grayscale.F2F3F6};

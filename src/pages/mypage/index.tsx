@@ -26,6 +26,18 @@ function Mypage() {
 		})
 	}
 
+	const handleLogout = () => {
+		setModal({
+			okText: "로그아웃",
+			okButton: () => {
+				removeCookie("token")
+				navigate("/")
+			},
+			content: "정말 로그아웃 하시겠습니까?",
+			isOpen: true
+		})
+	}
+
 	return (
 		<Container>
 			<TopHeader backButton={() => navigate(-1)}>
@@ -38,10 +50,7 @@ function Mypage() {
 						<span style={{ color: theme.color.grayscale.C_4C5463 }}>
 							카카오계정으로 로그인하셨어요!
 						</span>
-						<button onClick={() => {
-							removeCookie("token")
-							navigate("/")
-						}} style={{ color: theme.color.grayscale.B7C3D4, marginTop: 5, textDecoration: "underline" }}>
+						<button onClick={handleLogout} style={{ color: theme.color.grayscale.B7C3D4, marginTop: 5, textDecoration: "underline" }}>
 							로그아웃
 						</button>
 					</div>
