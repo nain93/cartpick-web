@@ -5,33 +5,70 @@ import theme from 'styles/theme'
 import inputSearchIcon from "assets/icon/inputSearchIcon.png"
 import lightCloseIcon from "assets/icon/lightCloseIcon.png"
 import React, { KeyboardEvent, useState } from 'react'
-import { getSearchMarketData, getSearchMarketList } from 'api/search'
+import { getSearchMarketList } from 'api/search'
 import { useCookies } from 'react-cookie'
+import { useMutation } from 'react-query'
+import MarketListLayout from 'components/marketListLayout'
+import grinningIcon from "assets/icon/grinningIcon.png"
 
 function Search() {
 	const navigate = useNavigate()
 	const [cookie] = useCookies(["token"])
 	const [keyword, setKeyWord] = useState("")
-	const [recentKeywords, setRecentKeyWords] = useState<Array<string>>(
-		[
-			"베이글",
-			"잼",
-			"떡볶이"
-		])
+	const [inputKeyword, setInputKeyword] = useState("")
+	const [recentKeywords, setRecentKeyWords] = useState<Array<string>>(JSON.parse(localStorage.getItem("recentKeywords") || "[]"))
+
+	const searchMutation = useMutation((mutateKeyword: string) => getSearchMarketList(mutateKeyword, cookie.token))
 
 	const handleSearch = async (searchText: string) => {
-		console.log(searchText, 'searchText');
-		const list = await getSearchMarketList(keyword, cookie.token)
-		const market = await getSearchMarketData(1, keyword, cookie.token)
-		console.log(list, 'list');
-		setKeyWord("")
+		// * 최근검색어 중복일시 리스트에 넣지않음
+		if (!recentKeywords.every(v => v !== searchText)) {
+		}
+
+		// * 최근검색어 갯수제한 5개, 5개 넘어가면 밀어내면서 5개 유지
+		else if (recentKeywords.length === 5) {
+			setRecentKeyWords([searchText, ...recentKeywords].slice(0, recentKeywords.length))
+			localStorage.setItem("recentKeywords", JSON.stringify([searchText, ...recentKeywords].slice(0, recentKeywords.length)))
+		}
+		else {
+			setRecentKeyWords([searchText, ...recentKeywords])
+			localStorage.setItem("recentKeywords", JSON.stringify([searchText, ...recentKeywords]))
+		}
+
+		setKeyWord(inputKeyword)
+		setInputKeyword("")
+		searchMutation.mutate(searchText)
 	}
 
 	const searchEnter = (e: KeyboardEvent<HTMLInputElement>) => {
 		// ! onKeyDown 한글입력시 2번 이벤트 발생해서 !e.nativeEvent.isComposing 처리
-		if (e.key === "Enter" && keyword && !e.nativeEvent.isComposing) {
-			handleSearch(keyword)
+		if (e.key === "Enter" && inputKeyword && !e.nativeEvent.isComposing) {
+			handleSearch(inputKeyword)
 		}
+	}
+
+	const removeRecentKeywords = (recentIndex: number) => {
+		setRecentKeyWords(recentKeywords.filter((_, filterI) => recentIndex !== filterI))
+		localStorage.setItem("recentKeywords", JSON.stringify(recentKeywords.filter((_, filterI) => recentIndex !== filterI)))
+	}
+
+	// * 로딩 화면
+	if (searchMutation.isLoading) {
+		return (
+			<Container>
+				<TopHeader backButton={() => navigate(-1)}>
+					추천템 검색
+				</TopHeader>
+				<MainWrap>
+					<InputWrap>
+						<input value={inputKeyword} placeholder="어떤 후기를 찾아볼까요?" />
+						<button>
+							<img src={inputSearchIcon} width={19} height={19} alt="searchIcon" />
+						</button>
+					</InputWrap>
+				</MainWrap>
+			</Container>
+		)
 	}
 
 	return (
@@ -42,26 +79,45 @@ function Search() {
 			<MainWrap>
 				<InputWrap>
 					<input onKeyDown={searchEnter}
-						onChange={(e) => setKeyWord(e.target.value)}
-						value={keyword} placeholder="어떤 후기를 찾아볼까요?" />
-					<button onClick={() => handleSearch(keyword)}>
+						onChange={(e) => setInputKeyword(e.target.value)}
+						value={inputKeyword} placeholder="어떤 후기를 찾아볼까요?" />
+					<button onClick={() => handleSearch(inputKeyword)}>
 						<img src={inputSearchIcon} width={19} height={19} alt="searchIcon" />
 					</button>
 				</InputWrap>
-				<Title>최근 검색어</Title>
-				<Keywords>
-					{recentKeywords.length === 0 ?
-						<span style={{ fontSize: 14, color: theme.color.grayscale.C_4C5463 }}>최근 검색어가 없습니다.</span>
-						:
-						React.Children.toArray(recentKeywords.map((v, i) =>
-							<li>
-								<span>{v}</span>
-								<button onClick={() => setRecentKeyWords(recentKeywords.filter((_, filterI) => i !== filterI))}>
-									<img src={lightCloseIcon} width={12} height={12} alt="lightCloseIcon" />
-								</button>
-							</li>
-						))}
-				</Keywords>
+				{searchMutation.data ?
+					(
+						// * 빈 검색 화면 (검색 결과 없을때)
+						searchMutation.data.length === 0 ?
+							<div style={{
+								display: "flex",
+								flexDirection: "column",
+								alignItems: "center",
+								justifyContent: "center",
+								height: "calc(100vh - 135px)"
+							}}>
+								<img src={grinningIcon} style={{ marginBottom: 10 }} width={30} height={30} alt="grinningIcon" />
+								<span style={{ color: theme.color.grayscale.C_4C5463 }}>검색 결과가 없습니다.</span>
+							</div>
+							:
+							<MarketListLayout searchKeyword={keyword} marketData={searchMutation.data} />
+					)
+					:
+					<div style={{ padding: "0 20px" }}>
+						<Title>최근 검색어</Title><Keywords>
+							{recentKeywords.length === 0 ?
+								<span style={{ fontSize: 14, color: theme.color.grayscale.C_4C5463 }}>최근 검색어가 없습니다.</span>
+								:
+								React.Children.toArray(recentKeywords.map((v, i) => <li>
+									<span>{v}</span>
+									<button onClick={() => removeRecentKeywords(i)}>
+										<img src={lightCloseIcon} width={12} height={12} alt="lightCloseIcon" />
+									</button>
+								</li>
+								))}
+						</Keywords>
+					</div>
+				}
 			</MainWrap>
 		</Container>
 	)
@@ -72,7 +128,18 @@ const Container = styled.section`
 `
 
 const MainWrap = styled.div`
-	padding: 40px 20px;
+	padding-top: 40px;
+`
+
+const InputWrap = styled.div`
+	display: flex;
+	justify-content: space-between;
+	width: calc(100% - 40px);
+	height: 45px;
+	border:1px solid ${theme.color.grayscale.DFE4EE};
+	padding:13px 15px;
+	margin: 0 20px;
+	border-radius: 5px;
 	input{
 		width: 100%;
 		padding-right: 15px;
@@ -80,16 +147,6 @@ const MainWrap = styled.div`
 			color:${theme.color.grayscale.B7C3D4}
 		}
 	}
-`
-
-const InputWrap = styled.div`
-	display: flex;
-	justify-content: space-between;
-	width: 100%;
-	height: 45px;
-	border:1px solid ${theme.color.grayscale.DFE4EE};
-	padding:13px 15px;
-	border-radius: 5px;
 `
 
 const Title = styled.h1`

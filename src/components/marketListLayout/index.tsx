@@ -18,21 +18,56 @@ import naverImage from "assets/image/naverImage.png"
 import oasisImage from "assets/image/oasisImage.png"
 import etcImage from "assets/image/etcImage.png"
 import { useCookies } from 'react-cookie'
+import { getSearchMarketData } from 'api/search'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
 
 interface MarketListLayoutProps {
 	marketData: Array<{ id: number, name: string }>,
-	date: string,
-	isPastItem?: boolean
+	date?: string,
+	isPastItem?: boolean,
+	searchKeyword?: string
 }
 
 const url = window.location.href
 
-function MarketListLayout({ marketData, date, isPastItem = false }: MarketListLayoutProps) {
+function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword }: MarketListLayoutProps) {
 	const [selectedIndex, setSelectedIndex] = useState(0)
 	const [selectedListIndex, setSelectedListIndex] = useState(-1)
-	const [marketProduct, setMarketProduct] = useState<Array<MarketProductType>>([])
 	const [marketInfo, setMarketInfo] = useState<Array<MarketInfoprops>>([])
 	const [cookie] = useCookies(["token"])
+
+	const marketQuery = useQuery<Array<MarketProductType> | null, Error>("marketData", async () => {
+		// * 검색후 나온 리스트 첫번째 데이터
+		if (searchKeyword) {
+			const queryData = await getSearchMarketData(marketData[0].id, searchKeyword, cookie.token)
+			return queryData
+		}
+
+		// * 마켓 리스트를 불러오고 첫번째 마켓 상품데이터 
+		else if (date) {
+			const queryData = await getMarketProduct(marketData[0].id, date, isPastItem ? cookie.token : "")
+			return queryData
+		}
+
+	})
+
+	const queryClient = useQueryClient()
+	const marketMutation = useMutation(async (marketIndex: number) => {
+		// * 검색 후 각 마켓별 리스트
+		if (searchKeyword) {
+			const mutationData = await getSearchMarketData(marketData[marketIndex].id, searchKeyword, cookie.token)
+			return mutationData
+		}
+		// * 요일별 각 마켓별 리스트
+		else if (date) {
+			const mutationData = await getMarketProduct(marketData[marketIndex].id, date, isPastItem ? cookie.token : "")
+			return mutationData
+		}
+	}, {
+		onSuccess: () => {
+			queryClient.invalidateQueries("marketData")
+		}
+	})
 
 	useEffect(() => {
 		if (marketData) {
@@ -80,18 +115,7 @@ function MarketListLayout({ marketData, date, isPastItem = false }: MarketListLa
 		}
 	}
 
-	useEffect(() => {
-		const getMarket = async () => {
-			// * 마켓 리스트를 불러오고 첫번째 마켓 상품데이터 
-			if (marketData && date) {
-				const firstProductData = await getMarketProduct(marketData[0].id, date, isPastItem ? cookie.token : "")
-				if (firstProductData) {
-					setMarketProduct(firstProductData)
-				}
-			}
-		}
-		getMarket()
-	}, [marketData, date])
+	console.log(marketQuery.data, 'marketQuery.data');
 
 	return (
 		<>
@@ -100,10 +124,7 @@ function MarketListLayout({ marketData, date, isPastItem = false }: MarketListLa
 					<div onClick={async () => {
 						setSelectedIndex(i)
 						// * 마켓 클릭할때마다 새 데이터 호출
-						const data = await getMarketProduct(marketData[i].id, date, isPastItem ? cookie.token : "")
-						if (data) {
-							setMarketProduct(data)
-						}
+						marketMutation.mutate(i)
 						setMarketInfo(marketInfo.map((marketInfoV, marketInfoI) => {
 							if (i === marketInfoI) {
 								return { ...marketInfoV, isClick: true }
@@ -127,13 +148,17 @@ function MarketListLayout({ marketData, date, isPastItem = false }: MarketListLa
 				</h1>
 			}
 			<ListView isPastItem={isPastItem}>
-				{
-					marketProduct.length === 0 ?
+				{marketQuery.isLoading ?
+					<div />
+					:
+					!marketQuery.data ?
+						// * 빈 요일별 화면 (요일별 추천템 없을때)
 						<div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%" }}>
 							<img style={{ marginBottom: 10 }} src={grinningIcon} width={30} height={30} alt="grinningIcon" />
 							<span style={{ color: theme.color.grayscale.C_4C5463 }}>오늘은 추천템이 없어요</span>
-						</div> :
-						React.Children.toArray(marketProduct.map((arrayItem, arrayIndex) => {
+						</div>
+						:
+						React.Children.toArray(marketQuery.data.map((arrayItem, arrayIndex) => {
 							return (
 								<div>
 									<ListItem
@@ -178,11 +203,13 @@ function MarketListLayout({ marketData, date, isPastItem = false }: MarketListLa
 						}))
 				}
 			</ListView>
-			<div style={{ padding: "40px 0", backgroundColor: theme.color.grayscale.F5F5F5 }}>
-				<LongButton onClick={handleShareList} buttonStyle={{ color: theme.color.grayscale.C_4C5463 }} color={theme.color.grayscale.B7C3D4}>
-					리스트 공유하기
-				</LongButton>
-			</div>
+			{date &&
+				<div style={{ padding: "40px 0", backgroundColor: theme.color.grayscale.F5F5F5 }}>
+					<LongButton onClick={handleShareList} buttonStyle={{ color: theme.color.grayscale.C_4C5463 }} color={theme.color.grayscale.B7C3D4}>
+						리스트 공유하기
+					</LongButton>
+				</div>
+			}
 		</>
 	)
 }
@@ -191,7 +218,7 @@ function MarketListLayout({ marketData, date, isPastItem = false }: MarketListLa
 const Slide = styled.div`
 	>div:first-child{
 		@media screen and (max-width: 768px) {
-			margin-left: 10px;
+			margin-left: 20px;
 			}
 			margin-left: 0px;
 	}
@@ -212,7 +239,7 @@ const Slide = styled.div`
 	padding: 0 20px;
 	flex-wrap: wrap;
 	overflow: scroll;
-	margin-right: 30px;
+	/* margin-right: 30px; */
 `;
 
 const ListView = styled.div<{ isPastItem: boolean }>`
