@@ -2,16 +2,25 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import { RecoilRoot } from 'recoil';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryCache, QueryClient, QueryClientProvider } from 'react-query';
 import { CookiesProvider } from "react-cookie"
-import CustomRouter from 'customRouter';
-import history from 'api/history';
+import axios from 'axios';
+import { BrowserRouter } from 'react-router-dom';
 
-const queryClient = new QueryClient()
+
+const queryClient = new QueryClient({
+	queryCache: new QueryCache({
+		onError: (error) => {
+			if (axios.isAxiosError(error) && error.response) {
+				console.log(error.response.data);
+			}
+		}
+	}),
+})
 
 ReactDOM.render(
 	<React.StrictMode>
-		<CustomRouter history={history}>
+		<BrowserRouter>
 			<QueryClientProvider client={queryClient}>
 				<RecoilRoot>
 					<CookiesProvider>
@@ -19,7 +28,7 @@ ReactDOM.render(
 					</CookiesProvider>
 				</RecoilRoot>
 			</QueryClientProvider>
-		</CustomRouter>
+		</BrowserRouter>
 	</React.StrictMode>,
 	document.getElementById('root')
 );

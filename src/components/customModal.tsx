@@ -63,7 +63,8 @@ const ModalWrap = styled.div`
 	flex-direction: column;
 	z-index: 11;
 	width: calc(100% - 80px);
-	margin: 0 40px;
+	max-width:384px;
+	margin: 0 auto;
 	height: 150px;
 	background-color: ${theme.color.grayscale.FFFFF};
 	border-radius: 10px;

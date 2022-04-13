@@ -11,21 +11,25 @@ import PastDetail from "pages/PastItemList/detail";
 import Onboarding from "pages/onboarding";
 import Search from "pages/search";
 import CustomModal from "components/customModal";
-import { useRecoilValue } from "recoil";
-import { modalState } from "recoil/atoms";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { modalState, tokenState } from "recoil/atoms";
 import NotFound from "pages/notFound";
 import { useCookies } from "react-cookie";
 import { useEffect } from "react";
 import ReactGA from 'react-ga';
 
 function App() {
-	// const isLogin = useRecoilValue(tokenState)
+	const [token, setToken] = useRecoilState(tokenState)
 	const isModalOpen = useRecoilValue(modalState)
 	const location = useLocation()
 	const [cookies] = useCookies(["token"])
 
-	// * 구글 애널리틱스 추적
 	useEffect(() => {
+		// todo refresh token 발급받아서 setToken에 넣어주기
+		if (cookies.token) {
+			setToken(cookies.token)
+		}
+		// * 구글 애널리틱스 추적
 		if (process.env.NODE_ENV === "production") {
 			ReactGA.initialize("UA-199856178-3");
 			ReactGA.pageview(location.pathname + location.search)
@@ -39,7 +43,7 @@ function App() {
 				<Routes>
 					<Route path='*' element={<NotFound />} />
 					<Route path="/" element={<Main />} />
-					{!cookies.token ?
+					{!token ?
 						<>
 							<Route path="/login" element={<Login />} />
 							<Route path="/onboarding" element={<Onboarding />} />

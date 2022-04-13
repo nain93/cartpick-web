@@ -41,6 +41,9 @@ const GlobalStyles = createGlobalStyle`
 		background-color:inherit ;
 		outline: inherit;
 	}
+	img{
+		image-rendering: -webkit-optimize-contrast;/* Webkit (non-standard naming) */
+	}
 `;
 
 export default GlobalStyles;

@@ -1,42 +1,45 @@
-import { errorHandler } from "api";
+import { baseURL, errorHandler } from "api";
+import axios from "axios";
 import { SignUpType } from "types/user";
 
 export async function getUserProfile(token: string) {
-	return errorHandler({
-		method: "get", url: "user/", config: {
-			headers: {
-				"Authorization": `Bearer ${token}`,
-				"Content-Type": "application/json"
-			}
+	const res = await axios.get(baseURL + "user/", {
+		headers: {
+			"Authorization": `Bearer ${token}`,
+			"Content-Type": "application/json"
 		}
 	})
+	if (res) {
+		return res.data
+	}
 }
 
 export async function editUserProfile(token: string, { nickname, job, household, market }: SignUpType) {
-	return errorHandler({
-		method: "patch", url: "user/", config: {
-			data: {
-				nickname,
-				job,
-				household,
-				market
-			},
-			headers: {
-				"Authorization": `Bearer ${token}`,
-				"Content-Type": "application/json"
-			}
+	const res = await axios.patch(baseURL + "user/", {
+		nickname,
+		job,
+		household,
+		market
+	}, {
+		headers: {
+			"Authorization": `Bearer ${token}`,
+			"Content-Type": "application/json"
 		}
-	})
+	});
+	if (res) {
+		return res.data
+	}
 }
 
 export async function getUserCount() {
-	return errorHandler({
-		method: "get", url: "auth/count/", config: {
-			headers: {
-				"Content-Type": "application/json"
-			}
+	const res = await axios.get(baseURL + "auth/count/", {
+		headers: {
+			"Content-Type": "application/json"
 		}
-	})
+	});
+	if (res) {
+		return res.data
+	}
 }
 
 

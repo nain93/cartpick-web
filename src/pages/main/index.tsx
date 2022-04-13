@@ -10,10 +10,11 @@ import { useCookies } from "react-cookie";
 import { getMarketList } from "api/market";
 import { useQuery } from "react-query"
 import { UserDataType } from "types/user";
-import { modalState } from "recoil/atoms";
-import { useSetRecoilState } from "recoil";
+import { modalState, tokenState } from "recoil/atoms";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import MarketListLayout from "components/marketListLayout";
 import { useEffect } from "react";
+import axios from "axios";
 
 const date = dateFormatForSendBack()
 
@@ -21,13 +22,31 @@ function Main() {
 	const [cookies, setCookie, removeCookie] = useCookies(['token']);
 	const navigate = useNavigate()
 	const setModal = useSetRecoilState(modalState)
-	// const [token, setToken] = useRecoilState(tokenState)
-	const userQuery = useQuery<UserDataType | null, Error>("userData", () => cookies.token ? getUserProfile(cookies.token) : null)
+	const [token, setToken] = useRecoilState(tokenState)
+	const userQuery = useQuery<UserDataType, Error>(["userData", token], () => getUserProfile(token),
+		{
+			enabled: !!token,
+			onError: (error) => {
+				// * 로그인상태에서 토큰 만료되거나 없을시 토큰 삭제시키고 로그인 페이지로 이동
+				if (axios.isAxiosError(error) && error.response) {
+					console.log(error.response.data);
+					if (error.response.data.detail === "Authentication credentials were not provided."
+						|| error.response.data.messages[0].message === "Token is invalid or expired" ||
+						error.response.data.code === "token_not_valid"
+					) {
+						removeCookie("token")
+						setToken("")
+						navigate("/login")
+					}
+				}
+			}
+		})
+
 	const { data } = useQuery<Array<{ id: number, name: string }>, Error>("marketList", () => getMarketList())
 
 
 	const handleGotoPastItem = () => {
-		if (cookies.token) {
+		if (token) {
 			navigate("/pastItemList")
 		}
 		else {
@@ -40,22 +59,6 @@ function Main() {
 		}
 	}
 
-	// * 로그인상태에서 토큰 만료되거나 없을시 토큰 삭제시키고 로그인 페이지로 이동
-	useEffect(() => {
-		if (cookies.token && userQuery.data === undefined && !userQuery.isLoading) {
-			removeCookie("token")
-			navigate("/login")
-		}
-	}, [userQuery.data])
-
-	// todo refresh token 대체 로직 (대체해서 받아온 토큰 setToken에 저장)
-
-	// * 전역 로그인 설정
-	// useEffect(() => {
-	// 	if (cookies.token) {
-	// 		setToken(cookies.token)
-	// 	}
-	// }, [])
 
 	return (
 		<>
@@ -63,7 +66,7 @@ function Main() {
 				<Header>
 					<TitleWrap>
 						<div style={{ fontSize: 24, fontWeight: "bold", lineHeight: 1.25 }}>오늘의 추천템</div>
-						{cookies.token ?
+						{token ?
 							<Link to="/mypage">
 								<img style={{ borderRadius: 20 }}
 									src={userQuery.data?.profileImage ? userQuery.data.profileImage : defaultImg}
