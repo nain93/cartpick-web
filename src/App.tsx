@@ -16,6 +16,7 @@ import { modalState } from "recoil/atoms";
 import NotFound from "pages/notFound";
 import { useCookies } from "react-cookie";
 
+
 function App() {
 	const isModalOpen = useRecoilValue(modalState)
 	const [cookies] = useCookies(["token"])

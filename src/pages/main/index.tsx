@@ -13,11 +13,12 @@ import { UserDataType } from "types/user";
 import { modalState } from "recoil/atoms";
 import { useSetRecoilState } from "recoil";
 import MarketListLayout from "components/marketListLayout";
+import { useEffect } from "react";
 
 const date = dateFormatForSendBack()
 
 function Main() {
-	const [cookies] = useCookies(['token']);
+	const [cookies, setCookie, removeCookie] = useCookies(['token']);
 	const navigate = useNavigate()
 	const setModal = useSetRecoilState(modalState)
 	const userQuery = useQuery<UserDataType | null, Error>("userData", () => cookies.token ? getUserProfile(cookies.token) : null)
@@ -37,6 +38,15 @@ function Main() {
 			})
 		}
 	}
+
+	// * 로그인상태에서 토큰 만료되거나 없을시 토큰 삭제시키고 로그인 페이지로 이동
+	useEffect(() => {
+		if (cookies.token && userQuery.data === undefined && !userQuery.isLoading) {
+			removeCookie("token")
+			navigate("/login")
+		}
+	}, [userQuery.data])
+
 	return (
 		<>
 			<Container>
