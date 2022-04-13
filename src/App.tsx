@@ -1,5 +1,5 @@
 import GlobalStyles from "Globalstyles";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import styled from "styled-components";
 
 import Main from "pages/main";
@@ -15,11 +15,21 @@ import { useRecoilValue } from "recoil";
 import { modalState } from "recoil/atoms";
 import NotFound from "pages/notFound";
 import { useCookies } from "react-cookie";
-
+import { useEffect } from "react";
+import ReactGA from 'react-ga';
 
 function App() {
 	const isModalOpen = useRecoilValue(modalState)
+	const location = useLocation()
 	const [cookies] = useCookies(["token"])
+
+	// * 구글 애널리틱스 추적
+	useEffect(() => {
+		if (process.env.NODE_ENV === "production") {
+			ReactGA.initialize("UA-199856178-3");
+			ReactGA.pageview(location.pathname + location.search)
+		}
+	}, [location])
 
 	return (
 		<>
