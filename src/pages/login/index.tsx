@@ -6,11 +6,12 @@ import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import queryString from 'query-string';
 import { useEffect } from 'react'
-import { baseURL, getUserCount } from 'api'
+import { baseURL } from 'api'
 import { useCookies } from 'react-cookie'
 import { useSetRecoilState } from 'recoil'
 import { loginState } from 'recoil/atoms'
 import { useQuery } from 'react-query'
+import { getUserCount } from 'api/user'
 
 const query = queryString.parse(window.location.search);
 const kakaoUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_RESTAPI_KEY}&redirect_uri=${process.env.REACT_APP_REDIRECT_URI}&response_type=code`
