@@ -21,6 +21,7 @@ function Main() {
 	const [cookies, setCookie, removeCookie] = useCookies(['token']);
 	const navigate = useNavigate()
 	const setModal = useSetRecoilState(modalState)
+	// const [token, setToken] = useRecoilState(tokenState)
 	const userQuery = useQuery<UserDataType | null, Error>("userData", () => cookies.token ? getUserProfile(cookies.token) : null)
 	const { data } = useQuery<Array<{ id: number, name: string }>, Error>("marketList", () => getMarketList())
 
@@ -47,6 +48,15 @@ function Main() {
 		}
 	}, [userQuery.data])
 
+	// todo refresh token 대체 로직 (대체해서 받아온 토큰 setToken에 저장)
+
+	// * 전역 로그인 설정
+	// useEffect(() => {
+	// 	if (cookies.token) {
+	// 		setToken(cookies.token)
+	// 	}
+	// }, [])
+
 	return (
 		<>
 			<Container>
@@ -55,7 +65,9 @@ function Main() {
 						<div style={{ fontSize: 24, fontWeight: "bold", lineHeight: 1.25 }}>오늘의 추천템</div>
 						{cookies.token ?
 							<Link to="/mypage">
-								<img style={{ borderRadius: 20 }} src={userQuery.data?.profileImage ? userQuery.data.profileImage : defaultImg} width={30} height={30} alt="defaultImg" />
+								<img style={{ borderRadius: 20 }}
+									src={userQuery.data?.profileImage ? userQuery.data.profileImage : defaultImg}
+									width={30} height={30} alt="defaultImg" />
 							</Link>
 							:
 							<Link to="/login" style={{ color: theme.color.main }}>로그인</Link>

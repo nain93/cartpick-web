@@ -19,6 +19,7 @@ import { useEffect } from "react";
 import ReactGA from 'react-ga';
 
 function App() {
+	// const isLogin = useRecoilValue(tokenState)
 	const isModalOpen = useRecoilValue(modalState)
 	const location = useLocation()
 	const [cookies] = useCookies(["token"])

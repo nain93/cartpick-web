@@ -9,7 +9,7 @@ import { useEffect } from 'react'
 import { baseURL } from 'api'
 import { useCookies } from 'react-cookie'
 import { useSetRecoilState } from 'recoil'
-import { loginState } from 'recoil/atoms'
+import { tokenState } from 'recoil/atoms'
 import { useQuery } from 'react-query'
 import { getUserCount } from 'api/user'
 
@@ -19,7 +19,7 @@ const kakaoUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${process.en
 function Login() {
 	const navigate = useNavigate()
 	const [cookie, setCookie] = useCookies(["token"])
-	const setIsLogin = useSetRecoilState(loginState)
+	const setToken = useSetRecoilState(tokenState)
 	const signCount = useQuery("signQuery", getUserCount)
 
 	const getKakaoTokenHandler = async (code: string) => {
@@ -59,7 +59,7 @@ function Login() {
 			})
 
 			if (res.data.accessToken) {
-				setIsLogin(res.data.accessToken)
+				setToken(res.data.accessToken)
 				setCookie("token", res.data.accessToken)
 				navigate("/")
 			}

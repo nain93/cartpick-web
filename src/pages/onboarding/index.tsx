@@ -11,7 +11,7 @@ import axios from 'axios'
 import { baseURL } from 'api'
 import { useCookies } from 'react-cookie'
 import { useSetRecoilState } from 'recoil'
-import { loginState } from 'recoil/atoms'
+import { tokenState } from 'recoil/atoms'
 import { useQuery } from 'react-query'
 import { getUserProfile } from 'api/user'
 import { SignUpType } from 'types/user'
@@ -41,11 +41,10 @@ function Onboarding() {
 		market: []
 	})
 	const [marketOthers, setMarketOthers] = useState<Array<string>>([])
-	const setIsLogin = useSetRecoilState(loginState)
+	const setToken = useSetRecoilState(tokenState)
 	const userQuery = useQuery<UserDataProps, Error>("userData", () => getUserProfile(cookies.token))
 
 	const handleSignIn = async () => {
-		// todo api 호출하고, 토큰 넣고 로그인
 		if (signUpData.job === "") {
 			setErrorMsg({
 				text: "해당하는 항목을 선택해주세요",
@@ -72,16 +71,6 @@ function Onboarding() {
 
 		const { email, kakaoCode, nickname, profileImage } = state
 
-		console.log({
-			email,
-			kakaoCode,
-			nickname,
-			profileImage,
-			job: signUpData.job,
-			household: signUpData.household,
-			market: signUpData.market.concat(marketOthers)
-		});
-
 		try {
 			const res = await axios.post(`${baseURL}auth/signup/`, {
 				email,
@@ -93,7 +82,7 @@ function Onboarding() {
 				market: signUpData.market.concat(marketOthers)
 			})
 			if (res.headers.accesstoken) {
-				setIsLogin(res.headers.accesstoken)
+				setToken(res.headers.accesstoken)
 				setCookie("token", res.headers.accesstoken,
 					{ httpOnly: true, secure: process.env.NODE_ENV === "development" ? false : true })
 			}

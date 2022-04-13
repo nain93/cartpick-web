@@ -120,8 +120,6 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 		return () => queryClient.removeQueries("marketData", { exact: true })
 	}, [queryClient])
 
-	console.log(marketQuery.data, 'marketQuery.data');
-
 	return (
 		<>
 			{marketQuery.isLoading ?
