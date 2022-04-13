@@ -6,6 +6,7 @@ import heartIcon from "assets/icon/reviewIcon/reviewHeartIcon.png"
 import roundIcon from "assets/icon/reviewIcon/reviewRoundIcon.png"
 import triangleIcon from "assets/icon/reviewIcon/reviewTriangleIcon.png"
 import closeIcon from "assets/icon/reviewIcon/reviewCloseIcon.png"
+import commentIcon from "assets/icon/reviewIcon/reviewCommentIcon.png"
 
 
 
@@ -30,12 +31,18 @@ function Review({ review }: { review: ReviewType }) {
 				setReviewIcon(closeIcon)
 				break;
 			}
+			case "comment": {
+				setReviewIcon(commentIcon)
+				break;
+			}
 			default: {
 				setReviewIcon("")
 				break;
 			}
 		}
 	}, [])
+
+
 	return (
 		<ListMore>
 			<div>

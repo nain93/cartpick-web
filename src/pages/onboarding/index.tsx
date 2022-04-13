@@ -12,8 +12,6 @@ import { baseURL } from 'api'
 import { useCookies } from 'react-cookie'
 import { useSetRecoilState } from 'recoil'
 import { tokenState } from 'recoil/atoms'
-import { useQuery } from 'react-query'
-import { getUserProfile } from 'api/user'
 import { SignUpType } from 'types/user'
 import { MarketErrorType } from 'types/market'
 
@@ -42,7 +40,9 @@ function Onboarding() {
 	})
 	const [marketOthers, setMarketOthers] = useState<Array<string>>([])
 	const setToken = useSetRecoilState(tokenState)
-	const userQuery = useQuery<UserDataProps, Error>("userData", () => getUserProfile(cookies.token))
+
+	const state = location.state as UserDataProps
+	const { email, kakaoCode, nickname, profileImage } = state
 
 	const handleSignIn = async () => {
 		if (signUpData.job === "") {
@@ -67,10 +67,6 @@ function Onboarding() {
 			return
 		}
 
-		const state = location.state as UserDataProps
-
-		const { email, kakaoCode, nickname, profileImage } = state
-
 		try {
 			const res = await axios.post(`${baseURL}auth/signup/`, {
 				email,
@@ -81,26 +77,29 @@ function Onboarding() {
 				household: signUpData.household,
 				market: signUpData.market.concat(marketOthers)
 			})
-			if (res.headers.accesstoken) {
-				setToken(res.headers.accesstoken)
-				setCookie("token", res.headers.accesstoken,
-					{ httpOnly: true, secure: process.env.NODE_ENV === "development" ? false : true })
+			if (res.data.accessToken) {
+				setLoginLoading(true)
+				setTimeout(() => {
+					setLoginLoading(false)
+					navigate("/")
+					setToken(res.data.accessToken)
+					localStorage.setItem("token", res.data.accessToken)
+				}, 3000)
+
+				// !! https에서 백엔드에서 설쟁해준 set-token 쿠키에 저장되는지 확인 
+				// setCookie("token", res.data.accessToken)
 			}
 		}
+
 		catch (err) {
 			if (axios.isAxiosError(err) && err.response) {
 				console.log((err.response?.data));
 			}
 		}
-		setLoginLoading(true)
-		setTimeout(() => {
-			setLoginLoading(false)
-			navigate("/")
-		}, 3000)
 	}
 
 	if (loginLoading) {
-		return <LoginLoading nickname={userQuery.data?.nickname} />
+		return <LoginLoading nickname={nickname} />
 	}
 
 	return (

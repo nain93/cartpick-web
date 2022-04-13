@@ -7,7 +7,7 @@ import { CookiesProvider } from "react-cookie"
 import axios from 'axios';
 import { BrowserRouter } from 'react-router-dom';
 
-
+// * react-query 에러 핸들러
 const queryClient = new QueryClient({
 	queryCache: new QueryCache({
 		onError: (error) => {

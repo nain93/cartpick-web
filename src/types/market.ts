@@ -14,7 +14,7 @@ export interface ReviewType {
 		priority: number,
 		image: string
 	}>,
-	satisfaction: "best" | "better" | "good" | "bad"
+	satisfaction: "best" | "better" | "good" | "bad" | "comment"
 }
 
 export interface MarketProductType {

@@ -10,9 +10,10 @@ import { useEffect, useState } from 'react'
 import { SignUpType, UserDataType } from 'types/user'
 import { useMutation, useQueryClient } from 'react-query'
 import { editUserProfile } from 'api/user'
-import { useCookies } from 'react-cookie'
+import { useRecoilValue } from 'recoil'
+import { tokenState } from 'recoil/atoms'
 
-const regex = /^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|]+$/;
+const regex = /^[ㄱ-ㅎ|가-힣|ㅏ-ㅣ|a-z|A-Z|0-9|]+$/;
 
 function EditMypage() {
 	const navigate = useNavigate()
@@ -28,11 +29,11 @@ function EditMypage() {
 		market: market.split("·"),
 		otherMarket
 	})
-	const [cookie] = useCookies(["token"])
+	const token = useRecoilValue(tokenState)
 	const [marketOthers, setMarketOthers] = useState<Array<string>>([])
 
 	const queryClient = useQueryClient()
-	const userMutation = useMutation((userData: SignUpType) => editUserProfile(cookie.token, userData), {
+	const userMutation = useMutation((userData: SignUpType) => editUserProfile(token, userData), {
 		onSuccess: () => {
 			queryClient.invalidateQueries("userData")
 		}

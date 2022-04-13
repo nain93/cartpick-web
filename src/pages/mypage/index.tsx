@@ -4,23 +4,27 @@ import styled from 'styled-components'
 import defaultImg from "assets/image/defaultImage.png"
 import theme from 'styles/theme'
 import LongButton from 'components/longButton'
-import { useSetRecoilState } from 'recoil'
-import { modalState } from 'recoil/atoms'
+import { useRecoilState, useSetRecoilState } from 'recoil'
+import { modalState, tokenState } from 'recoil/atoms'
 import { useQuery } from 'react-query'
 import { getUserProfile } from 'api/user'
-import { useCookies } from 'react-cookie'
 import { UserDataType } from 'types/user'
 
 function Mypage() {
 	const navigate = useNavigate()
 	const setModal = useSetRecoilState(modalState)
-	const [cookies, setCookie, removeCookie] = useCookies(["token"])
-	const { data } = useQuery<UserDataType, Error>("userData", () => getUserProfile(cookies.token))
+	const [token, setToken] = useRecoilState(tokenState)
+	const { data } = useQuery<UserDataType, Error>("userData", () => getUserProfile(token))
 
 	const handleDeleteModal = () => {
 		setModal({
 			okText: "탈퇴하기",
-			okButton: () => console.log("탈퇴하기 api"),
+			okButton: () => {
+				// todo 탈퇴하기 api
+				localStorage.removeItem("token")
+				setToken("")
+				navigate("/")
+			},
 			content: "탈퇴시 모든 정보는 저장되지 않습니다.\n정말 탈퇴하시겠어요?",
 			isOpen: true
 		})
@@ -30,7 +34,8 @@ function Mypage() {
 		setModal({
 			okText: "로그아웃",
 			okButton: () => {
-				removeCookie("token")
+				localStorage.removeItem("token")
+				setToken("")
 				navigate("/")
 			},
 			content: "정말 로그아웃 하시겠습니까?",

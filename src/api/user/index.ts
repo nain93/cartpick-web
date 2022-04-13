@@ -1,4 +1,4 @@
-import { baseURL, errorHandler } from "api";
+import { baseURL } from "api";
 import axios from "axios";
 import { SignUpType } from "types/user";
 

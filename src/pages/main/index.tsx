@@ -6,20 +6,17 @@ import { dateFormatForSendBack, dateSimpleFormat } from "utils"
 import defaultImg from "assets/image/defaultImage.png"
 
 import { getUserProfile } from "api/user";
-import { useCookies } from "react-cookie";
 import { getMarketList } from "api/market";
 import { useQuery } from "react-query"
 import { UserDataType } from "types/user";
 import { modalState, tokenState } from "recoil/atoms";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import MarketListLayout from "components/marketListLayout";
-import { useEffect } from "react";
 import axios from "axios";
 
 const date = dateFormatForSendBack()
 
 function Main() {
-	const [cookies, setCookie, removeCookie] = useCookies(['token']);
 	const navigate = useNavigate()
 	const setModal = useSetRecoilState(modalState)
 	const [token, setToken] = useRecoilState(tokenState)
@@ -34,7 +31,6 @@ function Main() {
 						|| error.response.data.messages[0].message === "Token is invalid or expired" ||
 						error.response.data.code === "token_not_valid"
 					) {
-						removeCookie("token")
 						setToken("")
 						navigate("/login")
 					}

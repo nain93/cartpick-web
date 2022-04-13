@@ -14,27 +14,40 @@ import CustomModal from "components/customModal";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { modalState, tokenState } from "recoil/atoms";
 import NotFound from "pages/notFound";
-import { useCookies } from "react-cookie";
 import { useEffect } from "react";
 import ReactGA from 'react-ga';
+import { getNewToken } from "api";
 
 function App() {
 	const [token, setToken] = useRecoilState(tokenState)
 	const isModalOpen = useRecoilValue(modalState)
 	const location = useLocation()
-	const [cookies] = useCookies(["token"])
 
 	useEffect(() => {
-		// todo refresh token 발급받아서 setToken에 넣어주기
-		if (cookies.token) {
-			setToken(cookies.token)
-		}
 		// * 구글 애널리틱스 추적
-		if (process.env.NODE_ENV === "production") {
-			ReactGA.initialize("UA-199856178-3");
-			ReactGA.pageview(location.pathname + location.search)
-		}
+		// if (process.env.NODE_ENV === "production") {
+		// 	ReactGA.initialize("UA-199856178-3");
+		// 	ReactGA.pageview(location.pathname + location.search)
+		// }
 	}, [location])
+
+	useEffect(() => {
+		const localToken = localStorage.getItem("token")
+		if (localToken) {
+			setToken(localToken)
+		}
+
+
+		// todo accessToken 새로 발급받아서 setToken에 넣어주기
+		console.log('zz');
+		const getToken = async () => {
+			const accessToken = await getNewToken()
+			if (accessToken) {
+				setToken(accessToken)
+			}
+		}
+		getToken()
+	}, [])
 
 	return (
 		<>

@@ -6,19 +6,20 @@ import inputSearchIcon from "assets/icon/inputSearchIcon.png"
 import lightCloseIcon from "assets/icon/lightCloseIcon.png"
 import React, { KeyboardEvent, useState } from 'react'
 import { getSearchMarketList } from 'api/search'
-import { useCookies } from 'react-cookie'
 import { useMutation } from 'react-query'
 import MarketListLayout from 'components/marketListLayout'
 import grinningIcon from "assets/icon/grinningIcon.png"
+import { useRecoilValue } from 'recoil'
+import { tokenState } from 'recoil/atoms'
 
 function Search() {
 	const navigate = useNavigate()
-	const [cookie] = useCookies(["token"])
+	const token = useRecoilValue(tokenState)
 	const [keyword, setKeyWord] = useState("")
 	const [inputKeyword, setInputKeyword] = useState("")
 	const [recentKeywords, setRecentKeyWords] = useState<Array<string>>(JSON.parse(localStorage.getItem("recentKeywords") || "[]"))
 
-	const searchMutation = useMutation((mutateKeyword: string) => getSearchMarketList(mutateKeyword, cookie.token))
+	const searchMutation = useMutation((mutateKeyword: string) => getSearchMarketList(mutateKeyword, token))
 
 	const handleSearch = async (searchText: string) => {
 		// * 최근검색어 중복일시 리스트에 넣지않음
@@ -34,7 +35,6 @@ function Search() {
 			setRecentKeyWords([searchText, ...recentKeywords])
 			localStorage.setItem("recentKeywords", JSON.stringify([searchText, ...recentKeywords]))
 		}
-
 		setKeyWord(inputKeyword)
 		setInputKeyword("")
 		searchMutation.mutate(searchText)
@@ -104,16 +104,21 @@ function Search() {
 					)
 					:
 					<div style={{ padding: "0 20px" }}>
-						<Title>최근 검색어</Title><Keywords>
+						<Title>최근 검색어</Title>
+						<Keywords>
 							{recentKeywords.length === 0 ?
 								<span style={{ fontSize: 14, color: theme.color.grayscale.C_4C5463 }}>최근 검색어가 없습니다.</span>
 								:
-								React.Children.toArray(recentKeywords.map((v, i) => <li>
-									<span>{v}</span>
-									<button onClick={() => removeRecentKeywords(i)}>
-										<img src={lightCloseIcon} width={12} height={12} alt="lightCloseIcon" />
-									</button>
-								</li>
+								React.Children.toArray(recentKeywords.map((v, i) =>
+									<li>
+										<span onClick={() => {
+											handleSearch(v)
+											setKeyWord(v)
+										}} style={{ cursor: "pointer", width: "80%" }}>{v}</span>
+										<button onClick={() => removeRecentKeywords(i)}>
+											<img src={lightCloseIcon} width={12} height={12} alt="lightCloseIcon" />
+										</button>
+									</li>
 								))}
 						</Keywords>
 					</div>
@@ -159,7 +164,7 @@ const Keywords = styled.ul`
 	li{
 		min-height: 43px;
 		span{
-			font-size: 16px;
+			font-size:16px;
 			color:${theme.color.grayscale.C_4C5463}
 		}
 		display: flex;
