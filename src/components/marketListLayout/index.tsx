@@ -29,15 +29,14 @@ interface MarketListLayoutProps {
 	searchKeyword?: string
 }
 
-const url = window.location.href
-
 function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword }: MarketListLayoutProps) {
+	const url = window.location.href
 	const [selectedIndex, setSelectedIndex] = useState(0)
 	const [selectedListIndex, setSelectedListIndex] = useState(-1)
 	const [marketInfo, setMarketInfo] = useState<Array<MarketInfoprops>>([])
 	const token = useRecoilValue(tokenState)
 
-	const marketQuery = useQuery<Array<MarketProductType> | null, Error>("marketData", async () => {
+	const marketQuery = useQuery<Array<MarketProductType> | null, Error>(["marketData", marketData], async () => {
 		// * 검색후 나온 리스트 첫번째 데이터
 		if (searchKeyword) {
 			const queryData = await getSearchMarketData(marketData[0].id, searchKeyword, token)
@@ -50,8 +49,10 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 			return queryData
 		}
 
+	}, {
+		enabled: marketData.length !== 0
 	})
-
+	console.log(marketData, 'marketData');
 	const queryClient = useQueryClient()
 	const marketMutation = useMutation(async (marketIndex: number) => {
 		// * 검색 후 각 마켓별 리스트
@@ -102,17 +103,83 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 		}
 	}, [marketData])
 
+	// * 카카오 공유하기 로직
 	const handleShareList = () => {
-		// ! https에서만 공유가능
-		if (navigator.share) {
-			navigator.share({
-				title: "맛추픽추",
-				text: "hello world",
-				url
-			})
+		//@ts-ignore
+		const { Kakao } = window
+		if (!marketQuery.data || marketQuery.data.length === 0) {
+			return
+		}
+		else if (marketQuery.data.length === 1) {
+			Kakao.Link.sendDefault({
+				objectType: "feed",
+				content: {
+					title: marketQuery.data[0].name, // 공유될 제목
+					description: marketQuery.data[0]?.reviews[0], // 공유될 설명
+					imageUrl: "", // 공유될 이미지 url
+					link: {
+						mobileWebUrl: url, // 공유될 모바일 URL
+						webUrl: url, // 공유될 웹 URL
+					},
+					buttons: [
+						{
+							title: '웹사이트로 이동',
+							link: {
+								mobileWebUrl: url,
+							},
+						},
+					]
+				},
+			});
+
 		}
 		else {
-			alert("공유하기가 지원되지 않는 환경 입니다.")
+			Kakao.Link.sendDefault({
+				objectType: 'list', // 메시지 형식 : 피드 타입
+				headerTitle: '카트픽',
+				headerLink: {
+					mobileWebUrl: url,
+					webUrl: url,
+				},
+				contents: [
+					{
+						title: marketQuery.data[0].name,
+						description: marketQuery.data[0]?.reviews[0],
+						imageUrl: '',
+						link: {
+							mobileWebUrl: '',
+							webUrl: '',
+						},
+					},
+					{
+						title: marketQuery.data[1].name,
+						description: marketQuery.data[1]?.reviews[0],
+						imageUrl: '',
+						link: {
+							mobileWebUrl: '',
+							webUrl: '',
+						},
+					},
+					{
+						title: marketQuery.data[2]?.name,
+						description: marketQuery.data[2]?.reviews[0],
+						imageUrl: '',
+						link: {
+							mobileWebUrl: '',
+							webUrl: '',
+						},
+					},
+				],
+				buttons: [
+					{
+						title: '웹사이트로 이동', // 버튼 이름
+						link: {
+							webUrl: url,
+							mobileWebUrl: url
+						},
+					},
+				],
+			});
 		}
 	}
 
@@ -219,11 +286,13 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 				}
 			</ListView>
 			{date &&
+
 				<div style={{ position: "fixed", bottom: 0, width: "100%", maxWidth: 768, padding: "40px 0", backgroundColor: theme.color.grayscale.F5F5F5 }}>
 					<LongButton onClick={handleShareList} buttonStyle={{ color: theme.color.grayscale.C_4C5463 }} color={theme.color.grayscale.B7C3D4}>
 						리스트 공유하기
 					</LongButton>
 				</div>
+
 			}
 		</>
 	)

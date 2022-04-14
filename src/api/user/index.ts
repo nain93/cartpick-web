@@ -31,6 +31,30 @@ export async function editUserProfile(token: string, { nickname, job, household,
 	}
 }
 
+export async function userLogout(token: string) {
+	const res = await axios.get(baseURL + "auth/logout/", {
+		headers: {
+			"Authorization": `Bearer ${token}`,
+			"Content-Type": "application/json"
+		}
+	})
+	if (res) {
+		return res.data
+	}
+}
+
+export async function deleteUser(token: string) {
+	const res = await axios.delete(baseURL + "", {
+		headers: {
+			"Authorization": `Bearer ${token}`,
+			"Content-Type": "application/json"
+		}
+	})
+	if (res) {
+		return res.data
+	}
+}
+
 export async function getUserCount() {
 	const res = await axios.get(baseURL + "auth/count/", {
 		headers: {

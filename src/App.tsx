@@ -25,23 +25,21 @@ function App() {
 
 	useEffect(() => {
 		// * 구글 애널리틱스 추적
-		// if (process.env.NODE_ENV === "production") {
-		// 	ReactGA.initialize("UA-199856178-3");
-		// 	ReactGA.pageview(location.pathname + location.search)
-		// }
+		if (process.env.NODE_ENV === "production") {
+			ReactGA.initialize("UA-199856178-3");
+			ReactGA.pageview(location.pathname + location.search)
+		}
 	}, [location])
 
 	useEffect(() => {
-		const localToken = localStorage.getItem("token")
-		if (localToken) {
-			setToken(localToken)
-		}
+		// * 카카오 링크 공유하기
+		//@ts-ignore
+		const { Kakao } = window
+		Kakao.init(process.env.REACT_APP_JAVASCRIPT_KEY)
 
-
-		// todo accessToken 새로 발급받아서 setToken에 넣어주기
-		console.log('zz');
+		// * accessToken 새로 발급받아서 setToken에 넣어주기
 		const getToken = async () => {
-			const accessToken = await getNewToken()
+			const { accessToken } = await getNewToken()
 			if (accessToken) {
 				setToken(accessToken)
 			}

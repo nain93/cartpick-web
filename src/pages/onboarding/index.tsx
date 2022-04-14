@@ -9,7 +9,6 @@ import LoginLoading from './loginLoading'
 import UserInputForm from 'components/userInputForm'
 import axios from 'axios'
 import { baseURL } from 'api'
-import { useCookies } from 'react-cookie'
 import { useSetRecoilState } from 'recoil'
 import { tokenState } from 'recoil/atoms'
 import { SignUpType } from 'types/user'
@@ -27,7 +26,6 @@ interface UserDataProps {
 function Onboarding() {
 	const location = useLocation()
 	const navigate = useNavigate()
-	const [cookies, setCookie] = useCookies(['token']);
 	const [errorMsg, setErrorMsg] = useState<MarketErrorType>({
 		text: "",
 		type: "job"
@@ -83,11 +81,8 @@ function Onboarding() {
 					setLoginLoading(false)
 					navigate("/")
 					setToken(res.data.accessToken)
-					localStorage.setItem("token", res.data.accessToken)
 				}, 3000)
-
 				// !! https에서 백엔드에서 설쟁해준 set-token 쿠키에 저장되는지 확인 
-				// setCookie("token", res.data.accessToken)
 			}
 		}
 

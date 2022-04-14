@@ -4,10 +4,10 @@ import axios, { AxiosRequestConfig } from "axios"
 // export const baseURL = process.env.REACT_APP_BASE_URL
 
 // export const baseURL = "http://13.125.255.25:8000/"
-// export const baseURL = "https://oudu3g942i.execute-api.ap-northeast-2.amazonaws.com/production/"
+export const baseURL = "https://oudu3g942i.execute-api.ap-northeast-2.amazonaws.com/production/"
 // export const baseURL = "http://192.168.123.109:8000/"
 // export const baseURL = "http://3.38.190.59:8000/"
-export const baseURL = "http://192.168.123.107:8000/"
+// export const baseURL = "http://192.168.123.107:8000/"
 
 export const getNewToken = async () => {
 	return errorHandler({
@@ -16,7 +16,8 @@ export const getNewToken = async () => {
 		config: {
 			headers: {
 				"Content-Type": "application/json"
-			}
+			},
+			withCredentials: true
 		}
 	})
 }

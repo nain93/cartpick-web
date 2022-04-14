@@ -6,8 +6,8 @@ import theme from 'styles/theme'
 import LongButton from 'components/longButton'
 import { useRecoilState, useSetRecoilState } from 'recoil'
 import { modalState, tokenState } from 'recoil/atoms'
-import { useQuery } from 'react-query'
-import { getUserProfile } from 'api/user'
+import { useMutation, useQuery } from 'react-query'
+import { getUserProfile, userLogout } from 'api/user'
 import { UserDataType } from 'types/user'
 
 function Mypage() {
@@ -15,13 +15,13 @@ function Mypage() {
 	const setModal = useSetRecoilState(modalState)
 	const [token, setToken] = useRecoilState(tokenState)
 	const { data } = useQuery<UserDataType, Error>("userData", () => getUserProfile(token))
+	const userLogoutMutaion = useMutation(() => userLogout(token))
 
 	const handleDeleteModal = () => {
 		setModal({
 			okText: "탈퇴하기",
 			okButton: () => {
 				// todo 탈퇴하기 api
-				localStorage.removeItem("token")
 				setToken("")
 				navigate("/")
 			},
@@ -34,8 +34,8 @@ function Mypage() {
 		setModal({
 			okText: "로그아웃",
 			okButton: () => {
-				localStorage.removeItem("token")
 				setToken("")
+				userLogoutMutaion.mutate()
 				navigate("/")
 			},
 			content: "정말 로그아웃 하시겠습니까?",

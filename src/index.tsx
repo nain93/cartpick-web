@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import { RecoilRoot } from 'recoil';
-import { QueryCache, QueryClient, QueryClientProvider } from 'react-query';
+import { MutationCache, QueryCache, QueryClient, QueryClientProvider } from 'react-query';
 import { CookiesProvider } from "react-cookie"
 import axios from 'axios';
 import { BrowserRouter } from 'react-router-dom';
@@ -16,6 +16,13 @@ const queryClient = new QueryClient({
 			}
 		}
 	}),
+	mutationCache: new MutationCache({
+		onError: (error) => {
+			if (axios.isAxiosError(error) && error.response) {
+				console.log(error.response.data);
+			}
+		}
+	})
 })
 
 ReactDOM.render(

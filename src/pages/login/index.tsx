@@ -7,7 +7,6 @@ import axios from 'axios'
 import queryString from 'query-string';
 import { useEffect } from 'react'
 import { baseURL } from 'api'
-import { useCookies } from 'react-cookie'
 import { useSetRecoilState } from 'recoil'
 import { tokenState } from 'recoil/atoms'
 import { useQuery } from 'react-query'
@@ -18,7 +17,6 @@ const kakaoUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${process.en
 function Login() {
 	const query = queryString.parse(window.location.search);
 	const navigate = useNavigate()
-	const [cookie, setCookie] = useCookies(["token"])
 	const setToken = useSetRecoilState(tokenState)
 	const signCount = useQuery("signQuery", getUserCount)
 
@@ -59,8 +57,6 @@ function Login() {
 
 			if (res.data.accessToken) {
 				setToken(res.data.accessToken)
-				localStorage.setItem("token", res.data.accessToken)
-
 				// !! https에서 백엔드에서 설쟁해준 set-token 쿠키에 저장되는지 확인 
 				// setCookie("token", res.data.accessToken)
 				navigate("/")

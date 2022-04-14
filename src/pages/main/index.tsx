@@ -5,9 +5,9 @@ import theme from "styles/theme"
 import { dateFormatForSendBack, dateSimpleFormat } from "utils"
 import defaultImg from "assets/image/defaultImage.png"
 
-import { getUserProfile } from "api/user";
+import { getUserProfile, userLogout } from "api/user";
 import { getMarketList } from "api/market";
-import { useQuery } from "react-query"
+import { useMutation, useQuery } from "react-query"
 import { UserDataType } from "types/user";
 import { modalState, tokenState } from "recoil/atoms";
 import { useRecoilState, useSetRecoilState } from "recoil";
@@ -20,6 +20,7 @@ function Main() {
 	const navigate = useNavigate()
 	const setModal = useSetRecoilState(modalState)
 	const [token, setToken] = useRecoilState(tokenState)
+	const userLogoutMutaion = useMutation(() => userLogout(token))
 	const userQuery = useQuery<UserDataType, Error>(["userData", token], () => getUserProfile(token),
 		{
 			enabled: !!token,
@@ -32,6 +33,7 @@ function Main() {
 						error.response.data.code === "token_not_valid"
 					) {
 						setToken("")
+						userLogoutMutaion.mutate()
 						navigate("/login")
 					}
 				}
@@ -54,7 +56,6 @@ function Main() {
 			})
 		}
 	}
-
 
 	return (
 		<>
