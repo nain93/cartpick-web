@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import theme from 'styles/theme'
 import inputSearchIcon from "assets/icon/inputSearchIcon.png"
 import lightCloseIcon from "assets/icon/lightCloseIcon.png"
-import React, { KeyboardEvent, useState } from 'react'
+import React, { KeyboardEvent, useEffect, useRef, useState } from 'react'
 import { getSearchMarketList } from 'api/search'
 import { useMutation } from 'react-query'
 import MarketListLayout from 'components/marketListLayout'
@@ -15,6 +15,7 @@ import { tokenState } from 'recoil/atoms'
 function Search() {
 	const navigate = useNavigate()
 	const token = useRecoilValue(tokenState)
+	const searchInputRef = useRef<HTMLInputElement>(null)
 	const [keyword, setKeyWord] = useState("")
 	const [inputKeyword, setInputKeyword] = useState("")
 	const [recentKeywords, setRecentKeyWords] = useState<Array<string>>(JSON.parse(localStorage.getItem("recentKeywords") || "[]"))
@@ -22,6 +23,9 @@ function Search() {
 	const searchMutation = useMutation((mutateKeyword: string) => getSearchMarketList(mutateKeyword, token))
 
 	const handleSearch = async (searchText: string) => {
+		if (inputKeyword === "" && searchText === "") {
+			return
+		}
 		// * 최근검색어 중복일시 리스트에 넣지않음
 		if (!recentKeywords.every(v => v !== searchText)) {
 		}
@@ -42,7 +46,7 @@ function Search() {
 
 	const searchEnter = (e: KeyboardEvent<HTMLInputElement>) => {
 		// ! onKeyDown 한글입력시 2번 이벤트 발생해서 !e.nativeEvent.isComposing 처리
-		if (e.key === "Enter" && inputKeyword && !e.nativeEvent.isComposing) {
+		if (e.key === "Enter" && !e.nativeEvent.isComposing) {
 			handleSearch(inputKeyword)
 		}
 	}
@@ -51,6 +55,10 @@ function Search() {
 		setRecentKeyWords(recentKeywords.filter((_, filterI) => recentIndex !== filterI))
 		localStorage.setItem("recentKeywords", JSON.stringify(recentKeywords.filter((_, filterI) => recentIndex !== filterI)))
 	}
+
+	useEffect(() => {
+		searchInputRef.current?.focus()
+	}, [])
 
 	// * 로딩 화면
 	if (searchMutation.isLoading) {
@@ -78,7 +86,7 @@ function Search() {
 			</TopHeader>
 			<MainWrap>
 				<InputWrap>
-					<input onKeyDown={searchEnter}
+					<input ref={searchInputRef} onKeyDown={searchEnter}
 						onChange={(e) => setInputKeyword(e.target.value)}
 						value={inputKeyword} placeholder="어떤 후기를 찾아볼까요?" />
 					<button onClick={() => handleSearch(inputKeyword)}>

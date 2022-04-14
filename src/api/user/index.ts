@@ -14,8 +14,8 @@ export async function getUserProfile(token: string) {
 	}
 }
 
-export async function editUserProfile(token: string, { nickname, job, household, market }: SignUpType) {
-	const res = await axios.patch(baseURL + "user/", {
+export async function editUserProfile(token: string, { nickname, job, household, market, id }: SignUpType) {
+	const res = await axios.patch(baseURL + `user/${id}/`, {
 		nickname,
 		job,
 		household,
@@ -31,24 +31,25 @@ export async function editUserProfile(token: string, { nickname, job, household,
 	}
 }
 
-export async function userLogout(token: string) {
+export async function userLogout() {
 	const res = await axios.get(baseURL + "auth/logout/", {
 		headers: {
-			"Authorization": `Bearer ${token}`,
 			"Content-Type": "application/json"
-		}
+		},
+		withCredentials: true
 	})
 	if (res) {
 		return res.data
 	}
 }
 
-export async function deleteUser(token: string) {
-	const res = await axios.delete(baseURL + "", {
+export async function deleteUser(token: string, id: number) {
+	const res = await axios.delete(baseURL + `user/${id}/`, {
 		headers: {
 			"Authorization": `Bearer ${token}`,
 			"Content-Type": "application/json"
-		}
+		},
+		withCredentials: true
 	})
 	if (res) {
 		return res.data

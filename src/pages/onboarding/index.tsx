@@ -74,6 +74,8 @@ function Onboarding() {
 				job: signUpData.job,
 				household: signUpData.household,
 				market: signUpData.market.concat(marketOthers)
+			}, {
+				withCredentials: true
 			})
 			if (res.data.accessToken) {
 				setLoginLoading(true)
@@ -82,7 +84,6 @@ function Onboarding() {
 					navigate("/")
 					setToken(res.data.accessToken)
 				}, 3000)
-				// !! https에서 백엔드에서 설쟁해준 set-token 쿠키에 저장되는지 확인 
 			}
 		}
 

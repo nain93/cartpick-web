@@ -5,7 +5,7 @@ export async function getMarketList() {
 	const res = await axios.get(baseURL + "market/", {
 		headers: {
 			"Content-Type": "application/json"
-		}
+		},
 	});
 	if (res) {
 		return res.data

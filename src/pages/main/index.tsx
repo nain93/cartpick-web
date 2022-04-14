@@ -20,7 +20,7 @@ function Main() {
 	const navigate = useNavigate()
 	const setModal = useSetRecoilState(modalState)
 	const [token, setToken] = useRecoilState(tokenState)
-	const userLogoutMutaion = useMutation(() => userLogout(token))
+	const userLogoutMutaion = useMutation(() => userLogout())
 	const userQuery = useQuery<UserDataType, Error>(["userData", token], () => getUserProfile(token),
 		{
 			enabled: !!token,
@@ -56,7 +56,6 @@ function Main() {
 			})
 		}
 	}
-
 	return (
 		<>
 			<Container>

@@ -18,12 +18,13 @@ const regex = /^[ㄱ-ㅎ|가-힣|ㅏ-ㅣ|a-z|A-Z|0-9|]+$/;
 function EditMypage() {
 	const navigate = useNavigate()
 	const location = useLocation()
-	const { profileImage, nickname, household, job, market, otherMarket } = location.state as UserDataType
+	const { profileImage, nickname, household, job, market, otherMarket, id } = location.state as UserDataType
 	const [nicknameInput, setNickNameInput] = useState(nickname)
 	const [titleErrorMsg, setTitleErrorMsg] = useState("")
 	const [inputErrorMsg, setInputErrorMsg] = useState("")
 
 	const [signUpData, setSignUpData] = useState<SignUpType>({
+		id,
 		job,
 		household,
 		market: market.split("·"),
@@ -60,6 +61,7 @@ function EditMypage() {
 		}
 
 		userMutation.mutate({
+			id,
 			nickname: nicknameInput,
 			job: signUpData.job,
 			household: signUpData.household,
@@ -67,7 +69,6 @@ function EditMypage() {
 		})
 		navigate(-1)
 	}
-
 
 	return (
 		<Container>

@@ -35,6 +35,7 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 	const [selectedListIndex, setSelectedListIndex] = useState(-1)
 	const [marketInfo, setMarketInfo] = useState<Array<MarketInfoprops>>([])
 	const token = useRecoilValue(tokenState)
+	const [listViewHeight, setListViewHeight] = useState("")
 
 	const marketQuery = useQuery<Array<MarketProductType> | null, Error>(["marketData", marketData], async () => {
 		// * 검색후 나온 리스트 첫번째 데이터
@@ -52,7 +53,6 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 	}, {
 		enabled: marketData.length !== 0
 	})
-	console.log(marketData, 'marketData');
 	const queryClient = useQueryClient()
 	const marketMutation = useMutation(async (marketIndex: number) => {
 		// * 검색 후 각 마켓별 리스트
@@ -102,9 +102,9 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 			}))
 		}
 	}, [marketData])
-
 	// * 카카오 공유하기 로직
 	const handleShareList = () => {
+		console.log(marketQuery.data, 'marketQuery.data');
 		//@ts-ignore
 		const { Kakao } = window
 		if (!marketQuery.data || marketQuery.data.length === 0) {
@@ -115,7 +115,7 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 				objectType: "feed",
 				content: {
 					title: marketQuery.data[0].name, // 공유될 제목
-					description: marketQuery.data[0]?.reviews[0], // 공유될 설명
+					description: marketQuery.data[0]?.reviews[0].content, // 공유될 설명
 					imageUrl: "", // 공유될 이미지 url
 					link: {
 						mobileWebUrl: url, // 공유될 모바일 URL
@@ -144,7 +144,7 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 				contents: [
 					{
 						title: marketQuery.data[0].name,
-						description: marketQuery.data[0]?.reviews[0],
+						description: marketQuery.data[0]?.reviews[0].content,
 						imageUrl: '',
 						link: {
 							mobileWebUrl: '',
@@ -153,7 +153,7 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 					},
 					{
 						title: marketQuery.data[1].name,
-						description: marketQuery.data[1]?.reviews[0],
+						description: marketQuery.data[1]?.reviews[0].content,
 						imageUrl: '',
 						link: {
 							mobileWebUrl: '',
@@ -162,7 +162,7 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 					},
 					{
 						title: marketQuery.data[2]?.name,
-						description: marketQuery.data[2]?.reviews[0],
+						description: marketQuery.data[2]?.reviews[0].content,
 						imageUrl: '',
 						link: {
 							mobileWebUrl: '',
@@ -187,6 +187,19 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 	useEffect(() => {
 		return () => queryClient.removeQueries("marketData", { exact: true })
 	}, [queryClient])
+
+	// * listView 화면마다 다르게 높이설정
+	useEffect(() => {
+		if (isPastItem) {
+			setListViewHeight("calc(100vh - 400px)")
+		}
+		else if (!isPastItem && date) {
+			setListViewHeight("calc(100vh - 380px)")
+		}
+		else {
+			setListViewHeight("calc(100vh - 280px)")
+		}
+	}, [])
 
 	return (
 		<>
@@ -223,7 +236,7 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 					{marketInfo[selectedIndex].name}
 				</h1>
 			}
-			<ListView shareButtonStyle={date} >
+			<ListView style={{ height: listViewHeight }}  >
 				{(marketQuery.isLoading || !marketQuery.data) ?
 					<div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%" }} />
 					:
@@ -286,7 +299,6 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 				}
 			</ListView>
 			{date &&
-
 				<div style={{ position: "fixed", bottom: 0, width: "100%", maxWidth: 768, padding: "40px 0", backgroundColor: theme.color.grayscale.F5F5F5 }}>
 					<LongButton onClick={handleShareList} buttonStyle={{ color: theme.color.grayscale.C_4C5463 }} color={theme.color.grayscale.B7C3D4}>
 						리스트 공유하기
@@ -326,10 +338,9 @@ const Slide = styled.div`
 	/* margin-right: 30px; */
 `;
 
-const ListView = styled.div<{ shareButtonStyle: string | undefined }>`
+const ListView = styled.div`
 	overflow: scroll;
 	margin-top: 20px;
-	padding-bottom:${props => props.shareButtonStyle ? "130px" : "0"};
 `;
 
 const ListItem = styled.div`

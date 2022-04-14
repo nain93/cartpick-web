@@ -7,7 +7,7 @@ import LongButton from 'components/longButton'
 import { useRecoilState, useSetRecoilState } from 'recoil'
 import { modalState, tokenState } from 'recoil/atoms'
 import { useMutation, useQuery } from 'react-query'
-import { getUserProfile, userLogout } from 'api/user'
+import { deleteUser, getUserProfile, userLogout } from 'api/user'
 import { UserDataType } from 'types/user'
 
 function Mypage() {
@@ -15,13 +15,15 @@ function Mypage() {
 	const setModal = useSetRecoilState(modalState)
 	const [token, setToken] = useRecoilState(tokenState)
 	const { data } = useQuery<UserDataType, Error>("userData", () => getUserProfile(token))
-	const userLogoutMutaion = useMutation(() => userLogout(token))
+	const userLogoutMutaion = useMutation(() => userLogout())
 
 	const handleDeleteModal = () => {
 		setModal({
 			okText: "탈퇴하기",
 			okButton: () => {
-				// todo 탈퇴하기 api
+				if (data) {
+					deleteUser(token, data.id)
+				}
 				setToken("")
 				navigate("/")
 			},

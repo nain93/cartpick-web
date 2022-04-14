@@ -57,8 +57,6 @@ function Login() {
 
 			if (res.data.accessToken) {
 				setToken(res.data.accessToken)
-				// !! https에서 백엔드에서 설쟁해준 set-token 쿠키에 저장되는지 확인 
-				// setCookie("token", res.data.accessToken)
 				navigate("/")
 			}
 			if (res.data.kakaoCode) {

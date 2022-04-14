@@ -9,6 +9,7 @@ export interface UserDataType {
 }
 
 export interface SignUpType {
+	id?: number,
 	nickname?: string,
 	job: string,
 	household: string,
