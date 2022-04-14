@@ -37,7 +37,7 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 	const token = useRecoilValue(tokenState)
 	const [listViewHeight, setListViewHeight] = useState("")
 
-	const marketQuery = useQuery<Array<MarketProductType> | null, Error>(["marketData", marketData], async () => {
+	const marketQuery = useQuery<Array<MarketProductType> | null, Error>("marketData", async () => {
 		// * 검색후 나온 리스트 첫번째 데이터
 		if (searchKeyword) {
 			const queryData = await getSearchMarketData(marketData[0].id, searchKeyword, token)
@@ -50,8 +50,6 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 			return queryData
 		}
 
-	}, {
-		enabled: marketData.length !== 0
 	})
 	const queryClient = useQueryClient()
 	const marketMutation = useMutation(async (marketIndex: number) => {
@@ -104,7 +102,6 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 	}, [marketData])
 	// * 카카오 공유하기 로직
 	const handleShareList = () => {
-		console.log(marketQuery.data, 'marketQuery.data');
 		//@ts-ignore
 		const { Kakao } = window
 		if (!marketQuery.data || marketQuery.data.length === 0) {
@@ -200,6 +197,7 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 			setListViewHeight("calc(100vh - 280px)")
 		}
 	}, [])
+
 
 	return (
 		<>
@@ -323,6 +321,11 @@ const Slide = styled.div`
 		margin-bottom: 0;
 	}
 		margin-bottom: 10px;
+	}
+	>div:last-child{
+		@media screen and (max-width: 768px){
+			margin-right: 10px;
+		}
 	}
 	display: flex;
 	margin-top: 20px;
