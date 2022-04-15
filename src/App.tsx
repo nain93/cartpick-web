@@ -12,15 +12,17 @@ import Onboarding from "pages/onboarding";
 import Search from "pages/search";
 import CustomModal from "components/customModal";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { modalState, tokenState } from "recoil/atoms";
+import { modalState, popupState, tokenState } from "recoil/atoms";
 import NotFound from "pages/notFound";
 import { useEffect } from "react";
 import ReactGA from 'react-ga';
 import { getNewToken } from "api";
+import AlertPopup from "components/alertPopup";
 
 function App() {
 	const [token, setToken] = useRecoilState(tokenState)
 	const isModalOpen = useRecoilValue(modalState)
+	const [isPopupOpen, setIsPopupOpen] = useRecoilState(popupState)
 	const location = useLocation()
 
 	useEffect(() => {
@@ -39,13 +41,22 @@ function App() {
 
 		// * accessToken 새로 발급받아서 setToken에 넣어주기
 		const getToken = async () => {
-			const { accessToken } = await getNewToken()
-			if (accessToken) {
-				setToken(accessToken)
+			const newToken = await getNewToken()
+			if (newToken?.accessToken) {
+				setToken(newToken.accessToken)
 			}
 		}
 		getToken()
 	}, [])
+
+	// * 경고 팝업창 띄웠다 꺼지는 로직
+	useEffect(() => {
+		if (isPopupOpen.isOpen) {
+			setTimeout(() => {
+				setIsPopupOpen({ ...isPopupOpen, isOpen: false })
+			}, 1500)
+		}
+	}, [isPopupOpen])
 
 	return (
 		<>
@@ -69,6 +80,9 @@ function App() {
 						</>
 					}
 				</Routes>
+				<AlertPopup popupStyle={isPopupOpen.isOpen ? { opacity: 1 } : { opacity: 0 }} >
+					{isPopupOpen.content}
+				</AlertPopup>
 				{isModalOpen.isOpen &&
 					<CustomModal />}
 			</Container>

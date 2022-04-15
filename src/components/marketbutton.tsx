@@ -5,12 +5,17 @@ interface MarketButtonProps {
 	marketImage: string;
 	marketColor: string;
 	isClick: boolean;
+	name?: string
 }
 
-function Marketbutton({ marketColor, marketImage, isClick }: MarketButtonProps) {
+function Marketbutton({ marketColor, marketImage, isClick, name }: MarketButtonProps) {
 	return (
 		<Container isClick={isClick} marketColor={marketColor}>
-			<img src={marketImage} alt="kurlyImage" width={68} height={38} />
+			{name ?
+				<span>{name}</span>
+				:
+				<img src={marketImage} alt="marketImage" style={{ objectFit: "contain" }} width={68} height={38} />
+			}
 		</Container>
 	)
 }

@@ -21,7 +21,7 @@ function PastItemList() {
 					지난 추천템 모음
 				</Title>
 				<Desc>
-					카톡방의 후기를 매일 매일 모았어요.<br /><span style={{ fontWeight: "bold" }}>매일 밤 9시,</span> 새로운 추천템이 업데이트됩니다.
+					카톡방의 후기를 매일 매일 모았어요.<br /><span style={{ fontWeight: "bold" }}>매일 밤 9시 30분,</span> 새로운 추천템이 업데이트됩니다.
 				</Desc>
 				<ListView>
 					{React.Children.toArray(lastList.map((v, i) => {
@@ -33,7 +33,7 @@ function PastItemList() {
 											{v}
 										</span>
 										<span style={{ marginLeft: "auto" }}>
-											&nbsp;추천템 리스트
+											추천템 리스트
 										</span>
 										<span
 											style={{ position: "absolute", right: -40, fontWeight: "bold", marginLeft: 5, color: theme.color.main }}>
@@ -44,14 +44,17 @@ function PastItemList() {
 							)
 						}
 						else {
+							// todo 지난 추천템에서 넘어오면 state 안주고 뒤로가기
+							// todo 공유하기로 넘어오면 /으로 리다이렉팅
+							// todo 공유하기로 넘어왔는데 로그아웃 상태일경우 팝업창 띄워서 로그인화면으로 넘어갈수있게
 							return (
-								<Link to={`/pastItemList/${v}`}>
-									<div style={{ display: "flex", minWidth: 155 }}>
+								<button onClick={() => navigate(`/pastItemList/${v}`, { state: { ispastItem: true } })}>
+									<div style={{ display: "flex", minWidth: 155, fontSize: 14 }}>
 										<span>
 											{v}
 										</span>
-										<span style={{ marginLeft: "auto" }}>
-											&nbsp;추천템 리스트
+										<span style={{ marginLeft: 8 }}>
+											추천템 리스트
 											{i === 0 &&
 												<span
 													style={{ fontWeight: "bold", marginLeft: 5, color: theme.color.main }}>
@@ -60,7 +63,7 @@ function PastItemList() {
 										</span>
 									</div>
 									<img src={rightIcon} alt="rightIcon" width={20} height={20} />
-								</Link>
+								</button>
 							)
 						}
 					})
@@ -99,12 +102,13 @@ const Desc = styled.span`
 const ListView = styled.div`
 	overflow: scroll;
 	margin-top: 35.5px;
-	>a{
+	>a,>button{
 		padding:14.5px 0;
 		height: 50px;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
+		width: 100%;
 		border-bottom: 1px solid ${theme.color.grayscale.F2F3F6};
 		span{
 			color:${theme.color.grayscale.C_4C5463}

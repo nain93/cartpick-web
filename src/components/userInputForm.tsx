@@ -1,4 +1,4 @@
-import React, { ChangeEvent, KeyboardEvent, RefObject, useEffect, useRef, useState } from 'react'
+import React, { KeyboardEvent, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import theme from 'styles/theme'
 import backpackIcon from "assets/icon/backpackIcon.png"
@@ -16,6 +16,8 @@ import roketImage from "assets/image/roketImage.png"
 import naverImage from "assets/image/naverImage.png"
 import wingItImage from "assets/image/wingItImage.png"
 import etcImage from "assets/image/etcImage.png"
+import bMartImage from "assets/image/bmartImage.jpg"
+import natureImage from "assets/image/natureImage.jpg"
 import Marketbutton from 'components/marketbutton'
 import closeIcon from "assets/icon/closeIcon.png"
 import { SignUpType } from 'types/user'
@@ -45,8 +47,8 @@ const house = [
 ]
 
 function UserInputForm({ errorMsg, signUpData, setSignUpData, marketOthers, setMarketOthers, isEdit }: UserInputProps) {
-	const [jobSelect, setJobSelect] = useState<number>(3)
-	const [houseSelect, setHouseSelect] = useState<number>()
+	const [jobSelect, setJobSelect] = useState<number>(0)
+	const [houseSelect, setHouseSelect] = useState<number>(0)
 	const [marketText, setMarketText] = useState<string>("")
 	const jobInputRef = useRef<HTMLInputElement>(null)
 	const marketInputRef = useRef<HTMLInputElement>(null)
@@ -85,6 +87,16 @@ function UserInputForm({ errorMsg, signUpData, setSignUpData, marketOthers, setM
 			{
 				image: wingItImage,
 				name: "윙잇",
+				isClick: false
+			},
+			{
+				image: bMartImage,
+				name: "B마트",
+				isClick: false
+			},
+			{
+				image: natureImage,
+				name: "헬로네이처",
 				isClick: false
 			},
 			{

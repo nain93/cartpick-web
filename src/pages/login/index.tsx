@@ -36,7 +36,7 @@ function Login() {
 			headers: {
 				'Content-type': 'application/x-www-form-urlencoded;charset=utf-8'
 			},
-		}).then((res) => {
+		}).then(async (res) => {
 			// * 서버에 토큰 전송
 			sendKakaoTokenToServer(res.data.access_token)
 		}).catch(error => {

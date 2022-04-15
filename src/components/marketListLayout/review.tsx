@@ -10,7 +10,7 @@ import commentIcon from "assets/icon/reviewIcon/reviewCommentIcon.png"
 
 
 
-function Review({ review }: { review: ReviewType }) {
+function Review({ review, reviewIndex }: { review: ReviewType, reviewIndex: number }) {
 	const [reviewIcon, setReviewIcon] = useState("")
 
 	useEffect(() => {
@@ -42,7 +42,6 @@ function Review({ review }: { review: ReviewType }) {
 		}
 	}, [])
 
-
 	return (
 		<ListMore>
 			<div>
@@ -50,8 +49,13 @@ function Review({ review }: { review: ReviewType }) {
 					<img src={reviewIcon} width={15} height={15} alt="reviewIcon" />
 					<div>
 						<span style={{ fontSize: 12, color: theme.color.grayscale.C_4C5463 }}>
-							<span style={{ fontWeight: "bold" }}>{review.author}</span> 님이
-							<span style={{ color: theme.color.main }}> 처음 추천</span>하셨어요!</span>
+							<span style={{ fontWeight: "bold" }}>{review.author}</span> 님
+							{reviewIndex === 0 &&
+								<span>
+									<span style={{ color: theme.color.main }}>이 처음 추천</span>하셨어요!
+								</span>
+							}
+						</span>
 					</div>
 				</div>
 				<MoreTextBox>

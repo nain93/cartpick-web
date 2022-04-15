@@ -24,6 +24,8 @@ const marketColor = {
 	emart: "#FFD040",
 	wingIt: "#F95E5E",
 	roket: "#1A982E",
+	bmart: "#2BC2BC",
+	nature: "#4D908E",
 	other: "#535860"
 }
 

@@ -17,10 +17,12 @@ import wingItImage from "assets/image/wingItImage.png"
 import naverImage from "assets/image/naverImage.png"
 import oasisImage from "assets/image/oasisImage.png"
 import etcImage from "assets/image/etcImage.png"
+import bMartImage from "assets/image/bmartImage.jpg"
+import natureImage from "assets/image/natureImage.jpg"
 import { getSearchMarketData } from 'api/search'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
-import { useRecoilValue } from 'recoil'
-import { tokenState } from 'recoil/atoms'
+import { useRecoilValue, useSetRecoilState } from 'recoil'
+import { popupState, tokenState } from 'recoil/atoms'
 
 interface MarketListLayoutProps {
 	marketData: Array<{ id: number, name: string }>,
@@ -36,31 +38,33 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 	const [marketInfo, setMarketInfo] = useState<Array<MarketInfoprops>>([])
 	const token = useRecoilValue(tokenState)
 	const [listViewHeight, setListViewHeight] = useState("")
+	const setIspopupOpen = useSetRecoilState(popupState)
 
 	const marketQuery = useQuery<Array<MarketProductType> | null, Error>("marketData", async () => {
 		// * 검색후 나온 리스트 첫번째 데이터
 		if (searchKeyword) {
-			const queryData = await getSearchMarketData(marketData[0].id, searchKeyword, token)
+			const queryData = await getSearchMarketData(null, searchKeyword, token)
 			return queryData
 		}
 
 		// * 마켓 리스트를 불러오고 첫번째 마켓 상품데이터 
 		else if (date) {
-			const queryData = await getMarketProduct(marketData[0].id, date, isPastItem ? token : "")
+			const queryData = await getMarketProduct(null, date, isPastItem ? token : "")
 			return queryData
 		}
 
 	})
 	const queryClient = useQueryClient()
-	const marketMutation = useMutation(async (marketIndex: number) => {
+	const marketMutation = useMutation(async (marketIndex: number | null) => {
+		console.log(marketIndex, 'marketIndex');
 		// * 검색 후 각 마켓별 리스트
 		if (searchKeyword) {
-			const mutationData = await getSearchMarketData(marketData[marketIndex].id, searchKeyword, token)
+			const mutationData = await getSearchMarketData((marketIndex || marketIndex === 0) ? marketData[marketIndex].id : null, searchKeyword, token)
 			return mutationData
 		}
 		// * 요일별 각 마켓별 리스트
 		else if (date) {
-			const mutationData = await getMarketProduct(marketData[marketIndex].id, date, isPastItem ? token : "")
+			const mutationData = await getMarketProduct((marketIndex || marketIndex === 0) ? marketData[marketIndex].id : null, date, isPastItem ? token : "")
 			return mutationData
 		}
 	}, {
@@ -71,7 +75,7 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 
 	useEffect(() => {
 		if (marketData) {
-			setMarketInfo(marketData.map((v) => {
+			setMarketInfo([{ name: "전체", color: theme.color.marketColor.other, isClick: true, image: "" }, ...marketData.map((v) => {
 				switch (v.name) {
 					case "마켓컬리":
 						return { name: v.name, color: theme.color.marketColor.kurly, isClick: false, image: kurlyImage }
@@ -87,17 +91,16 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 						return { name: v.name, color: theme.color.marketColor.wingIt, isClick: false, image: wingItImage }
 					case "오아시스마켓":
 						return { name: v.name, color: theme.color.marketColor.oasis, isClick: false, image: oasisImage }
-					case "기타(직접입력)":
+					case "B마트":
+						return { name: v.name, color: theme.color.marketColor.bmart, isClick: false, image: bMartImage }
+					case "헬로네이처":
+						return { name: v.name, color: theme.color.marketColor.nature, isClick: false, image: natureImage }
+					case "기타":
 						return { name: v.name, color: theme.color.marketColor.other, isClick: false, image: etcImage }
 					default:
 						return { name: v.name, color: theme.color.marketColor.other, isClick: false, image: etcImage }
 				}
-			}).map((v, i) => {
-				if (i === 0) {
-					return { ...v, isClick: true }
-				}
-				return v
-			}))
+			})])
 		}
 	}, [marketData])
 	// * 카카오 공유하기 로직
@@ -105,6 +108,7 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 		//@ts-ignore
 		const { Kakao } = window
 		if (!marketQuery.data || marketQuery.data.length === 0) {
+			setIspopupOpen({ isOpen: true, content: "공유할 리스트가 없습니다" })
 			return
 		}
 		else if (marketQuery.data.length === 1) {
@@ -144,8 +148,8 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 						description: marketQuery.data[0]?.reviews[0].content,
 						imageUrl: '',
 						link: {
-							mobileWebUrl: '',
-							webUrl: '',
+							mobileWebUrl: url,
+							webUrl: url,
 						},
 					},
 					{
@@ -153,8 +157,8 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 						description: marketQuery.data[1]?.reviews[0].content,
 						imageUrl: '',
 						link: {
-							mobileWebUrl: '',
-							webUrl: '',
+							mobileWebUrl: url,
+							webUrl: url,
 						},
 					},
 					{
@@ -162,8 +166,8 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 						description: marketQuery.data[2]?.reviews[0].content,
 						imageUrl: '',
 						link: {
-							mobileWebUrl: '',
-							webUrl: '',
+							mobileWebUrl: url,
+							webUrl: url,
 						},
 					},
 				],
@@ -207,11 +211,32 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 				</Slide>
 				:
 				<Slide>
-					{React.Children.toArray(marketData?.map((v, i) =>
+					{/* <div>
+						<button
+							onClick={() => {
+								setClickAllButton(!clickAllButton)
+								setMarketInfo(marketInfo.map(v => ({ ...v, isClick: false })))
+							}}
+							style={{
+								fontSize: 16,
+								width: 100, height: 45, borderRadius: 22.5, marginRight: 10,
+								display: "flex", alignItems: "center", justifyContent: "center",
+								border: `1px solid ${clickAllButton ? theme.color.main : theme.color.grayscale.F2F3F6}`
+							}}>
+
+							전체
+						</button>
+					</div> */}
+					{React.Children.toArray([{ id: null, name: "전체" }, ...marketData]?.map((v, i) =>
 						<div onClick={async () => {
 							setSelectedIndex(i)
 							// * 마켓 클릭할때마다 새 데이터 호출
-							marketMutation.mutate(i)
+							if (i === 0) {
+								marketMutation.mutate(null)
+							}
+							else {
+								marketMutation.mutate(i - 1)
+							}
 							setMarketInfo(marketInfo.map((marketInfoV, marketInfoI) => {
 								if (i === marketInfoI) {
 									return { ...marketInfoV, isClick: true }
@@ -223,7 +248,8 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 								<Marketbutton
 									isClick={marketInfo[i].isClick}
 									marketImage={marketInfo[i].image}
-									marketColor={theme.color.marketColor.kurly}
+									marketColor={theme.color.main}
+									name={i === 0 ? marketInfo[i].name : ""}
 								/>
 							}
 						</div>
@@ -286,8 +312,8 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 										</div>
 										{
 											(selectedListIndex === arrayIndex) &&
-											React.Children.toArray(arrayItem.reviews.map(review =>
-												<Review review={review} />
+											React.Children.toArray(arrayItem.reviews.map((review, reviewIndex) =>
+												<Review review={review} reviewIndex={reviewIndex} />
 											))
 										}
 									</ListItem>

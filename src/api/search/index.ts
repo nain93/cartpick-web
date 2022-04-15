@@ -17,7 +17,7 @@ export async function getSearchMarketList(keyword: string, token: string) {
 	}
 }
 
-export async function getSearchMarketData(market_id: number, keyword: string, token: string) {
+export async function getSearchMarketData(market_id: number | null, keyword: string, token: string) {
 	const res = await axios.get(baseURL + "search/product/", {
 		params: {
 			keyword,
