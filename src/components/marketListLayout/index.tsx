@@ -56,7 +56,6 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 	})
 	const queryClient = useQueryClient()
 	const marketMutation = useMutation(async (marketIndex: number | null) => {
-		console.log(marketIndex, 'marketIndex');
 		// * 검색 후 각 마켓별 리스트
 		if (searchKeyword) {
 			const mutationData = await getSearchMarketData((marketIndex || marketIndex === 0) ? marketData[marketIndex].id : null, searchKeyword, token)
@@ -111,29 +110,6 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 			setIspopupOpen({ isOpen: true, content: "공유할 리스트가 없습니다" })
 			return
 		}
-		else if (marketQuery.data.length === 1) {
-			Kakao.Link.sendDefault({
-				objectType: "feed",
-				content: {
-					title: marketQuery.data[0].name, // 공유될 제목
-					description: marketQuery.data[0]?.reviews[0].content, // 공유될 설명
-					imageUrl: "", // 공유될 이미지 url
-					link: {
-						mobileWebUrl: url, // 공유될 모바일 URL
-						webUrl: url, // 공유될 웹 URL
-					},
-					buttons: [
-						{
-							title: '웹사이트로 이동',
-							link: {
-								mobileWebUrl: url,
-							},
-						},
-					]
-				},
-			});
-
-		}
 		else {
 			Kakao.Link.sendDefault({
 				objectType: 'list', // 메시지 형식 : 피드 타입
@@ -145,7 +121,7 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 				contents: [
 					{
 						title: marketQuery.data[0].name,
-						description: marketQuery.data[0]?.reviews[0].content,
+						description: marketQuery.data[0]?.reviews.length > 0 ? marketQuery.data[0]?.reviews[0].content : "",
 						imageUrl: '',
 						link: {
 							mobileWebUrl: url,
@@ -153,8 +129,8 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 						},
 					},
 					{
-						title: marketQuery.data[1].name,
-						description: marketQuery.data[1]?.reviews[0].content,
+						title: marketQuery.data[1]?.name || "",
+						description: marketQuery.data[1]?.reviews.length > 0 ? marketQuery.data[1]?.reviews[0].content : "",
 						imageUrl: '',
 						link: {
 							mobileWebUrl: url,
@@ -162,8 +138,8 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 						},
 					},
 					{
-						title: marketQuery.data[2]?.name,
-						description: marketQuery.data[2]?.reviews[0].content,
+						title: marketQuery.data[2]?.name || "",
+						description: marketQuery.data[2]?.reviews.length > 0 ? marketQuery.data[2]?.reviews[0].content : "",
 						imageUrl: '',
 						link: {
 							mobileWebUrl: url,
@@ -211,25 +187,10 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 				</Slide>
 				:
 				<Slide>
-					{/* <div>
-						<button
-							onClick={() => {
-								setClickAllButton(!clickAllButton)
-								setMarketInfo(marketInfo.map(v => ({ ...v, isClick: false })))
-							}}
-							style={{
-								fontSize: 16,
-								width: 100, height: 45, borderRadius: 22.5, marginRight: 10,
-								display: "flex", alignItems: "center", justifyContent: "center",
-								border: `1px solid ${clickAllButton ? theme.color.main : theme.color.grayscale.F2F3F6}`
-							}}>
-
-							전체
-						</button>
-					</div> */}
 					{React.Children.toArray([{ id: null, name: "전체" }, ...marketData]?.map((v, i) =>
 						<div onClick={async () => {
 							setSelectedIndex(i)
+							setSelectedListIndex(-1)
 							// * 마켓 클릭할때마다 새 데이터 호출
 							if (i === 0) {
 								marketMutation.mutate(null)

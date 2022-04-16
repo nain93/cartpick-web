@@ -13,7 +13,6 @@ export async function getMarketList() {
 }
 
 export async function getMarketProduct(id: number | null, date: string, token?: string) {
-	console.log(id, 'id');
 	if (token) {
 		const res = await axios.get(baseURL + "market/product/", {
 			params: {
