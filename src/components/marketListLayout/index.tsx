@@ -41,13 +41,13 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 	const setIspopupOpen = useSetRecoilState(popupState)
 
 	const marketQuery = useQuery<Array<MarketProductType> | null, Error>("marketData", async () => {
-		// * 검색후 나온 리스트 첫번째 데이터
+		// * 검색후 나온 전체 리스트 데이터
 		if (searchKeyword) {
 			const queryData = await getSearchMarketData(null, searchKeyword, token)
 			return queryData
 		}
 
-		// * 마켓 리스트를 불러오고 첫번째 마켓 상품데이터 
+		// * 마켓 리스트를 전체 리스트 데이터 
 		else if (date) {
 			const queryData = await getMarketProduct(null, date, isPastItem ? token : "")
 			return queryData

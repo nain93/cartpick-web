@@ -32,8 +32,8 @@ function Onboarding() {
 	})
 	const [loginLoading, setLoginLoading] = useState(false)
 	const [signUpData, setSignUpData] = useState<SignUpType>({
-		job: "",
-		household: "",
+		job: "학생",
+		household: "1인 가구",
 		market: []
 	})
 	const [marketOthers, setMarketOthers] = useState<Array<string>>([])
