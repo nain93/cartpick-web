@@ -331,6 +331,10 @@ const Slide = styled.div`
 const ListView = styled.div`
 	overflow: scroll;
 	margin-top: 20px;
+	padding-bottom:83px ;
+	@media screen and (max-width: 768px){
+		padding-bottom:0 ;
+	}
 `;
 
 const ListItem = styled.div`
