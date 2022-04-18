@@ -4,6 +4,8 @@ import closeIcon from "assets/icon/closeIcon.png"
 import searchIcon from "assets/icon/searchIcon.png"
 import theme from 'styles/theme';
 import { useNavigate } from 'react-router-dom';
+import { modalState, tokenState } from 'recoil/atoms';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 interface TopHeaderProps {
 	children: JSX.Element | string;
@@ -14,6 +16,8 @@ interface TopHeaderProps {
 
 function TopHeader({ children, backButton, closeButton, searchButton }: TopHeaderProps) {
 	const navigate = useNavigate()
+	const setModal = useSetRecoilState(modalState)
+	const token = useRecoilValue(tokenState)
 	return (
 		<Container>
 			{backButton ?
@@ -33,7 +37,19 @@ function TopHeader({ children, backButton, closeButton, searchButton }: TopHeade
 				</button>
 				:
 				searchButton ?
-					<button onClick={() => navigate("/search")}>
+					<button onClick={() => {
+						if (token) {
+							navigate("/search")
+						}
+						else {
+							setModal({
+								okText: "로그인 하기",
+								okButton: () => navigate("/login"),
+								content: "로그인이 필요한 서비스입니다.\n로그인 하시겠어요?",
+								isOpen: true
+							})
+						}
+					}}>
 						<img src={searchIcon} width={19} height={19} alt="searchIcon" />
 					</button>
 					:

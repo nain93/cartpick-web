@@ -351,9 +351,9 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 												<Review isFirstReview={reviewIndex === 0} review={review} reviewIndex={reviewIndex} />
 											))
 										}
-										<ShareButton onClick={() => handleShareItem(arrayItem)}>
+										{/* <ShareButton onClick={() => handleShareItem(arrayItem)}>
 											<img width={25} height={25} src={shareIcon} alt="shareIcon" />
-										</ShareButton>
+										</ShareButton> */}
 									</ListItem>
 								</div>
 							)

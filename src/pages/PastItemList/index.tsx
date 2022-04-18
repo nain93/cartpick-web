@@ -98,17 +98,17 @@ function PastItemList() {
 						}
 						else {
 							return (
-								<button onClick={() => handleGotoPastItem({ date: v })}>
+								<div onClick={() => handleGotoPastItem({ date: v })}>
 									<div style={{ display: "flex", minWidth: 155, fontSize: 14 }}>
 										<span>
 											{v}
 										</span>
-										<span style={{ marginLeft: 8 }}>
+										<span style={{ marginLeft: "auto" }}>
 											추천템 리스트
 										</span>
 									</div>
 									<img src={rightIcon} alt="rightIcon" width={20} height={20} />
-								</button>
+								</div>
 							)
 						}
 					})
@@ -153,7 +153,7 @@ const ListView = styled.div`
 	overflow: scroll;
 	margin-top: 35.5px;
 	padding:0 20px;
-	>a,>button:not(:last-child){
+	>a,>div:not(:last-child){
 		padding:14.5px 0;
 		height: 50px;
 		display: flex;
