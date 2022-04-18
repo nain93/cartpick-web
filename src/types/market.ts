@@ -20,6 +20,7 @@ export interface ReviewType {
 export interface MarketProductType {
 	id: number,
 	name: string,
+	market: string,
 	reviews: Array<ReviewType>,
 	reviewCount: number,
 	created: string

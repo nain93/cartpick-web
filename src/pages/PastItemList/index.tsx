@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import TopHeader from 'components/topHeader'
 import { Link, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
@@ -6,14 +6,19 @@ import theme from 'styles/theme'
 import rightIcon from "assets/icon/rightIcon.png"
 import { datebarFormat } from 'utils'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
-import { modalState, tokenState } from 'recoil/atoms'
+import { modalState, popupState, tokenState } from 'recoil/atoms'
+import LongButton from 'components/longButton'
 
-const lastList = datebarFormat()
+const formatDate = new Date();
+let month: number = formatDate.getMonth() + 1;
 
 function PastItemList() {
 	const navigate = useNavigate()
 	const setModal = useSetRecoilState(modalState)
 	const token = useRecoilValue(tokenState)
+	const setIspopupOpen = useSetRecoilState(popupState)
+	const [lastList, setLastList] = useState<Array<string>>(datebarFormat())
+	const [monthState, setMonthstate] = useState<number>(month)
 
 	const handleGotoPastItem = ({ date }: { date: string }) => {
 		if (token) {
@@ -29,6 +34,36 @@ function PastItemList() {
 		}
 	}
 
+	// * 요일별 추천템 리스트 더 불러오기
+	const handleLoadMoreDate = () => {
+		if ((monthState - 1) === 1) {
+			setIspopupOpen({ isOpen: true, content: "마지막 추천템 리스트입니다" })
+			return
+		}
+		setMonthstate(prev => prev - 1)
+		let day = 0
+
+		if ((monthState - 1) % 2 === 1) {
+			day = 31
+		}
+		else if ((monthState - 1) === 2) {
+			day = 28
+		}
+		else {
+			day = 30
+		}
+
+		const list = []
+		while (day > 0) {
+			list.push(formatDate.getFullYear() + '-' + ((monthState - 1) >= 10 ? (monthState - 1) : '0' + (monthState - 1)) + '-' + (day >= 10 ? day : '0' + day))
+			day = day - 1
+			if ((monthState - 1) === 2 && day === 22) {
+				break;
+			}
+		}
+		setLastList(lastList.concat(list))
+	}
+
 	return (
 		<Container>
 			<TopHeader searchButton={true}>
@@ -36,7 +71,7 @@ function PastItemList() {
 			</TopHeader>
 			<MainWrap>
 				<Title>
-					지난 추천템 모음
+					카톡방 추천템 모음
 				</Title>
 				<Desc>
 					카톡방의 후기를 매일 매일 모았어요.<br /><span style={{ fontWeight: "bold" }}>매일 밤 9시 30분,</span> 새로운 추천템이 업데이트됩니다.
@@ -78,6 +113,9 @@ function PastItemList() {
 						}
 					})
 					)}
+					<LongButton onClick={handleLoadMoreDate} buttonStyle={{ color: theme.color.main, width: "100%", marginTop: 40 }} color={theme.color.main}>
+						계속 보기
+					</LongButton>
 				</ListView>
 			</MainWrap>
 		</Container >
@@ -95,10 +133,11 @@ const Title = styled.h1`
 	font-weight: bold;
 	margin-top: 8.5px;
 	margin-bottom: 6px;
+	padding:0 20px;
 `
 
 const MainWrap = styled.div`
-	padding: 20px;
+	padding: 20px 0;
 	display: flex;
 	flex-direction: column;
 	height: calc(100vh - 50px);
@@ -106,13 +145,15 @@ const MainWrap = styled.div`
 
 const Desc = styled.span`
  	line-height: 1.43;
+	padding:0 20px;
 	color:${theme.color.grayscale.C_4C5463};
 `
 
 const ListView = styled.div`
 	overflow: scroll;
 	margin-top: 35.5px;
-	>a,>button{
+	padding:0 20px;
+	>a,>button:not(:last-child){
 		padding:14.5px 0;
 		height: 50px;
 		display: flex;

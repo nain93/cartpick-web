@@ -13,7 +13,9 @@ function LongButton({ children, color, buttonStyle, onClick, disabled }: LoginBu
 	return (
 		<Container onClick={disabled ? () => null : onClick}
 			buttonStyle={disabled ? { color: theme.color.grayscale.B7C3D4, backgroundColor: theme.color.grayscale.F2F3F6, border: "none" } : buttonStyle}
-			color={color}>{children}</Container>
+			color={color}>
+			{children}
+		</Container>
 	)
 }
 

@@ -19,6 +19,13 @@ import oasisImage from "assets/image/oasisImage.png"
 import etcImage from "assets/image/etcImage.png"
 import bMartImage from "assets/image/bmartImage.jpg"
 import natureImage from "assets/image/natureImage.jpg"
+import heartIcon from "assets/icon/reviewIcon/reviewHeartIcon.png"
+import roundIcon from "assets/icon/reviewIcon/reviewRoundIcon.png"
+import triangleIcon from "assets/icon/reviewIcon/reviewTriangleIcon.png"
+import closeIcon from "assets/icon/reviewIcon/reviewCloseIcon.png"
+import commentIcon from "assets/icon/reviewIcon/reviewCommentIcon.png"
+import shareIcon from "assets/icon/shareIcon.png"
+
 import { getSearchMarketData } from 'api/search'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
@@ -39,7 +46,6 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 	const token = useRecoilValue(tokenState)
 	const [listViewHeight, setListViewHeight] = useState("")
 	const setIspopupOpen = useSetRecoilState(popupState)
-
 	const marketQuery = useQuery<Array<MarketProductType> | null, Error>("marketData", async () => {
 		// * 검색후 나온 전체 리스트 데이터
 		if (searchKeyword) {
@@ -47,12 +53,15 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 			return queryData
 		}
 
-		// * 마켓 리스트를 전체 리스트 데이터 
+		// * 마켓 리스트 전체 리스트 데이터 
 		else if (date) {
 			const queryData = await getMarketProduct(null, date, isPastItem ? token : "")
 			return queryData
 		}
 
+	}, {
+		// * 윈도우 포커스시 데이터가 전체리스트로 덮어씌우는거 방지
+		refetchOnWindowFocus: false
 	})
 	const queryClient = useQueryClient()
 	const marketMutation = useMutation(async (marketIndex: number | null) => {
@@ -103,9 +112,9 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 		}
 	}, [marketData])
 	// * 카카오 공유하기 로직
+	//@ts-ignore
+	const { Kakao } = window
 	const handleShareList = () => {
-		//@ts-ignore
-		const { Kakao } = window
 		if (!marketQuery.data || marketQuery.data.length === 0) {
 			setIspopupOpen({ isOpen: true, content: "공유할 리스트가 없습니다" })
 			return
@@ -160,6 +169,48 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 		}
 	}
 
+	const handleShareItem = (marketItem: MarketProductType) => {
+		console.log(marketItem, 'marketItem');
+		Kakao.Link.sendDefault({
+			objectType: 'feed', // 메시지 형식 : 피드 타입
+			content: {
+				title: marketItem.market,
+				description: marketItem.name,
+				imageUrl: '이미지 주소', // 메인으로 보여질 이미지 주소
+				link: {
+					webUrl: url,
+					mobileWebUrl: url,
+				},
+			},
+			itemContent: {
+				profileText: "카트픽",
+				items: [
+					{
+						item: marketItem.reviews[0].author,
+						itemOp: marketItem.reviews[0].content
+					},
+					{
+						item: marketItem.reviews[1]?.author ? marketItem.reviews[1].author : "",
+						itemOp: marketItem.reviews[1]?.content ? marketItem.reviews[1].content : ""
+					},
+					{
+						item: marketItem.reviews[2]?.author ? marketItem.reviews[2].author : "",
+						itemOp: marketItem.reviews[2]?.content ? marketItem.reviews[2].content : ""
+					}
+				]
+			},
+			buttons: [
+				{
+					title: '웹 사이트로 이동', // 버튼 이름
+					link: {
+						webUrl: url,
+						mobileWebUrl: url,
+					},
+				},
+			],
+		});
+	}
+
 	// * marketData 캐싱 데이터삭제 (ui상 문제)
 	useEffect(() => {
 		return () => queryClient.removeQueries("marketData", { exact: true })
@@ -178,6 +229,29 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 		}
 	}, [])
 
+	// * 리뷰 만족도별 아이콘처리
+	const handleFilterIcon = (satisfaction: string) => {
+		switch (satisfaction) {
+			case "best": {
+				return heartIcon
+			}
+			case "better": {
+				return roundIcon
+			}
+			case "good": {
+				return triangleIcon
+			}
+			case "bad": {
+				return closeIcon
+			}
+			case "comment": {
+				return commentIcon
+			}
+			default: {
+				return ""
+			}
+		}
+	}
 
 	return (
 		<>
@@ -238,7 +312,13 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 							return (
 								<div>
 									<ListItem
-										onClick={() => {
+										style={{
+											marginLeft: selectedListIndex === arrayIndex ? 0 : 20,
+											paddingLeft: selectedListIndex === arrayIndex ? 20 : 0,
+											backgroundColor: selectedListIndex === arrayIndex ? theme.color.grayscale.F5F5F5 : theme.color.grayscale.FFFFF,
+										}}
+									>
+										<div onClick={() => {
 											if (arrayItem.reviewCount === 0) {
 												// * 리뷰 없으면 열리는 ui 비활성화 처리
 												return
@@ -248,14 +328,8 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 											} else {
 												setSelectedListIndex(arrayIndex);
 											}
-										}}
-										style={{
-											marginLeft: selectedListIndex === arrayIndex ? 0 : 20,
-											paddingLeft: selectedListIndex === arrayIndex ? 20 : 0,
-											backgroundColor: selectedListIndex === arrayIndex ? theme.color.grayscale.F5F5F5 : theme.color.grayscale.FFFFF,
-										}}
-									>
-										<div>
+										}}>
+											<img style={{ marginRight: 5, marginBottom: 3 }} src={handleFilterIcon(arrayItem.reviews[0].satisfaction)} width={15} height={15} alt="reviewIcon" />
 											<span
 												style={{
 													fontSize: 16,
@@ -274,9 +348,12 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 										{
 											(selectedListIndex === arrayIndex) &&
 											React.Children.toArray(arrayItem.reviews.map((review, reviewIndex) =>
-												<Review review={review} reviewIndex={reviewIndex} />
+												<Review isFirstReview={reviewIndex === 0} review={review} reviewIndex={reviewIndex} />
 											))
 										}
+										<ShareButton onClick={() => handleShareItem(arrayItem)}>
+											<img width={25} height={25} src={shareIcon} alt="shareIcon" />
+										</ShareButton>
 									</ListItem>
 								</div>
 							)
@@ -339,13 +416,13 @@ const ListView = styled.div`
 
 const ListItem = styled.div`
 	cursor: pointer;
+	position: relative;
 	min-height: 53px;
 	border-bottom: 1px solid ${theme.color.grayscale.F2F3F6};
 	display: flex;
 	align-items: center;
-	padding:14.5px 0;
-	position: relative;
 	>div:first-child{
+		padding: 14.5px 0;
 		display: flex;
 		align-items: center;
 		width: calc(100% - 40px);
@@ -360,6 +437,20 @@ const UpDownIcon = styled.img`
 	right: 20px;
 `
 
+const ShareButton = styled.button`
+	font-size: 12px;
+	position: absolute;
+	top: 68px;
+	right: 20px; 
+	border-radius: 5px;
+	border:1px solid ${theme.color.grayscale.B7C3D4};
+	background-color: ${theme.color.grayscale.FFFFF};
+	padding: 2px 3px;
+	display: flex;
+	img{
+		object-fit: contain;
+	}
+`
 
 const Tag = styled.span`
 	height: 20px;
