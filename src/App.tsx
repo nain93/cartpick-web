@@ -64,7 +64,8 @@ function App() {
 			<Container>
 				<Routes>
 					<Route path='*' element={<NotFound />} />
-					<Route path="/" element={<Main />} />
+					<Route path="/" element={<PastItemList />} />
+					<Route path="/today" element={<Main />} />
 					{!token ?
 						<>
 							<Route path="/login" element={<Login />} />
@@ -74,8 +75,7 @@ function App() {
 						<>
 							<Route path="/mypage" element={<Mypage />} />
 							<Route path="/mypage/edit" element={<EditMypage />} />
-							<Route path="/pastItemList" element={<PastItemList />} />
-							<Route path="/pastItemList/:id" element={<PastDetail />} />
+							<Route path="/list/:id" element={<PastDetail />} />
 							<Route path="/search" element={<Search />} />
 						</>
 					}

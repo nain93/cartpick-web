@@ -5,15 +5,33 @@ import styled from 'styled-components'
 import theme from 'styles/theme'
 import rightIcon from "assets/icon/rightIcon.png"
 import { datebarFormat } from 'utils'
+import { useRecoilValue, useSetRecoilState } from 'recoil'
+import { modalState, tokenState } from 'recoil/atoms'
 
 const lastList = datebarFormat()
 
 function PastItemList() {
 	const navigate = useNavigate()
+	const setModal = useSetRecoilState(modalState)
+	const token = useRecoilValue(tokenState)
+
+	const handleGotoPastItem = ({ date }: { date: string }) => {
+		if (token) {
+			navigate(`/list/${date}`, { state: { ispastItem: true } })
+		}
+		else {
+			setModal({
+				okText: "로그인 하기",
+				okButton: () => navigate("/login"),
+				content: "로그인이 필요한 서비스입니다.\n로그인 하시겠어요?",
+				isOpen: true
+			})
+		}
+	}
 
 	return (
 		<Container>
-			<TopHeader backButton={() => navigate(-1)} searchButton={true}>
+			<TopHeader searchButton={true}>
 				추천템 더보기
 			</TopHeader>
 			<MainWrap>
@@ -27,7 +45,7 @@ function PastItemList() {
 					{React.Children.toArray(lastList.map((v, i) => {
 						if (i === 0) {
 							return (
-								<Link to={"/"}>
+								<Link to={"/today"}>
 									<div style={{ display: "flex", position: "relative", minWidth: 155, justifyContent: "center" }}>
 										<span>
 											{v}
@@ -44,22 +62,14 @@ function PastItemList() {
 							)
 						}
 						else {
-							// todo 지난 추천템에서 넘어오면 state 안주고 뒤로가기
-							// todo 공유하기로 넘어오면 /으로 리다이렉팅
-							// todo 공유하기로 넘어왔는데 로그아웃 상태일경우 팝업창 띄워서 로그인화면으로 넘어갈수있게
 							return (
-								<button onClick={() => navigate(`/pastItemList/${v}`, { state: { ispastItem: true } })}>
+								<button onClick={() => handleGotoPastItem({ date: v })}>
 									<div style={{ display: "flex", minWidth: 155, fontSize: 14 }}>
 										<span>
 											{v}
 										</span>
 										<span style={{ marginLeft: 8 }}>
 											추천템 리스트
-											{i === 0 &&
-												<span
-													style={{ fontWeight: "bold", marginLeft: 5, color: theme.color.main }}>
-													NEW</span>
-											}
 										</span>
 									</div>
 									<img src={rightIcon} alt="rightIcon" width={20} height={20} />

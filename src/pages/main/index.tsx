@@ -9,8 +9,8 @@ import { getUserProfile, userLogout } from "api/user";
 import { getMarketList } from "api/market";
 import { useMutation, useQuery } from "react-query"
 import { UserDataType } from "types/user";
-import { modalState, tokenState } from "recoil/atoms";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { tokenState } from "recoil/atoms";
+import { useRecoilState } from "recoil";
 import MarketListLayout from "components/marketListLayout";
 import axios from "axios";
 
@@ -18,7 +18,6 @@ const date = dateFormatForSendBack()
 
 function Main() {
 	const navigate = useNavigate()
-	const setModal = useSetRecoilState(modalState)
 	const [token, setToken] = useRecoilState(tokenState)
 	const userLogoutMutaion = useMutation(() => userLogout())
 	const userQuery = useQuery<UserDataType, Error>(["userData", token], () => getUserProfile(token),
@@ -43,19 +42,6 @@ function Main() {
 	const { data } = useQuery<Array<{ id: number, name: string }>, Error>("marketList", () => getMarketList())
 
 
-	const handleGotoPastItem = () => {
-		if (token) {
-			navigate("/pastItemList")
-		}
-		else {
-			setModal({
-				okText: "로그인 하기",
-				okButton: () => navigate("/login"),
-				content: "로그인이 필요한 서비스입니다.\n로그인 하시겠어요?",
-				isOpen: true
-			})
-		}
-	}
 	return (
 		<>
 			<Container>
@@ -76,7 +62,7 @@ function Main() {
 						<span style={{ fontWeight: "bold" }}>{dateSimpleFormat()}</span>
 						에 나온 추천템이에요
 					</span>
-					<LastItemButton onClick={handleGotoPastItem}
+					<LastItemButton onClick={() => navigate("/")}
 					>
 						{`지난 추천템 보기 >`}
 					</LastItemButton>
