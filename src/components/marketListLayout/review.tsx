@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import React, { RefObject, useEffect, useState } from 'react'
 import styled from 'styled-components';
 import theme from 'styles/theme';
 import { ReviewType } from 'types/market';
@@ -11,7 +11,7 @@ import commentIcon from "assets/icon/reviewIcon/reviewCommentIcon.png"
 interface ReviewPropType {
 	review: ReviewType,
 	reviewIndex: number,
-	isFirstReview: boolean
+	isFirstReview: boolean,
 }
 
 function Review({ review, reviewIndex, isFirstReview }: ReviewPropType) {
@@ -47,6 +47,7 @@ function Review({ review, reviewIndex, isFirstReview }: ReviewPropType) {
 	}, [])
 
 
+	// console.log(review, 'review');
 	return (
 		<ListMore isFirstReview={isFirstReview}>
 			<div>
@@ -67,6 +68,9 @@ function Review({ review, reviewIndex, isFirstReview }: ReviewPropType) {
 					<MoreTextBox>
 						<span>{review.content}</span>
 					</MoreTextBox>
+				}
+				{review.images.length > 0 &&
+					React.Children.toArray(review.images.map(v => <img src={v.image} width={20} height={20} alt="reviewImage" />))
 				}
 			</div>
 		</ListMore>
