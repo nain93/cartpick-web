@@ -22,6 +22,17 @@ export const getNewToken = async () => {
 	})
 }
 
+export const getEventPopup = async () => {
+	const res = await axios.get(baseURL + "notice/popup/", {
+		headers: {
+			"Content-Type": "application/json"
+		}
+	});
+	if (res) {
+		return res.data
+	}
+}
+
 interface errorHandlerType {
 	method: "get" | "post" | "delete" | "patch",
 	url: string,

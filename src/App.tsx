@@ -14,17 +14,25 @@ import CustomModal from "components/customModal";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { modalState, popupState, tokenState } from "recoil/atoms";
 import NotFound from "pages/notFound";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import ReactGA from 'react-ga';
-import { getNewToken } from "api";
+import { getEventPopup, getNewToken } from "api";
 import AlertPopup from "components/alertPopup";
+import EventPopup from "components/eventPopup";
+import { useQuery } from "react-query";
 
 function App() {
 	const [token, setToken] = useRecoilState(tokenState)
 	const isModalOpen = useRecoilValue(modalState)
 	const [isPopupOpen, setIsPopupOpen] = useRecoilState(popupState)
+	const [isEventOpen, setIsEventOpen] = useState(false)
 	const location = useLocation()
 
+	// const eventQuery = useQuery("eventQuery", getEventPopup, {
+	// 	refetchOnWindowFocus: false
+	// })
+
+	// console.log(eventQuery.data, 'eventQuery.data');
 	useEffect(() => {
 		// * 구글 애널리틱스 추적
 		if (process.env.NODE_ENV === "production") {
@@ -58,6 +66,21 @@ function App() {
 		}
 	}, [isPopupOpen])
 
+	// * 이벤트 팝업 세팅
+	// useEffect(() => {
+	// 	const event = localStorage.getItem("eventpopup")
+	// 	if (event === "true") {
+	// 		setIsEventOpen(true)
+	// 	}
+	// 	else if (event === null) {
+	// 		setIsEventOpen(true)
+	// 		localStorage.setItem("eventpopup", JSON.stringify(true))
+	// 	}
+	// 	else if (event === "false") {
+	// 		setIsEventOpen(false)
+	// 	}
+	// }, [])
+
 	return (
 		<>
 			<GlobalStyles />
@@ -80,6 +103,9 @@ function App() {
 						</>
 					}
 				</Routes>
+				{isEventOpen &&
+					<EventPopup isEventOpen={isEventOpen} setIsEventOpen={(isOpen: boolean) => setIsEventOpen(isOpen)} />
+				}
 				<AlertPopup popupStyle={isPopupOpen.isOpen ? { opacity: 1 } : { opacity: 0 }} >
 					{isPopupOpen.content}
 				</AlertPopup>

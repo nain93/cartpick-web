@@ -46,8 +46,6 @@ function Review({ review, reviewIndex, isFirstReview }: ReviewPropType) {
 		}
 	}, [])
 
-
-	// console.log(review, 'review');
 	return (
 		<ListMore isFirstReview={isFirstReview}>
 			<div>
@@ -66,11 +64,15 @@ function Review({ review, reviewIndex, isFirstReview }: ReviewPropType) {
 				</div>
 				{review.content &&
 					<MoreTextBox>
-						<span>{review.content}</span>
+						{review.images.length > 0 &&
+							<div style={{ marginRight: 10 }}>
+								<img src={review.images[0].image} width={50} height={50} alt="reviewImage" />
+							</div>
+						}
+						<div>
+							<span>{review.content}</span>
+						</div>
 					</MoreTextBox>
-				}
-				{review.images.length > 0 &&
-					React.Children.toArray(review.images.map(v => <img src={v.image} width={20} height={20} alt="reviewImage" />))
 				}
 			</div>
 		</ListMore>
@@ -91,6 +93,7 @@ const ListMore = styled.div<{ isFirstReview: boolean }>`
 `;
 
 const MoreTextBox = styled.div`
+	display: flex;
 	width:calc(100% - 20px) ;
 	margin-left: 20px;
 	margin-top: 9px;

@@ -130,7 +130,7 @@ function ListItem({ list, listIndex, selectedListIndex, setSelectedListIndex }: 
 						fontWeight: selectedListIndex === listIndex ? 'bold' : 'normal',
 					}}
 				>
-					{list.name}
+					{list.name.includes("None") ? list.name.replace("None", "") : list.name}
 					<Tag>{list.reviewCount}</Tag>
 				</span>
 				<UpDownIcon src={downIcon}
