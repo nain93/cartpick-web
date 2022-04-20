@@ -85,6 +85,7 @@ const Header = styled.section`
 	flex-direction: column;
 	padding: 20px;
 	position: fixed;
+	max-width: 768px;
 	top:0px;
 	background-color: ${theme.color.grayscale.FFFFF};
 	width: 100%;

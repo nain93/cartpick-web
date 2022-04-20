@@ -41,6 +41,8 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 	const token = useRecoilValue(tokenState)
 	const setIspopupOpen = useSetRecoilState(popupState)
 	const viewRef = useRef<HTMLDivElement>(null)
+	const [topHeight, setTopHeight] = useState("")
+	const [bottomPadding, setBottomPadding] = useState("")
 
 	const marketQuery = useQuery<Array<MarketProductType> | null, Error>("marketData", async () => {
 		// * 검색후 나온 전체 리스트 데이터
@@ -165,11 +167,26 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 		}
 	}
 
-
 	// * marketData 캐싱 데이터삭제 (ui상 문제)
 	useEffect(() => {
 		return () => queryClient.removeQueries("marketData", { exact: true })
 	}, [queryClient])
+
+	// * listView 화면마다 다르게 높이설정
+	useEffect(() => {
+		if (isPastItem) {
+			setTopHeight("140px")
+			setBottomPadding("190px")
+		}
+		else if (!isPastItem && date) {
+			setTopHeight("120px")
+			setBottomPadding("220px")
+		}
+		else {
+			setTopHeight("120px)")
+			setBottomPadding("100px")
+		}
+	}, [])
 
 	return (
 		<>
@@ -178,7 +195,7 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 					<EmptyDiv />
 				</Slide>
 				:
-				<SlideWrap isPastItem={isPastItem}>
+				<SlideWrap style={{ top: topHeight }}>
 					<Slide>
 						{React.Children.toArray([{ id: null, name: "전체" }, ...marketData]?.map((v, i) =>
 							<div onClick={async () => {
@@ -216,7 +233,7 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 					}
 				</SlideWrap>
 			}
-			<ListView ref={viewRef}  >
+			<ListView bottom={bottomPadding} search={!isPastItem && !date} ref={viewRef}  >
 				{(marketQuery.isLoading || !marketQuery.data) ?
 					<div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%" }} />
 					:
@@ -250,13 +267,12 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 	)
 }
 
-const SlideWrap = styled.div<{ isPastItem: boolean }>`
+const SlideWrap = styled.div`
 	position: fixed;
 	@media screen and (max-width: 768px) {
 		width: 100%;
 	}
 	max-width: 768px;
-	top:${props => props.isPastItem ? "140px" : "120px"};
 	z-index: 3;
 	background-color: ${theme.color.grayscale.FFFFF};
 `
@@ -292,12 +308,12 @@ const Slide = styled.div`
 	overflow: scroll;
 `;
 
-const ListView = styled.div`
-	padding-top: 250px;
+const ListView = styled.div<{ search: boolean, bottom: string }>`
+	padding-top: ${props => props.bottom};
 	overflow: scroll;
 	margin-top: 20px;
 	@media screen and (max-width: 768px){
-		padding-top: 170px;
+		padding-top: ${props => props.bottom};
 		padding-bottom:0 ;
 	}
 `;

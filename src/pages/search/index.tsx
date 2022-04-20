@@ -93,6 +93,10 @@ function Search() {
 						<img src={inputSearchIcon} width={19} height={19} alt="searchIcon" />
 					</button>
 				</InputWrap>
+				{searchMutation.data &&
+					<div style={{ padding: "0 20px", marginTop: 40 }}>
+						<span>총 {searchMutation.data.length}개의 검색결과</span>
+					</div>}
 				{searchMutation.data ?
 					(
 						// * 빈 검색 화면 (검색 결과 없을때)
