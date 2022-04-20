@@ -2,7 +2,6 @@ import GlobalStyles from "Globalstyles";
 import { Route, Routes, useLocation } from "react-router-dom";
 import styled from "styled-components";
 
-import Main from "pages/main";
 import Login from "pages/login";
 import Mypage from "pages/mypage";
 import EditMypage from "pages/mypage/editMypage";
@@ -20,6 +19,8 @@ import { getEventPopup, getNewToken } from "api";
 import AlertPopup from "components/alertPopup";
 import EventPopup from "components/eventPopup";
 import { useQuery } from "react-query";
+import Today from "pages/today";
+import { EventQueryType } from "types/others";
 
 function App() {
 	const [token, setToken] = useRecoilState(tokenState)
@@ -28,11 +29,10 @@ function App() {
 	const [isEventOpen, setIsEventOpen] = useState(false)
 	const location = useLocation()
 
-	// const eventQuery = useQuery("eventQuery", getEventPopup, {
-	// 	refetchOnWindowFocus: false
-	// })
+	const eventQuery = useQuery<EventQueryType>("eventQuery", getEventPopup, {
+		refetchOnWindowFocus: false
+	})
 
-	// console.log(eventQuery.data, 'eventQuery.data');
 	useEffect(() => {
 		// * 구글 애널리틱스 추적
 		if (process.env.NODE_ENV === "production") {
@@ -67,19 +67,19 @@ function App() {
 	}, [isPopupOpen])
 
 	// * 이벤트 팝업 세팅
-	// useEffect(() => {
-	// 	const event = localStorage.getItem("eventpopup")
-	// 	if (event === "true") {
-	// 		setIsEventOpen(true)
-	// 	}
-	// 	else if (event === null) {
-	// 		setIsEventOpen(true)
-	// 		localStorage.setItem("eventpopup", JSON.stringify(true))
-	// 	}
-	// 	else if (event === "false") {
-	// 		setIsEventOpen(false)
-	// 	}
-	// }, [])
+	useEffect(() => {
+		const event = localStorage.getItem("eventpopup")
+		if (event === "true") {
+			setIsEventOpen(true)
+		}
+		else if (event === null) {
+			setIsEventOpen(true)
+			localStorage.setItem("eventpopup", JSON.stringify(true))
+		}
+		else if (event === "false") {
+			setIsEventOpen(false)
+		}
+	}, [])
 
 	return (
 		<>
@@ -88,7 +88,7 @@ function App() {
 				<Routes>
 					<Route path='*' element={<NotFound />} />
 					<Route path="/" element={<PastItemList />} />
-					<Route path="/today" element={<Main />} />
+					<Route path="/today" element={<Today />} />
 					{!token ?
 						<>
 							<Route path="/login" element={<Login />} />
@@ -103,10 +103,10 @@ function App() {
 						</>
 					}
 				</Routes>
-				{isEventOpen &&
-					<EventPopup isEventOpen={isEventOpen} setIsEventOpen={(isOpen: boolean) => setIsEventOpen(isOpen)} />
+				{(isEventOpen && eventQuery.data?.title) &&
+					<EventPopup {...eventQuery.data} setIsEventOpen={(isOpen: boolean) => setIsEventOpen(isOpen)} />
 				}
-				<AlertPopup popupStyle={isPopupOpen.isOpen ? { opacity: 1 } : { opacity: 0 }} >
+				<AlertPopup popupStyle={isPopupOpen.isOpen ? { opacity: 1, zIndex: 2 } : { opacity: 0, zIndex: -1 }} >
 					{isPopupOpen.content}
 				</AlertPopup>
 				{isModalOpen.isOpen &&

@@ -1,7 +1,7 @@
 export function dateSimpleFormat() {
 	const formatDate = new Date();
 	let month: string | number = formatDate.getMonth() + 1;
-	let day: string | number = formatDate.getDate();
+	let day: string | number = formatDate.getDate() - 1;
 
 	return month + "월 " + day + "일";
 }
@@ -9,7 +9,7 @@ export function dateSimpleFormat() {
 export function datebarFormat() {
 	const formatDate = new Date();
 	let month: string | number = formatDate.getMonth() + 1;
-	let day: string | number = formatDate.getDate();
+	let day: string | number = formatDate.getDate() - 1;
 
 	const list = []
 	while (day > 0) {

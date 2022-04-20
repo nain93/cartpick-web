@@ -1,19 +1,25 @@
 import React from 'react'
 import styled from 'styled-components'
 import theme from 'styles/theme'
-import partyIcon from "assets/icon/partyIcon.png"
 import LongButton from 'components/longButton'
+import { useNavigate } from 'react-router-dom'
+import { EventQueryType } from 'types/others'
 
 interface EventPopupType {
-	isEventOpen: boolean;
 	setIsEventOpen: (isOpen: boolean) => void;
 }
 
-function EventPopup({ isEventOpen, setIsEventOpen }: EventPopupType) {
+function EventPopup({ setIsEventOpen, title, content, tags, objectId }: EventPopupType & EventQueryType) {
+	const navigate = useNavigate()
 
 	const handlePopupClose = () => {
 		localStorage.setItem("eventpopup", JSON.stringify(false))
 		setIsEventOpen(false)
+	}
+
+	const handleGoItem = () => {
+		setIsEventOpen(false)
+		navigate(`/list/2022-04-19?id=${objectId}`)
 	}
 
 	return (
@@ -25,12 +31,13 @@ function EventPopup({ isEventOpen, setIsEventOpen }: EventPopupType) {
 						<h1>🎉 축하드려요!</h1>
 						<Content>
 							<span style={{ fontSize: 16 }}>오늘의 맛도리 당첨</span>
-							<span style={{ fontSize: 30, marginTop: 5, fontWeight: "bold" }}>ㅇㅇㅇ님</span>
+							<span style={{ fontSize: 30, marginTop: 5, fontWeight: "bold" }}>{title}님</span>
 							<span style={{ fontSize: 12, marginTop: 16, color: theme.color.grayscale.C_4C5463 }}>오픈카톡방에서 방장에게 연락주세요!</span>
 						</Content>
 						<ButtonWrap>
-							<span>오늘의 선물 : #감자빵 #촉촉 #존맛</span>
-							<LongButton onClick={() => console.log("click")}
+							<span>오늘의 선물 : </span>
+							{React.Children.toArray(tags?.map(v => <span>{v} </span>))}
+							<LongButton onClick={handleGoItem}
 								color={theme.color.main}
 								buttonStyle={{ marginTop: 13, width: "100%", backgroundColor: theme.color.main, color: theme.color.grayscale.FFFFF }} >
 								추천템 보러가기

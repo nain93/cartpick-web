@@ -20,7 +20,6 @@ const Container = styled.div`
 	width: 100%;
 	z-index: 999;
 	transition: all ease-in-out 0.3s;
-	z-index: -1;
 	div{
 		font-size: 12px;
 		padding: 10px 40px;

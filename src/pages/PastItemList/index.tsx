@@ -98,7 +98,7 @@ function PastItemList() {
 						}
 						else {
 							return (
-								<div onClick={() => handleGotoPastItem({ date: v })}>
+								<div onClick={() => handleGotoPastItem({ date: v })} style={{ cursor: "pointer" }}>
 									<div style={{ display: "flex", minWidth: 155, fontSize: 14 }}>
 										<span>
 											{v}

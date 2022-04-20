@@ -16,7 +16,7 @@ import axios from "axios";
 
 const date = dateFormatForSendBack()
 
-function Main() {
+function Today() {
 	const navigate = useNavigate()
 	const [token, setToken] = useRecoilState(tokenState)
 	const userLogoutMutaion = useMutation(() => userLogout())
@@ -103,4 +103,4 @@ const LastItemButton = styled.div`
 	cursor: pointer;
 `;
 
-export default Main
+export default Today

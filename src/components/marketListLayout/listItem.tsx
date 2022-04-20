@@ -12,6 +12,7 @@ import styled from 'styled-components'
 import theme from 'styles/theme'
 import downIcon from "assets/icon/downIcon.png"
 import { MarketProductType } from 'types/market'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 interface ListItemPropType {
 	list: MarketProductType;
@@ -22,6 +23,8 @@ interface ListItemPropType {
 
 function ListItem({ list, listIndex, selectedListIndex, setSelectedListIndex }: ListItemPropType) {
 	const url = window.location.href
+	const location = useLocation()
+	const navigate = useNavigate()
 	const listRef = useRef<HTMLDivElement>(null)
 
 	// * 리뷰 만족도별 아이콘처리
@@ -51,7 +54,6 @@ function ListItem({ list, listIndex, selectedListIndex, setSelectedListIndex }: 
 	const handleShareItem = (marketItem: MarketProductType) => {
 		//@ts-ignore
 		const { Kakao } = window
-		console.log(marketItem, 'marketItem');
 		Kakao.Link.sendDefault({
 			objectType: 'feed', // 메시지 형식 : 피드 타입
 			content: {
@@ -84,21 +86,23 @@ function ListItem({ list, listIndex, selectedListIndex, setSelectedListIndex }: 
 				{
 					title: '웹 사이트로 이동', // 버튼 이름
 					link: {
-						webUrl: url,
-						mobileWebUrl: url,
+						webUrl: `${url}?id=${list.id}`,
+						mobileWebUrl: `${url}?id=${list.id}`,
 					},
 				},
 			],
 		});
 	}
-
 	// * 해당 아이템으로 포커싱
-	// useEffect(() => {
-	// 	if (list.id === 6920) {
-	// 		setSelectedListIndex(listIndex)
-	// 		listRef.current?.scrollIntoView({ behavior: 'smooth', block: "start" })
-	// 	}
-	// }, [list.id, selectedListIndex])
+	useEffect(() => {
+		if (list.id === Number(location.search.replace("?id=", ""))) {
+			setSelectedListIndex(listIndex)
+			listRef.current?.scrollIntoView({ behavior: 'smooth', block: "start" })
+			setTimeout(() => {
+				navigate(location.pathname, { replace: true })
+			}, 500)
+		}
+	}, [selectedListIndex, list.id])
 
 	return (
 		<Container ref={listRef}
@@ -143,9 +147,11 @@ function ListItem({ list, listIndex, selectedListIndex, setSelectedListIndex }: 
 					<Review isFirstReview={reviewIndex === 0} review={review} reviewIndex={reviewIndex} />
 				))
 			}
-			{/* <ShareButton onClick={() => handleShareItem(arrayItem)}>
-											<img width={25} height={25} src={shareIcon} alt="shareIcon" />
-										</ShareButton> */}
+			{selectedListIndex === listIndex &&
+				<ShareButton onClick={() => handleShareItem(list)}>
+					<img width={25} height={25} src={shareIcon} alt="shareIcon" />
+				</ShareButton>
+			}
 		</Container>
 	)
 }
@@ -176,7 +182,7 @@ const UpDownIcon = styled.img`
 const ShareButton = styled.button`
 	font-size: 12px;
 	position: absolute;
-	top: 68px;
+	top: 63px;
 	right: 20px; 
 	border-radius: 5px;
 	border:1px solid ${theme.color.grayscale.B7C3D4};
