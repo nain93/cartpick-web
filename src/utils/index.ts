@@ -23,7 +23,7 @@ export function datebarFormat() {
 export function dateFormatForSendBack() {
 	const formatDate = new Date();
 	let month: string | number = formatDate.getMonth() + 1;
-	let day: string | number = formatDate.getDate();
+	let day: string | number = formatDate.getDate() - 1;
 	let second: string | number = formatDate.getSeconds();
 
 	month = month >= 10 ? month : '0' + month;

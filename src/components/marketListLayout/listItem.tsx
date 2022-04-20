@@ -96,8 +96,10 @@ function ListItem({ list, listIndex, selectedListIndex, setSelectedListIndex }: 
 	// * 해당 아이템으로 포커싱
 	useEffect(() => {
 		if (list.id === Number(location.search.replace("?id=", ""))) {
+			console.log(listIndex, 'listIndex');
+			console.log(list.id, 'list.id');
 			setSelectedListIndex(listIndex)
-			listRef.current?.scrollIntoView({ behavior: 'smooth', block: "start" })
+			listRef.current?.scrollIntoView({ behavior: 'smooth', block: "center" })
 			setTimeout(() => {
 				navigate(location.pathname, { replace: true })
 			}, 500)

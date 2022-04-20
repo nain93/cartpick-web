@@ -41,7 +41,11 @@ function PastDetail() {
 			}}>
 				{`${params.id} 추천템 리스트`}
 			</TopHeader>
-			<div style={{ padding: 20 }}>
+			<div style={{
+				padding: "20px 20px 15px 20px", width: "100%", position: "fixed", top: 50, zIndex: 3,
+
+				backgroundColor: theme.color.grayscale.FFFFF
+			}}>
 				<Title>{month}월 {date}일의 추천템</Title>
 				<Desc>
 					<span style={{ fontWeight: "bold" }}>{month}월 {date}일</span> 에 올라온 추천템이에요

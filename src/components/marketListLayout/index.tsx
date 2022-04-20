@@ -39,7 +39,6 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 	const [selectedListIndex, setSelectedListIndex] = useState(-1)
 	const [marketInfo, setMarketInfo] = useState<Array<MarketInfoprops>>([])
 	const token = useRecoilValue(tokenState)
-	const [listViewHeight, setListViewHeight] = useState("")
 	const setIspopupOpen = useSetRecoilState(popupState)
 	const viewRef = useRef<HTMLDivElement>(null)
 
@@ -172,19 +171,6 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 		return () => queryClient.removeQueries("marketData", { exact: true })
 	}, [queryClient])
 
-	// * listView 화면마다 다르게 높이설정
-	useEffect(() => {
-		if (isPastItem) {
-			setListViewHeight("calc(100vh - 400px)")
-		}
-		else if (!isPastItem && date) {
-			setListViewHeight("calc(100vh - 380px)")
-		}
-		else {
-			setListViewHeight("calc(100vh - 280px)")
-		}
-	}, [])
-
 	return (
 		<>
 			{marketQuery.isLoading ?
@@ -192,42 +178,45 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 					<EmptyDiv />
 				</Slide>
 				:
-				<Slide>
-					{React.Children.toArray([{ id: null, name: "전체" }, ...marketData]?.map((v, i) =>
-						<div onClick={async () => {
-							setSelectedIndex(i)
-							setSelectedListIndex(-1)
-							// * 마켓 클릭할때마다 새 데이터 호출
-							if (i === 0) {
-								marketMutation.mutate(null)
-							}
-							else {
-								marketMutation.mutate(i - 1)
-							}
-							setMarketInfo(marketInfo.map((marketInfoV, marketInfoI) => {
-								if (i === marketInfoI) {
-									return { ...marketInfoV, isClick: true }
+				<SlideWrap isPastItem={isPastItem}>
+					<Slide>
+						{React.Children.toArray([{ id: null, name: "전체" }, ...marketData]?.map((v, i) =>
+							<div onClick={async () => {
+								setSelectedIndex(i)
+								setSelectedListIndex(-1)
+								// * 마켓 클릭할때마다 새 데이터 호출
+								if (i === 0) {
+									marketMutation.mutate(null)
 								}
-								return { ...marketInfoV, isClick: false }
-							}))
-						}}>
-							{marketInfo.length !== 0 &&
-								<Marketbutton
-									isClick={marketInfo[i].isClick}
-									marketImage={marketInfo[i].image}
-									marketColor={theme.color.main}
-									name={i === 0 ? marketInfo[i].name : ""}
-								/>
-							}
-						</div>
-					))}
-				</Slide>}
-			{marketInfo.length !== 0 &&
-				<h1 style={{ marginTop: 20, marginLeft: 20, fontSize: 16, fontWeight: "bold", color: marketInfo[selectedIndex].color }}>
-					{marketInfo[selectedIndex].name}
-				</h1>
+								else {
+									marketMutation.mutate(i - 1)
+								}
+								setMarketInfo(marketInfo.map((marketInfoV, marketInfoI) => {
+									if (i === marketInfoI) {
+										return { ...marketInfoV, isClick: true }
+									}
+									return { ...marketInfoV, isClick: false }
+								}))
+							}}>
+								{marketInfo.length !== 0 &&
+									<Marketbutton
+										isClick={marketInfo[i].isClick}
+										marketImage={marketInfo[i].image}
+										marketColor={theme.color.main}
+										name={i === 0 ? marketInfo[i].name : ""}
+									/>
+								}
+							</div>
+						))}
+					</Slide>
+					{marketInfo.length !== 0 &&
+						<h1 style={{ paddingBottom: 10, marginTop: 20, marginLeft: 20, fontSize: 16, fontWeight: "bold", color: marketInfo[selectedIndex].color }}>
+							{marketInfo[selectedIndex].name}
+						</h1>
+					}
+				</SlideWrap>
 			}
-			<ListView ref={viewRef} style={{ height: listViewHeight }}  >
+			<ListView ref={viewRef}  >
 				{(marketQuery.isLoading || !marketQuery.data) ?
 					<div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%" }} />
 					:
@@ -249,19 +238,28 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 							)
 						})))
 				}
+				{(date && marketQuery.data && marketQuery.data?.length !== 0) &&
+					<div style={{ width: "100%", maxWidth: 768, padding: "40px 0", backgroundColor: theme.color.grayscale.F5F5F5 }}>
+						<LongButton onClick={handleShareList} buttonStyle={{ color: theme.color.grayscale.C_4C5463 }} color={theme.color.grayscale.B7C3D4}>
+							리스트 공유하기
+						</LongButton>
+					</div>
+				}
 			</ListView>
-			{date &&
-				<div style={{ position: "fixed", bottom: 0, width: "100%", maxWidth: 768, padding: "40px 0", backgroundColor: theme.color.grayscale.F5F5F5 }}>
-					<LongButton onClick={handleShareList} buttonStyle={{ color: theme.color.grayscale.C_4C5463 }} color={theme.color.grayscale.B7C3D4}>
-						리스트 공유하기
-					</LongButton>
-				</div>
-
-			}
 		</>
 	)
 }
 
+const SlideWrap = styled.div<{ isPastItem: boolean }>`
+	position: fixed;
+	@media screen and (max-width: 768px) {
+		width: 100%;
+	}
+	max-width: 768px;
+	top:${props => props.isPastItem ? "140px" : "120px"};
+	z-index: 3;
+	background-color: ${theme.color.grayscale.FFFFF};
+`
 
 const Slide = styled.div`
 	>div:first-child{
@@ -292,14 +290,14 @@ const Slide = styled.div`
 	padding: 0 20px;
 	flex-wrap: wrap;
 	overflow: scroll;
-	/* margin-right: 30px; */
 `;
 
 const ListView = styled.div`
+	padding-top: 250px;
 	overflow: scroll;
 	margin-top: 20px;
-	padding-bottom:83px ;
 	@media screen and (max-width: 768px){
+		padding-top: 170px;
 		padding-bottom:0 ;
 	}
 `;

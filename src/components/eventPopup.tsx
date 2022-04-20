@@ -9,17 +9,17 @@ interface EventPopupType {
 	setIsEventOpen: (isOpen: boolean) => void;
 }
 
-function EventPopup({ setIsEventOpen, title, content, tags, objectId }: EventPopupType & EventQueryType) {
+function EventPopup({ setIsEventOpen, title, content, tags, objectId, objectDate, winner }: EventPopupType & EventQueryType) {
 	const navigate = useNavigate()
 
 	const handlePopupClose = () => {
-		localStorage.setItem("eventpopup", JSON.stringify(false))
 		setIsEventOpen(false)
+		localStorage.setItem("eventpopup", JSON.stringify(false))
 	}
 
 	const handleGoItem = () => {
-		setIsEventOpen(false)
-		navigate(`/list/2022-04-19?id=${objectId}`)
+		handlePopupClose()
+		navigate(`/list/${objectDate}?id=${objectId}`)
 	}
 
 	return (
@@ -28,15 +28,15 @@ function EventPopup({ setIsEventOpen, title, content, tags, objectId }: EventPop
 			<Container>
 				<ModalWrap>
 					<ContentWrap>
-						<h1>🎉 축하드려요!</h1>
+						<h1>🎉 {title}</h1>
 						<Content>
 							<span style={{ fontSize: 16 }}>오늘의 맛도리 당첨</span>
-							<span style={{ fontSize: 30, marginTop: 5, fontWeight: "bold" }}>{title}님</span>
+							<span style={{ fontSize: 30, marginTop: 10, fontWeight: "bold" }}>{winner.replace((winner.slice(1, 2)), "*")}님</span>
 							<span style={{ fontSize: 12, marginTop: 16, color: theme.color.grayscale.C_4C5463 }}>오픈카톡방에서 방장에게 연락주세요!</span>
 						</Content>
 						<ButtonWrap>
-							<span>오늘의 선물 : </span>
-							{React.Children.toArray(tags?.map(v => <span>{v} </span>))}
+							<span>{content}</span>
+							{/* {React.Children.toArray(tags?.map(v => <span>{v} </span>))} */}
 							<LongButton onClick={handleGoItem}
 								color={theme.color.main}
 								buttonStyle={{ marginTop: 13, width: "100%", backgroundColor: theme.color.main, color: theme.color.grayscale.FFFFF }} >

@@ -47,7 +47,7 @@ function Today() {
 			<Container>
 				<Header>
 					<TitleWrap>
-						<div style={{ fontSize: 24, fontWeight: "bold", lineHeight: 1.25 }}>오늘의 추천템</div>
+						<div style={{ fontSize: 24, fontWeight: "bold", lineHeight: 1.25 }}>지난 추천템</div>
 						{token ?
 							<Link to="/mypage">
 								<img style={{ borderRadius: 20 }}
@@ -84,6 +84,12 @@ const Header = styled.section`
 	display: flex;
 	flex-direction: column;
 	padding: 20px;
+	position: fixed;
+	top:0px;
+	background-color: ${theme.color.grayscale.FFFFF};
+	width: 100%;
+	padding-bottom: 40px;
+	z-index: 2;
 `;
 
 const TitleWrap = styled.div`

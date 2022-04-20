@@ -20,7 +20,7 @@ function PastItemList() {
 	const [lastList, setLastList] = useState<Array<string>>(datebarFormat())
 	const [monthState, setMonthstate] = useState<number>(month)
 
-	const handleGotoPastItem = ({ date }: { date: string }) => {
+	const handleGotoPastItem = ({ date, index }: { date: string, index?: number }) => {
 		if (token) {
 			navigate(`/list/${date}`, { state: { ispastItem: true } })
 		}
@@ -94,6 +94,21 @@ function PastItemList() {
 									</div>
 									<img src={rightIcon} alt="rightIcon" width={20} height={20} />
 								</Link>
+							)
+						}
+						else if (i === 1) {
+							return (
+								<div onClick={() => handleGotoPastItem({ date: v, index: i })} style={{ cursor: "pointer" }}>
+									<div style={{ display: "flex", minWidth: 155, fontSize: 14 }}>
+										<span>
+											{v}
+										</span>
+										<span style={{ marginLeft: "auto" }}>
+											추천템 리스트
+										</span>
+									</div>
+									<img src={rightIcon} alt="rightIcon" width={20} height={20} />
+								</div>
 							)
 						}
 						else {
