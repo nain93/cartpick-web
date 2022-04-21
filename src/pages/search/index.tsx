@@ -5,12 +5,13 @@ import theme from 'styles/theme'
 import inputSearchIcon from "assets/icon/inputSearchIcon.png"
 import lightCloseIcon from "assets/icon/lightCloseIcon.png"
 import React, { KeyboardEvent, useEffect, useRef, useState } from 'react'
-import { getSearchMarketList } from 'api/search'
-import { useMutation } from 'react-query'
+import { getSearchMarketData, getSearchMarketList } from 'api/search'
+import { useMutation, useQuery } from 'react-query'
 import MarketListLayout from 'components/marketListLayout'
 import grinningIcon from "assets/icon/grinningIcon.png"
 import { useRecoilValue } from 'recoil'
 import { tokenState } from 'recoil/atoms'
+import { MarketProductType } from 'types/market'
 
 function Search() {
 	const navigate = useNavigate()
@@ -21,6 +22,9 @@ function Search() {
 	const [recentKeywords, setRecentKeyWords] = useState<Array<string>>(JSON.parse(localStorage.getItem("recentKeywords") || "[]"))
 
 	const searchMutation = useMutation((mutateKeyword: string) => getSearchMarketList(mutateKeyword, token))
+	const marketQuery = useQuery<Array<MarketProductType> | null, Error>("searchData", () => getSearchMarketData(null, keyword, token), {
+		enabled: !!keyword
+	})
 
 	const handleSearch = async (searchText: string) => {
 		if (inputKeyword === "" && searchText === "") {
@@ -60,6 +64,7 @@ function Search() {
 		searchInputRef.current?.focus()
 	}, [])
 
+
 	// * 로딩 화면
 	if (searchMutation.isLoading) {
 		return (
@@ -85,18 +90,20 @@ function Search() {
 				추천템 검색
 			</TopHeader>
 			<MainWrap>
-				<InputWrap>
-					<input ref={searchInputRef} onKeyDown={searchEnter}
-						onChange={(e) => setInputKeyword(e.target.value)}
-						value={inputKeyword} placeholder="어떤 후기를 찾아볼까요?" />
-					<button onClick={() => handleSearch(inputKeyword)}>
-						<img src={inputSearchIcon} width={19} height={19} alt="searchIcon" />
-					</button>
-				</InputWrap>
-				{searchMutation.data &&
-					<div style={{ padding: "0 20px", marginTop: 40 }}>
-						<span>총 {searchMutation.data.length}개의 검색결과</span>
-					</div>}
+				<div style={{ position: "fixed", top: 50, width: "100%", paddingTop: 40, maxWidth: 768, backgroundColor: theme.color.grayscale.FFFFF, zIndex: 2 }}>
+					<InputWrap>
+						<input ref={searchInputRef} onKeyDown={searchEnter}
+							onChange={(e) => setInputKeyword(e.target.value)}
+							value={inputKeyword} placeholder="어떤 후기를 찾아볼까요?" />
+						<button onClick={() => handleSearch(inputKeyword)}>
+							<img src={inputSearchIcon} width={19} height={19} alt="searchIcon" />
+						</button>
+					</InputWrap>
+					{marketQuery.data &&
+						<div style={{ padding: "0 20px 20px 20px", marginTop: 40 }}>
+							<span>총 {marketQuery.data.length}개의 검색결과</span>
+						</div>}
+				</div>
 				{searchMutation.data ?
 					(
 						// * 빈 검색 화면 (검색 결과 없을때)
@@ -115,7 +122,7 @@ function Search() {
 							<MarketListLayout searchKeyword={keyword} marketData={searchMutation.data} />
 					)
 					:
-					<div style={{ padding: "0 20px" }}>
+					<div style={{ padding: "50px 20px 0px 20px" }}>
 						<Title>최근 검색어</Title>
 						<Keywords>
 							{recentKeywords.length === 0 ?
@@ -146,19 +153,24 @@ const Container = styled.section`
 
 const MainWrap = styled.div`
 	padding-top: 40px;
+	max-width:768px ;
+	
 `
 
 const InputWrap = styled.div`
+	top:90px;
+	z-index:2;
+	background-color:${theme.color.grayscale.FFFFF} ;
 	display: flex;
 	justify-content: space-between;
 	width: calc(100% - 40px);
+	max-width:786px ;
 	height: 45px;
 	border:1px solid ${theme.color.grayscale.DFE4EE};
 	padding:13px 15px;
 	margin: 0 20px;
 	border-radius: 5px;
 	input{
-		width: 100%;
 		padding-right: 15px;
 		::placeholder{
 			color:${theme.color.grayscale.B7C3D4}
@@ -170,6 +182,7 @@ const Title = styled.h1`
 	font-size: 12px;
 	margin-top: 40px;
 	margin-bottom: 30px;
+	font-weight:bold ;
 `
 
 const Keywords = styled.ul`

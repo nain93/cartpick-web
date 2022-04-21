@@ -183,8 +183,8 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 			setBottomPadding("220px")
 		}
 		else {
-			setTopHeight("120px)")
-			setBottomPadding("100px")
+			setTopHeight("200px")
+			setBottomPadding("220px")
 		}
 	}, [])
 
@@ -269,6 +269,7 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 
 const SlideWrap = styled.div`
 	position: fixed;
+	width:100% ;
 	@media screen and (max-width: 768px) {
 		width: 100%;
 	}

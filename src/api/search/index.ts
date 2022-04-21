@@ -29,7 +29,6 @@ export async function getSearchMarketData(market_id: number | null, keyword: str
 		}
 	});
 	if (res) {
-		// console.log(res.data, 'res.data');
 		return res.data
 	}
 }
