@@ -11,14 +11,14 @@ interface EventPopupType {
 	setIsEventOpen: (isOpen: boolean) => void;
 }
 
-function EventPopup({ setIsEventOpen, title, content, objectId, objectDate, winner }: EventPopupType & EventQueryType) {
+function EventPopup({ setIsEventOpen, title, content, objectId, objectDate, winner, id }: EventPopupType & EventQueryType) {
 	const navigate = useNavigate()
 	const token = useRecoilValue(tokenState)
 	const setModal = useSetRecoilState(modalState)
 
 	const handlePopupClose = () => {
+		localStorage.setItem("eventpopup", String(id))
 		setIsEventOpen(false)
-		localStorage.setItem("eventpopup", JSON.stringify(false))
 	}
 
 	const handleGoItem = () => {

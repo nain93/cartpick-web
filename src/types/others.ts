@@ -1,4 +1,5 @@
 export interface EventQueryType {
+	id: number,
 	title: string,
 	content: string,
 	tags: Array<string>,

@@ -1,5 +1,5 @@
 import GlobalStyles from "Globalstyles";
-import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import styled from "styled-components";
 
 import Login from "pages/login";
@@ -67,17 +67,10 @@ function App() {
 	// * 이벤트 팝업 세팅
 	useEffect(() => {
 		const event = localStorage.getItem("eventpopup")
-		if (event === "true") {
+		if (Number(event) !== eventQuery.data?.id) {
 			setIsEventOpen(true)
 		}
-		else if (event === null) {
-			setIsEventOpen(true)
-			localStorage.setItem("eventpopup", JSON.stringify(true))
-		}
-		else if (event === "false") {
-			setIsEventOpen(false)
-		}
-	}, [])
+	}, [eventQuery.data])
 
 
 	return (
@@ -102,7 +95,7 @@ function App() {
 						</>
 					}
 				</Routes>
-				{(isEventOpen && eventQuery.data?.title) &&
+				{(isEventOpen && eventQuery.data?.id) &&
 					<EventPopup {...eventQuery.data} setIsEventOpen={(isOpen: boolean) => setIsEventOpen(isOpen)} />
 				}
 				<AlertPopup popupStyle={isPopupOpen.isOpen ? { opacity: 1, zIndex: 2 } : { opacity: 0, zIndex: -1 }} >
