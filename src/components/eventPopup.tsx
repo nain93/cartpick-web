@@ -4,13 +4,17 @@ import theme from 'styles/theme'
 import LongButton from 'components/longButton'
 import { useNavigate } from 'react-router-dom'
 import { EventQueryType } from 'types/others'
+import { useRecoilValue, useSetRecoilState } from 'recoil'
+import { modalState, tokenState } from 'recoil/atoms'
 
 interface EventPopupType {
 	setIsEventOpen: (isOpen: boolean) => void;
 }
 
-function EventPopup({ setIsEventOpen, title, content, tags, objectId, objectDate, winner }: EventPopupType & EventQueryType) {
+function EventPopup({ setIsEventOpen, title, content, objectId, objectDate, winner }: EventPopupType & EventQueryType) {
 	const navigate = useNavigate()
+	const token = useRecoilValue(tokenState)
+	const setModal = useSetRecoilState(modalState)
 
 	const handlePopupClose = () => {
 		setIsEventOpen(false)
@@ -18,8 +22,18 @@ function EventPopup({ setIsEventOpen, title, content, tags, objectId, objectDate
 	}
 
 	const handleGoItem = () => {
+		if (!token) {
+			setModal({
+				okText: "로그인 하기",
+				okButton: () => navigate("/login"),
+				content: "로그인이 필요한 서비스입니다.\n로그인 하시겠어요?",
+				isOpen: true
+			})
+		}
+		else {
+			navigate(`/list/${objectDate}?id=${objectId}`)
+		}
 		handlePopupClose()
-		navigate(`/list/${objectDate}?id=${objectId}`)
 	}
 
 	return (

@@ -23,8 +23,11 @@ import natureImage from "assets/image/natureImage.jpg"
 import { getSearchMarketData } from 'api/search'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
-import { popupState, tokenState } from 'recoil/atoms'
+import { modalState, popupState, tokenState } from 'recoil/atoms'
 import ListItem from 'components/marketListLayout/listItem'
+import axios from 'axios'
+import { userLogout } from 'api/user'
+import { useNavigate } from 'react-router-dom'
 
 interface MarketListLayoutProps {
 	marketData: Array<{ id: number, name: string }>,
@@ -43,6 +46,11 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 	const viewRef = useRef<HTMLDivElement>(null)
 	const [topHeight, setTopHeight] = useState("")
 	const [bottomPadding, setBottomPadding] = useState("")
+	const [webBottomPadding, setWebBottomPadding] = useState("")
+	const setToken = useSetRecoilState(tokenState)
+	const userLogoutMutaion = useMutation(userLogout)
+	const navigate = useNavigate()
+	const setModal = useSetRecoilState(modalState)
 
 	const marketQuery = useQuery<Array<MarketProductType> | null, Error>("marketData", async () => {
 		// * 검색후 나온 전체 리스트 데이터
@@ -58,6 +66,24 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 		}
 
 	}, {
+		onError: (error) => {
+			// * 로그인상태에서 토큰 만료되거나 없을시 토큰 삭제시키고 로그인 페이지로 이동
+			if (axios.isAxiosError(error) && error.response) {
+				console.log(error.response.data);
+				if (error.response.data.detail === "Authentication credentials were not provided.") {
+					setModal({
+						okText: "로그인 하기",
+						okButton: () => {
+							navigate("/login")
+							setToken("")
+							userLogoutMutaion.mutate()
+						},
+						content: "로그인이 필요한 서비스입니다.\n로그인 하시겠어요?",
+						isOpen: true
+					})
+				}
+			}
+		},
 		// * 윈도우 포커스시 데이터가 전체리스트로 덮어씌우는거 방지
 		refetchOnWindowFocus: false
 	})
@@ -174,17 +200,23 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 
 	// * listView 화면마다 다르게 높이설정
 	useEffect(() => {
+		// * 지난 아이템
 		if (isPastItem) {
 			setTopHeight("140px")
-			setBottomPadding("190px")
+			setBottomPadding("180px")
+			setWebBottomPadding("260px")
 		}
+		// * 어제 아이템
 		else if (!isPastItem && date) {
 			setTopHeight("120px")
-			setBottomPadding("220px")
+			setBottomPadding("210px")
+			setWebBottomPadding("290px")
 		}
+		// * 검색 결과 아이템
 		else {
 			setTopHeight("200px")
-			setBottomPadding("220px")
+			setBottomPadding("200px")
+			setWebBottomPadding("230px")
 		}
 	}, [])
 
@@ -233,7 +265,7 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 					}
 				</SlideWrap>
 			}
-			<ListView bottom={bottomPadding} search={!isPastItem && !date} ref={viewRef}  >
+			<ListView webBottom={webBottomPadding} bottom={bottomPadding} search={!isPastItem && !date} ref={viewRef}  >
 				{(marketQuery.isLoading || !marketQuery.data) ?
 					<div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%" }} />
 					:
@@ -309,8 +341,8 @@ const Slide = styled.div`
 	overflow: scroll;
 `;
 
-const ListView = styled.div<{ search: boolean, bottom: string }>`
-	padding-top: ${props => props.bottom};
+const ListView = styled.div<{ search: boolean, webBottom: string, bottom: string }>`
+	padding-top:${props => props.webBottom};
 	overflow: scroll;
 	margin-top: 20px;
 	@media screen and (max-width: 768px){

@@ -24,6 +24,9 @@ function PastItemList() {
 		if (token) {
 			navigate(`/list/${date}`, { state: { ispastItem: true } })
 		}
+		else if (index === 1) {
+			navigate(`list/${date}`, { state: { isYesterday: true } })
+		}
 		else {
 			setModal({
 				okText: "로그인 하기",

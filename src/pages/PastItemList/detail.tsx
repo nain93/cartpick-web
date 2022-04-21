@@ -6,15 +6,11 @@ import theme from 'styles/theme'
 import { useQuery } from 'react-query'
 import { getMarketList } from 'api/market'
 import MarketListLayout from 'components/marketListLayout'
-import { useRecoilValue } from 'recoil'
-import { tokenState } from 'recoil/atoms'
-import { useEffect } from 'react'
 
 function PastDetail() {
 	const navigate = useNavigate()
 	const params = useParams()
 	const location = useLocation()
-	const token = useRecoilValue(tokenState)
 
 	const { data } = useQuery<Array<{ id: number, name: string }>, Error>("marketList", () => getMarketList())
 
@@ -22,12 +18,6 @@ function PastDetail() {
 	const date = Number(params.id?.slice(8, 10))
 	const paramDate = params.id?.replaceAll("-", "")
 
-	useEffect(() => {
-		// * 토큰 없이 공유하기로 넘어왔을떄 로그인 화면으로 리다이렉팅
-		if (!token) {
-			navigate("/login")
-		}
-	}, [])
 
 	return (
 		<Cotainer>

@@ -96,8 +96,6 @@ function ListItem({ list, listIndex, selectedListIndex, setSelectedListIndex }: 
 	// * 해당 아이템으로 포커싱
 	useEffect(() => {
 		if (list.id === Number(location.search.replace("?id=", ""))) {
-			console.log(listIndex, 'listIndex');
-			console.log(list.id, 'list.id');
 			setSelectedListIndex(listIndex)
 			listRef.current?.scrollIntoView({ behavior: 'smooth', block: "center" })
 			setTimeout(() => {
@@ -107,14 +105,14 @@ function ListItem({ list, listIndex, selectedListIndex, setSelectedListIndex }: 
 	}, [selectedListIndex, list.id])
 
 	return (
-		<Container ref={listRef}
+		<Container
 			style={{
 				marginLeft: selectedListIndex === listIndex ? 0 : 20,
 				paddingLeft: selectedListIndex === listIndex ? 20 : 0,
 				backgroundColor: selectedListIndex === listIndex ? theme.color.grayscale.F5F5F5 : theme.color.grayscale.FFFFF,
 			}}
 		>
-			<div onClick={() => {
+			<div ref={listRef} onClick={() => {
 				if (list.reviewCount === 0) {
 					// * 리뷰 없으면 열리는 ui 비활성화 처리
 					return
@@ -136,7 +134,7 @@ function ListItem({ list, listIndex, selectedListIndex, setSelectedListIndex }: 
 						fontWeight: selectedListIndex === listIndex ? 'bold' : 'normal',
 					}}
 				>
-					{list.name.includes("None") ? list.name.replace("None", "") : list.name}
+					{list.name}
 					<Tag>{list.reviewCount}</Tag>
 				</span>
 				<UpDownIcon src={downIcon}

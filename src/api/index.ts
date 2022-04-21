@@ -3,16 +3,15 @@ import axios, { AxiosRequestConfig } from "axios"
 export const baseURL = process.env.REACT_APP_BASE_URL
 
 export const getNewToken = async () => {
-	return errorHandler({
-		method: "get",
-		url: "auth/refresh/",
-		config: {
-			headers: {
-				"Content-Type": "application/json"
-			},
-			withCredentials: true
-		}
+	const res = await axios.get(baseURL + "auth/refresh/", {
+		headers: {
+			"Content-Type": "application/json"
+		},
+		withCredentials: true
 	})
+	if (res) {
+		return res.data
+	}
 }
 
 export const getEventPopup = async () => {

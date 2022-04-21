@@ -22,7 +22,7 @@ function Search() {
 	const [recentKeywords, setRecentKeyWords] = useState<Array<string>>(JSON.parse(localStorage.getItem("recentKeywords") || "[]"))
 
 	const searchMutation = useMutation((mutateKeyword: string) => getSearchMarketList(mutateKeyword, token))
-	const marketQuery = useQuery<Array<MarketProductType> | null, Error>("searchData", () => getSearchMarketData(null, keyword, token), {
+	const marketQuery = useQuery<Array<MarketProductType> | null, Error>("marketData", () => getSearchMarketData(null, keyword, token), {
 		enabled: !!keyword
 	})
 

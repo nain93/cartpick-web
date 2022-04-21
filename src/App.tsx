@@ -1,5 +1,5 @@
 import GlobalStyles from "Globalstyles";
-import { Route, Routes, useLocation } from "react-router-dom";
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 import Login from "pages/login";
@@ -32,6 +32,7 @@ function App() {
 	const eventQuery = useQuery<EventQueryType>("eventQuery", getEventPopup, {
 		refetchOnWindowFocus: false
 	})
+	const loginQuery = useQuery("loginQuery", getNewToken)
 
 	useEffect(() => {
 		// * 구글 애널리틱스 추적
@@ -40,22 +41,19 @@ function App() {
 			ReactGA.pageview(location.pathname + location.search)
 		}
 	}, [location])
-
 	useEffect(() => {
 		// * 카카오 링크 공유하기
 		//@ts-ignore
 		const { Kakao } = window
 		Kakao.init(process.env.REACT_APP_JAVASCRIPT_KEY)
-
-		// * accessToken 새로 발급받아서 setToken에 넣어주기
-		const getToken = async () => {
-			const newToken = await getNewToken()
-			if (newToken?.accessToken) {
-				setToken(newToken.accessToken)
-			}
-		}
-		getToken()
 	}, [])
+
+	useEffect(() => {
+		// * accessToken 새로 발급받아서 setToken에 넣어주기
+		if (loginQuery.data) {
+			setToken(loginQuery.data.accessToken)
+		}
+	}, [loginQuery.data])
 
 	// * 경고 팝업창 띄웠다 꺼지는 로직
 	useEffect(() => {
@@ -90,6 +88,7 @@ function App() {
 					<Route path='*' element={<NotFound />} />
 					<Route path="/" element={<PastItemList />} />
 					<Route path="/today" element={<Today />} />
+					<Route path="/list/:id" element={<PastDetail />} />
 					{!token ?
 						<>
 							<Route path="/login" element={<Login />} />
@@ -99,7 +98,6 @@ function App() {
 						<>
 							<Route path="/mypage" element={<Mypage />} />
 							<Route path="/mypage/edit" element={<EditMypage />} />
-							<Route path="/list/:id" element={<PastDetail />} />
 							<Route path="/search" element={<Search />} />
 						</>
 					}
