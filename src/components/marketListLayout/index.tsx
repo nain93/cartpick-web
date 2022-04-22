@@ -28,6 +28,7 @@ import ListItem from 'components/marketListLayout/listItem'
 import axios from 'axios'
 import { userLogout } from 'api/user'
 import { useNavigate } from 'react-router-dom'
+import Loading from 'components/loading'
 
 interface MarketListLayoutProps {
 	marketData: Array<{ id: number, name: string }>,
@@ -220,51 +221,51 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 		}
 	}, [])
 
+	if (marketQuery.isLoading) {
+		return (
+			<Loading />
+		)
+	}
+
 	return (
 		<>
-			{marketQuery.isLoading ?
+			<SlideWrap style={{ top: topHeight }}>
 				<Slide>
-					<EmptyDiv />
+					{React.Children.toArray([{ id: null, name: "전체" }, ...marketData]?.map((v, i) =>
+						<div onClick={async () => {
+							setSelectedIndex(i)
+							setSelectedListIndex(-1)
+							// * 마켓 클릭할때마다 새 데이터 호출
+							if (i === 0) {
+								marketMutation.mutate(null)
+							}
+							else {
+								marketMutation.mutate(i - 1)
+							}
+							setMarketInfo(marketInfo.map((marketInfoV, marketInfoI) => {
+								if (i === marketInfoI) {
+									return { ...marketInfoV, isClick: true }
+								}
+								return { ...marketInfoV, isClick: false }
+							}))
+						}}>
+							{marketInfo.length !== 0 &&
+								<Marketbutton
+									isClick={marketInfo[i].isClick}
+									marketImage={marketInfo[i].image}
+									marketColor={theme.color.main}
+									name={i === 0 ? marketInfo[i].name : ""}
+								/>
+							}
+						</div>
+					))}
 				</Slide>
-				:
-				<SlideWrap style={{ top: topHeight }}>
-					<Slide>
-						{React.Children.toArray([{ id: null, name: "전체" }, ...marketData]?.map((v, i) =>
-							<div onClick={async () => {
-								setSelectedIndex(i)
-								setSelectedListIndex(-1)
-								// * 마켓 클릭할때마다 새 데이터 호출
-								if (i === 0) {
-									marketMutation.mutate(null)
-								}
-								else {
-									marketMutation.mutate(i - 1)
-								}
-								setMarketInfo(marketInfo.map((marketInfoV, marketInfoI) => {
-									if (i === marketInfoI) {
-										return { ...marketInfoV, isClick: true }
-									}
-									return { ...marketInfoV, isClick: false }
-								}))
-							}}>
-								{marketInfo.length !== 0 &&
-									<Marketbutton
-										isClick={marketInfo[i].isClick}
-										marketImage={marketInfo[i].image}
-										marketColor={theme.color.main}
-										name={i === 0 ? marketInfo[i].name : ""}
-									/>
-								}
-							</div>
-						))}
-					</Slide>
-					{marketInfo.length !== 0 &&
-						<h1 style={{ paddingBottom: 10, marginTop: 20, marginLeft: 20, fontSize: 16, fontWeight: "bold", color: marketInfo[selectedIndex].color }}>
-							{marketInfo[selectedIndex].name}
-						</h1>
-					}
-				</SlideWrap>
-			}
+				{marketInfo.length !== 0 &&
+					<h1 style={{ paddingBottom: 10, marginTop: 20, marginLeft: 20, fontSize: 16, fontWeight: "bold", color: marketInfo[selectedIndex].color }}>
+						{marketInfo[selectedIndex].name}
+					</h1>
+				}
+			</SlideWrap>
 			<ListView webBottom={webBottomPadding} bottom={bottomPadding} search={!isPastItem && !date} ref={viewRef}  >
 				{(marketQuery.isLoading || !marketQuery.data) ?
 					<div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%" }} />

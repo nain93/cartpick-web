@@ -126,7 +126,7 @@ function ListItem({ list, listIndex, selectedListIndex, setSelectedListIndex }: 
 				{list.reviews.length > 0 &&
 					<img style={{ marginRight: 5, marginBottom: 3 }} src={handleFilterIcon(list.reviews[0]?.satisfaction)} width={15} height={15} alt="reviewIcon" />
 				}
-				<span
+				<div
 					style={{
 						fontSize: 16,
 						lineHeight: 1.5,
@@ -136,7 +136,7 @@ function ListItem({ list, listIndex, selectedListIndex, setSelectedListIndex }: 
 				>
 					{list.name}
 					<Tag>{list.reviewCount}</Tag>
-				</span>
+				</div>
 				<UpDownIcon src={downIcon}
 					style={{ transform: selectedListIndex === listIndex ? "rotate(180deg)" : "", objectFit: "cover" }}
 					width={20} height={20} alt="updownIcon" />
@@ -146,10 +146,10 @@ function ListItem({ list, listIndex, selectedListIndex, setSelectedListIndex }: 
 				React.Children.toArray(list.reviews.map((review, reviewIndex) =>
 					<Review isFirstReview={reviewIndex === 0} review={review} reviewIndex={reviewIndex} />
 				))
-			}
-			{selectedListIndex === listIndex &&
-				<ShareButton onClick={() => handleShareItem(list)}>
-					<img width={25} height={25} src={shareIcon} alt="shareIcon" />
+			}{
+				selectedListIndex === listIndex &&
+				<ShareButton top={listRef.current?.offsetHeight} onClick={() => handleShareItem(list)}>
+					<img width={20} height={20} src={shareIcon} alt="shareIcon" />
 				</ShareButton>
 			}
 		</Container>
@@ -179,18 +179,17 @@ const UpDownIcon = styled.img`
 	right: 20px;
 `
 
-const ShareButton = styled.button`
-	font-size: 12px;
+const ShareButton = styled.button<{ top?: number }>`
 	position: absolute;
-	top: 63px;
-	right: 20px; 
 	border-radius: 5px;
-	border:1px solid ${theme.color.grayscale.B7C3D4};
+	border:1px solid ${theme.color.grayscale.DFE4EE};
 	background-color: ${theme.color.grayscale.FFFFF};
-	padding: 2px 3px;
-	display: flex;
+	top:${props => `calc(${props.top}px + 10px)`};
+	right: 20px; 
+	margin-left: 5px;
 	img{
-		object-fit: contain;
+		padding-top: 5px;
+		object-fit: cover;
 	}
 `
 
