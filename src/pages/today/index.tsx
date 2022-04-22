@@ -59,7 +59,7 @@ function Today() {
 							<Link to="/login" style={{ color: theme.color.main }}>로그인</Link>
 						}
 					</TitleWrap>
-					<Banner>
+					<Banner href={"https://open.kakao.com/o/g59Bsmce"}>
 						<div style={{ display: "flex", flexDirection: "column" }}>
 							<span style={{
 								fontSize: 16,
@@ -67,14 +67,14 @@ function Today() {
 								lineHeight: 1.25
 							}}>나만 알기 아까운 <span style={{ fontWeight: "bold" }}>
 									추천템</span><br />여기로 알려주세요!</span>
-							<a href={"https://open.kakao.com/o/g59Bsmce"}
+							<span
 								style={{
 									cursor: "pointer",
 									fontSize: 12,
 									color: theme.color.grayscale.FFFFF,
 									marginTop: 10, lineHeight: 2, textDecoration: "underline"
 								}}>
-								{"추천템 공유하기 >"}</a>
+								{"추천템 공유하기 >"}</span>
 						</div>
 						<img style={{ position: "absolute", bottom: 0, right: 15, maxWidth: 110 }}
 							src={bannerImg} alt="bannerImg" width={"30%"} height={86} />
@@ -120,7 +120,7 @@ const TitleWrap = styled.div`
 	align-items: center;
 `;
 
-const Banner = styled.div`
+const Banner = styled.a`
 	position: relative;
 	padding: 15px;
 	background-color: ${theme.color.main};
