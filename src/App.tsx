@@ -67,7 +67,7 @@ function App() {
 	// * 이벤트 팝업 세팅
 	useEffect(() => {
 		const event = localStorage.getItem("eventpopup")
-		if (Number(event) !== eventQuery.data?.id) {
+		if (eventQuery.data && (Number(event) !== eventQuery.data?.id)) {
 			setIsEventOpen(true)
 		}
 	}, [eventQuery.data])

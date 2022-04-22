@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import theme from "styles/theme"
 import { dateFormatForSendBack, dateSimpleFormat } from "utils"
 import defaultImg from "assets/image/defaultImage.png"
+import bannerImg from "assets/image/banner.png"
 
 import { getUserProfile, userLogout } from "api/user";
 import { getMarketList } from "api/market";
@@ -58,6 +59,26 @@ function Today() {
 							<Link to="/login" style={{ color: theme.color.main }}>로그인</Link>
 						}
 					</TitleWrap>
+					<Banner>
+						<div style={{ display: "flex", flexDirection: "column" }}>
+							<span style={{
+								fontSize: 16,
+								color: theme.color.grayscale.FFFFF,
+								lineHeight: 1.25
+							}}>나만 알기 아까운 <span style={{ fontWeight: "bold" }}>
+									추천템</span><br />여기로 알려주세요!</span>
+							<a href={"https://open.kakao.com/o/g59Bsmce"}
+								style={{
+									cursor: "pointer",
+									fontSize: 12,
+									color: theme.color.grayscale.FFFFF,
+									marginTop: 10, lineHeight: 2, textDecoration: "underline"
+								}}>
+								{"추천템 공유하기 >"}</a>
+						</div>
+						<img style={{ position: "absolute", bottom: 0, right: 15, maxWidth: 110 }}
+							src={bannerImg} alt="bannerImg" width={"30%"} height={86} />
+					</Banner>
 					<span>
 						<span style={{ fontWeight: "bold" }}>{dateSimpleFormat()}</span>
 						에 나온 추천템이에요
@@ -97,8 +118,17 @@ const TitleWrap = styled.div`
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	margin-bottom: 10px;
 `;
+
+const Banner = styled.div`
+	position: relative;
+	padding: 15px;
+	background-color: ${theme.color.main};
+	border-radius: 10px;
+	width: 100%;
+	height: 100px;
+	margin:40px 0 50px 0;
+`
 
 const LastItemButton = styled.div`
 	line-height: 2;

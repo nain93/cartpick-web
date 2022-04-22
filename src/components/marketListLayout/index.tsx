@@ -203,20 +203,20 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 		// * 지난 아이템
 		if (isPastItem) {
 			setTopHeight("140px")
-			setBottomPadding("180px")
-			setWebBottomPadding("260px")
+			setBottomPadding("200px")
+			setWebBottomPadding("280px")
 		}
 		// * 어제 아이템
 		else if (!isPastItem && date) {
-			setTopHeight("120px")
-			setBottomPadding("210px")
-			setWebBottomPadding("290px")
+			setTopHeight("300px")
+			setBottomPadding("410px")
+			setWebBottomPadding("490px")
 		}
 		// * 검색 결과 아이템
 		else {
 			setTopHeight("200px")
-			setBottomPadding("200px")
-			setWebBottomPadding("230px")
+			setBottomPadding("220px")
+			setWebBottomPadding("250px")
 		}
 	}, [])
 
@@ -271,7 +271,7 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 					:
 					(marketQuery.data.length === 0 ?
 						// * 빈 요일별 화면 (요일별 추천템 없을때)
-						<div style={{ position: "absolute", top: "50%", width: "100%", maxWidth: 768, display: "flex", flexDirection: "column", alignItems: "center" }}>
+						<div style={{ position: "absolute", top: isPastItem ? "50%" : "70%", width: "100%", maxWidth: 768, display: "flex", flexDirection: "column", alignItems: "center" }}>
 							<img style={{ marginBottom: 10 }} src={grinningIcon} width={30} height={30} alt="grinningIcon" />
 							<span style={{ color: theme.color.grayscale.C_4C5463 }}>
 								{isPastItem ? `${date?.slice(4, 6)}월 ${date?.slice(6, 8)}일 추천템이 없어요` : "오늘은 추천템이 없어요"}
@@ -344,7 +344,6 @@ const Slide = styled.div`
 const ListView = styled.div<{ search: boolean, webBottom: string, bottom: string }>`
 	padding-top:${props => props.webBottom};
 	overflow: scroll;
-	margin-top: 20px;
 	@media screen and (max-width: 768px){
 		padding-top: ${props => props.bottom};
 		padding-bottom:0 ;
