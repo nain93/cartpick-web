@@ -30,14 +30,16 @@ import { userLogout } from 'api/user'
 import { useNavigate } from 'react-router-dom'
 import Loading from 'components/loading'
 
+
 interface MarketListLayoutProps {
 	marketData: Array<{ id: number, name: string }>,
 	date?: string,
 	isPastItem?: boolean,
-	searchKeyword?: string
+	searchKeyword?: string,
+	isScroll?: boolean
 }
 
-function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword }: MarketListLayoutProps) {
+function MarketListLayout({ isScroll, marketData, date, isPastItem = false, searchKeyword }: MarketListLayoutProps) {
 	const url = window.location.href
 	const [selectedIndex, setSelectedIndex] = useState(0)
 	const [selectedListIndex, setSelectedListIndex] = useState(-1)
@@ -210,8 +212,8 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 		// * 어제 아이템
 		else if (!isPastItem && date) {
 			setTopHeight("300px")
-			setBottomPadding("410px")
-			setWebBottomPadding("490px")
+			setBottomPadding("410px") //! 410
+			setWebBottomPadding("490px") //! 490
 		}
 		// * 검색 결과 아이템
 		else {
@@ -219,7 +221,7 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 			setBottomPadding("220px")
 			setWebBottomPadding("250px")
 		}
-	}, [])
+	}, [isScroll])
 
 	if (marketQuery.isLoading) {
 		return (
@@ -229,7 +231,7 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 
 	return (
 		<>
-			<SlideWrap style={{ top: topHeight }}>
+			<SlideWrap topHeight={topHeight} style={isScroll ? { transform: "translateY(-180px)" } : {}}>
 				<Slide>
 					{React.Children.toArray([{ id: null, name: "전체" }, ...marketData]?.map((v, i) =>
 						<div onClick={async () => {
@@ -300,15 +302,17 @@ function MarketListLayout({ marketData, date, isPastItem = false, searchKeyword 
 	)
 }
 
-const SlideWrap = styled.div`
+const SlideWrap = styled.div<{ topHeight: string }>`
 	position: fixed;
 	width:100% ;
+	top:${props => props.topHeight};
 	@media screen and (max-width: 768px) {
 		width: 100%;
 	}
 	max-width: 768px;
 	z-index: 3;
 	background-color: ${theme.color.grayscale.FFFFF};
+	transition:all 0.3s ease-in-out;
 `
 
 const Slide = styled.div`

@@ -1,4 +1,4 @@
-import styled from "styled-components"
+import styled, { css, keyframes } from "styled-components"
 import { Link, useNavigate } from "react-router-dom";
 
 import theme from "styles/theme"
@@ -14,6 +14,7 @@ import { tokenState } from "recoil/atoms";
 import { useRecoilState } from "recoil";
 import MarketListLayout from "components/marketListLayout";
 import axios from "axios";
+import { useEffect, useState } from "react";
 
 const date = dateFormatForSendBack()
 
@@ -21,6 +22,7 @@ function Today() {
 	const navigate = useNavigate()
 	const [token, setToken] = useRecoilState(tokenState)
 	const userLogoutMutaion = useMutation(() => userLogout())
+	const [isScroll, setIsScroll] = useState(false)
 	const userQuery = useQuery<UserDataType, Error>(["userData", token], () => getUserProfile(token),
 		{
 			enabled: !!token,
@@ -42,6 +44,21 @@ function Today() {
 
 	const { data } = useQuery<Array<{ id: number, name: string }>, Error>("marketList", () => getMarketList())
 
+	// * 스크롤 애니메이션 컨트롤
+	const handleScroll = () => {
+		if (window.scrollY >= 50) {
+			setIsScroll(true)
+		} else {
+			setIsScroll(false)
+		}
+	};
+
+	useEffect(() => {
+		window.addEventListener('scroll', handleScroll);
+		return () => {
+			window.removeEventListener('scroll', handleScroll); //clean up
+		};
+	}, [])
 
 	return (
 		<>
@@ -59,7 +76,7 @@ function Today() {
 							<Link to="/login" style={{ color: theme.color.main }}>로그인</Link>
 						}
 					</TitleWrap>
-					<Banner href={"https://open.kakao.com/o/g59Bsmce"}>
+					<Banner isScroll={isScroll} href={"https://open.kakao.com/o/g59Bsmce"}>
 						<div style={{ display: "flex", flexDirection: "column" }}>
 							<span style={{
 								fontSize: 16,
@@ -79,17 +96,19 @@ function Today() {
 						<img style={{ position: "absolute", bottom: 0, right: 15, maxWidth: 110 }}
 							src={bannerImg} alt="bannerImg" width={"30%"} height={86} />
 					</Banner>
-					<span>
-						<span style={{ fontWeight: "bold" }}>{dateSimpleFormat()}</span>
-						에 나온 추천템이에요
-					</span>
-					<LastItemButton onClick={() => navigate("/")}
-					>
-						{`지난 추천템 보기 >`}
-					</LastItemButton>
+					<TextBox isScroll={isScroll}>
+						<span>
+							<span style={{ fontWeight: "bold" }}>{dateSimpleFormat()}</span>
+							에 나온 추천템이에요
+						</span>
+						<LastItemButton onClick={() => navigate("/")}
+						>
+							{`지난 추천템 보기 >`}
+						</LastItemButton>
+					</TextBox>
 				</Header>
 				{data &&
-					<MarketListLayout date={date} marketData={data} />}
+					<MarketListLayout isScroll={isScroll} date={date} marketData={data} />}
 			</Container>
 
 		</>
@@ -120,7 +139,17 @@ const TitleWrap = styled.div`
 	align-items: center;
 `;
 
-const Banner = styled.a`
+const boxFade = keyframes`
+  from {
+    opacity: 1;
+	visibility: visible
+  }
+  to {
+    opacity: 0;
+	visibility: hidden
+  }
+`
+const Banner = styled.a<{ isScroll: boolean }>`
 	position: relative;
 	padding: 15px;
 	background-color: ${theme.color.main};
@@ -128,6 +157,12 @@ const Banner = styled.a`
 	width: 100%;
 	height: 100px;
 	margin:40px 0 50px 0;
+	animation:${props => props.isScroll && css`${boxFade} 0.3s ease-in-out forwards`} ;
+`
+
+const TextBox = styled.div<{ isScroll: boolean }>`
+	transform:${props => props.isScroll && "translateY(-180px)"} ;
+	transition:all 0.3s ease-in-out ;
 `
 
 const LastItemButton = styled.div`
