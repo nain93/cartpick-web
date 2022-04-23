@@ -129,6 +129,7 @@ const Header = styled.section`
 	top:0px;
 	background-color: ${theme.color.grayscale.FFFFF};
 	width: 100%;
+	height: 30%;
 	padding-bottom: 40px;
 	z-index: 2;
 `;

@@ -355,11 +355,4 @@ const ListView = styled.div<{ search: boolean, webBottom: string, bottom: string
 	}
 `;
 
-const EmptyDiv = styled.div`
-	@media screen and (max-width: 768px) {
-		height: 45px
-	}
-	height: 100px;
-`
-
 export default MarketListLayout
