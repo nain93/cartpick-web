@@ -212,8 +212,8 @@ function MarketListLayout({ isScroll, marketData, date, isPastItem = false, sear
 		// * 어제 아이템
 		else if (!isPastItem && date) {
 			setTopHeight("300px")
-			setBottomPadding("410px") //! 410
-			setWebBottomPadding("490px") //! 490
+			setBottomPadding("410px")
+			setWebBottomPadding("490px")
 		}
 		// * 검색 결과 아이템
 		else {

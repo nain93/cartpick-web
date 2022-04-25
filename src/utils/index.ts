@@ -1,7 +1,8 @@
 export function dateSimpleFormat() {
 	const formatDate = new Date();
 	let month: string | number = formatDate.getMonth() + 1;
-	let day: string | number = formatDate.getDate() - 1;
+	let hour: number = formatDate.getHours()
+	let day: string | number = hour < 18 ? formatDate.getDate() - 2 : formatDate.getDate() - 1;
 
 	return month + "월 " + day + "일";
 }
@@ -9,7 +10,8 @@ export function dateSimpleFormat() {
 export function datebarFormat() {
 	const formatDate = new Date();
 	let month: string | number = formatDate.getMonth() + 1;
-	let day: string | number = formatDate.getDate() - 1;
+	let hour: number = formatDate.getHours()
+	let day: string | number = hour < 18 ? formatDate.getDate() - 2 : formatDate.getDate() - 1;
 
 	const list = []
 	while (day > 0) {
@@ -23,7 +25,8 @@ export function datebarFormat() {
 export function dateFormatForSendBack() {
 	const formatDate = new Date();
 	let month: string | number = formatDate.getMonth() + 1;
-	let day: string | number = formatDate.getDate() - 1;
+	let hour: number = formatDate.getHours()
+	let day: string | number = hour < 18 ? formatDate.getDate() - 2 : formatDate.getDate() - 1;
 	let second: string | number = formatDate.getSeconds();
 
 	month = month >= 10 ? month : '0' + month;

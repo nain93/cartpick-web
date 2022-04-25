@@ -58,7 +58,9 @@ function EventPopup({ setIsEventOpen, title, content, objectId, objectDate, winn
 							</LongButton>
 						</ButtonWrap>
 					</ContentWrap>
-					<span onClick={handlePopupClose} style={{ color: theme.color.grayscale.F2F3F6, position: "absolute", bottom: -30, left: "calc(50% - 10px)" }}>닫기</span>
+					<span onClick={handlePopupClose}
+						style={{ cursor: "pointer", color: theme.color.grayscale.F2F3F6, position: "absolute", bottom: -30, left: "calc(50% - 10px)" }}>
+						닫기</span>
 				</ModalWrap>
 			</Container>
 		</>
