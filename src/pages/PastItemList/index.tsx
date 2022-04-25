@@ -9,10 +9,11 @@ import { useRecoilValue, useSetRecoilState } from 'recoil'
 import { modalState, popupState, tokenState } from 'recoil/atoms'
 import LongButton from 'components/longButton'
 
-const formatDate = new Date();
-let month: number = formatDate.getMonth() + 1;
 
 function PastItemList() {
+	const formatDate = new Date();
+	let month: number = formatDate.getMonth() + 1;
+	let hour: number = formatDate.getHours()
 	const navigate = useNavigate()
 	const setModal = useSetRecoilState(modalState)
 	const token = useRecoilValue(tokenState)
@@ -83,7 +84,7 @@ function PastItemList() {
 					{React.Children.toArray(lastList.map((v, i) => {
 						if (i === 0) {
 							return (
-								<Link to={"/today"}>
+								<Link to={"/"}>
 									<div style={{ display: "flex", position: "relative", minWidth: 155, justifyContent: "center" }}>
 										<span>
 											{v}
@@ -99,7 +100,7 @@ function PastItemList() {
 								</Link>
 							)
 						}
-						else if (i === 1) {
+						else if (i === 1 && hour > 18) {
 							return (
 								<div onClick={() => handleGotoPastItem({ date: v, index: i })} style={{ cursor: "pointer" }}>
 									<div style={{ display: "flex", minWidth: 155, fontSize: 14 }}>

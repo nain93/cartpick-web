@@ -19,7 +19,7 @@ import { getEventPopup, getNewToken } from "api";
 import AlertPopup from "components/alertPopup";
 import EventPopup from "components/eventPopup";
 import { useQuery } from "react-query";
-import Today from "pages/today";
+import Main from "pages/main";
 import { EventQueryType } from "types/others";
 
 function App() {
@@ -41,6 +41,7 @@ function App() {
 			ReactGA.pageview(location.pathname + location.search)
 		}
 	}, [location])
+
 	useEffect(() => {
 		// * 카카오 링크 공유하기
 		//@ts-ignore
@@ -55,7 +56,7 @@ function App() {
 		}
 	}, [loginQuery.data])
 
-	// * 경고 팝업창 띄웠다 꺼지는 로직
+	// * 알림 팝업창 띄웠다 꺼지는 로직
 	useEffect(() => {
 		if (isPopupOpen.isOpen) {
 			setTimeout(() => {
@@ -79,8 +80,8 @@ function App() {
 			<Container>
 				<Routes>
 					<Route path='*' element={<NotFound />} />
-					<Route path="/" element={<PastItemList />} />
-					<Route path="/today" element={<Today />} />
+					<Route path="/" element={<Main />} />
+					<Route path="/pastItemList" element={<PastItemList />} />
 					<Route path="/list/:id" element={<PastDetail />} />
 					{!token ?
 						<>

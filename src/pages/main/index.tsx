@@ -18,7 +18,7 @@ import { useEffect, useState } from "react";
 
 const date = dateFormatForSendBack()
 
-function Today() {
+function Main() {
 	const navigate = useNavigate()
 	const [token, setToken] = useRecoilState(tokenState)
 	const userLogoutMutaion = useMutation(() => userLogout())
@@ -42,7 +42,7 @@ function Today() {
 			}
 		})
 
-	const { data } = useQuery<Array<{ id: number, name: string }>, Error>("marketList", () => getMarketList())
+	const { data } = useQuery<Array<{ id: number, name: string }>, Error>("marketList", getMarketList)
 
 	// * 스크롤 애니메이션 컨트롤
 	const handleScroll = () => {
@@ -101,7 +101,7 @@ function Today() {
 							<span style={{ fontWeight: "bold" }}>{dateSimpleFormat()}</span>
 							에 나온 추천템이에요
 						</span>
-						<LastItemButton onClick={() => navigate("/")}
+						<LastItemButton onClick={() => navigate("/pastItemList")}
 						>
 							{`지난 추천템 보기 >`}
 						</LastItemButton>
@@ -176,4 +176,4 @@ const LastItemButton = styled.div`
 	cursor: pointer;
 `;
 
-export default Today
+export default Main
