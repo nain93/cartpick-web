@@ -55,7 +55,7 @@ const Container = styled.div`
 	align-items: center;
 	width: 100%;
 	max-width: 768px;
-	height: 100%;
+	height: 100vh;
 `
 
 const ModalWrap = styled.div`

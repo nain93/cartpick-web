@@ -21,7 +21,7 @@ const date = dateFormatForSendBack()
 function Main() {
 	const navigate = useNavigate()
 	const [token, setToken] = useRecoilState(tokenState)
-	const userLogoutMutaion = useMutation(() => userLogout())
+	const userLogoutMutaion = useMutation(userLogout)
 	const [isScroll, setIsScroll] = useState(false)
 	const userQuery = useQuery<UserDataType, Error>(["userData", token], () => getUserProfile(token),
 		{
@@ -110,7 +110,6 @@ function Main() {
 				{data &&
 					<MarketListLayout isScroll={isScroll} date={date} marketData={data} />}
 			</Container>
-
 		</>
 	)
 }
