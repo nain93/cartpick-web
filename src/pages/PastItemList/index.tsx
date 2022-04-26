@@ -22,11 +22,8 @@ function PastItemList() {
 	const [monthState, setMonthstate] = useState<number>(month)
 
 	const handleGotoPastItem = ({ date, index }: { date: string, index?: number }) => {
-		if (token) {
-			navigate(`/list/${date}`, { state: { ispastItem: true } })
-		}
-		else if (index === 1) {
-			navigate(`list/${date}`, { state: { isYesterday: true } })
+		if (token || (index === 1 && hour > 18)) {
+			navigate(`/list/${date}`)
 		}
 		else {
 			setModal({
@@ -81,13 +78,13 @@ function PastItemList() {
 					카톡방의 후기를 매일 매일 모았어요.<br /><span style={{ fontWeight: "bold" }}>매일 밤 9시 30분,</span> 새로운 추천템이 업데이트됩니다.
 				</Desc>
 				<ListView>
-					{React.Children.toArray(lastList.map((v, i) => {
+					{React.Children.toArray(lastList.map((listDate, i) => {
 						if (i === 0) {
 							return (
 								<Link to={"/"}>
 									<div style={{ display: "flex", position: "relative", minWidth: 155, justifyContent: "center" }}>
 										<span>
-											{v}
+											{listDate}
 										</span>
 										<span style={{ marginLeft: "auto" }}>
 											추천템 리스트
@@ -100,27 +97,12 @@ function PastItemList() {
 								</Link>
 							)
 						}
-						else if (i === 1 && hour > 18) {
-							return (
-								<div onClick={() => handleGotoPastItem({ date: v, index: i })} style={{ cursor: "pointer" }}>
-									<div style={{ display: "flex", minWidth: 155, fontSize: 14 }}>
-										<span>
-											{v}
-										</span>
-										<span style={{ marginLeft: "auto" }}>
-											추천템 리스트
-										</span>
-									</div>
-									<img src={rightIcon} alt="rightIcon" width={20} height={20} />
-								</div>
-							)
-						}
 						else {
 							return (
-								<div onClick={() => handleGotoPastItem({ date: v })} style={{ cursor: "pointer" }}>
+								<div onClick={() => handleGotoPastItem({ date: listDate, index: i })} style={{ cursor: "pointer" }}>
 									<div style={{ display: "flex", minWidth: 155, fontSize: 14 }}>
 										<span>
-											{v}
+											{listDate}
 										</span>
 										<span style={{ marginLeft: "auto" }}>
 											추천템 리스트

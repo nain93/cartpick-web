@@ -15,7 +15,7 @@ function Mypage() {
 	const setModal = useSetRecoilState(modalState)
 	const [token, setToken] = useRecoilState(tokenState)
 	const { data } = useQuery<UserDataType, Error>("userData", () => getUserProfile(token))
-	const userLogoutMutaion = useMutation(() => userLogout())
+	const userLogoutMutaion = useMutation(userLogout)
 
 	const handleDeleteModal = () => {
 		setModal({

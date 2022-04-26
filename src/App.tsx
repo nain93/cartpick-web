@@ -77,7 +77,9 @@ function App() {
 	return (
 		<>
 			<GlobalStyles />
-			<Container>
+			<Container
+				// * 팝업창 뜰때 스크롤 고정
+				style={{ overflow: (isEventOpen || isModalOpen.isOpen) ? "hidden" : "initial" }}>
 				<Routes>
 					<Route path='*' element={<NotFound />} />
 					<Route path="/" element={<Main />} />
@@ -109,7 +111,7 @@ function App() {
 	);
 }
 
-const Container = styled.div`
+const Container = styled.section`
     min-width: 360px;
 	max-width: 768px;
     height: 100vh;
