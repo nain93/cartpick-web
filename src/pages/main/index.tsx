@@ -5,13 +5,14 @@ import theme from "styles/theme"
 import { dateFormatForSendBack, dateSimpleFormat } from "utils"
 import defaultImg from "assets/image/defaultImage.png"
 import bannerImg from "assets/image/banner.png"
+import searchIcon from "assets/icon/searchIcon.png"
 
 import { getUserProfile, userLogout } from "api/user";
 import { getMarketList } from "api/market";
 import { useMutation, useQuery } from "react-query"
 import { UserDataType } from "types/user";
-import { tokenState } from "recoil/atoms";
-import { useRecoilState } from "recoil";
+import { modalState, tokenState } from "recoil/atoms";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import MarketListLayout from "components/marketListLayout";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -23,6 +24,7 @@ function Main() {
 	const [token, setToken] = useRecoilState(tokenState)
 	const userLogoutMutaion = useMutation(userLogout)
 	const [isScroll, setIsScroll] = useState(false)
+	const setModal = useSetRecoilState(modalState)
 	const userQuery = useQuery<UserDataType, Error>(["userData", token], () => getUserProfile(token),
 		{
 			enabled: !!token,
@@ -66,15 +68,32 @@ function Main() {
 				<Header>
 					<TitleWrap>
 						<div style={{ fontSize: 24, fontWeight: "bold", lineHeight: 1.25 }}>지난 추천템</div>
-						{token ?
-							<Link to="/mypage">
-								<img style={{ borderRadius: 20 }}
-									src={userQuery.data?.profileImage ? userQuery.data.profileImage : defaultImg}
-									width={30} height={30} alt="defaultImg" />
-							</Link>
-							:
-							<Link to="/login" style={{ color: theme.color.main }}>로그인</Link>
-						}
+						<div style={{ display: "flex" }}>
+							<button style={{ marginRight: 30 }} onClick={() => {
+								if (token) {
+									navigate("/search")
+								}
+								else {
+									setModal({
+										okText: "로그인 하기",
+										okButton: () => navigate("/login"),
+										content: "로그인이 필요한 서비스입니다.\n로그인 하시겠어요?",
+										isOpen: true
+									})
+								}
+							}}>
+								<img src={searchIcon} width={20} height={20} alt="searchIcon" />
+							</button>
+							{token ?
+								<Link to="/mypage">
+									<img style={{ borderRadius: 20 }}
+										src={userQuery.data?.profileImage ? userQuery.data.profileImage : defaultImg}
+										width={30} height={30} alt="defaultImg" />
+								</Link>
+								:
+								<Link to="/login" style={{ color: theme.color.main }}>로그인</Link>
+							}
+						</div>
 					</TitleWrap>
 					<Banner isScroll={isScroll} href={"https://open.kakao.com/o/g59Bsmce"}>
 						<div style={{ display: "flex", flexDirection: "column" }}>
@@ -167,10 +186,10 @@ const TextBox = styled.div<{ isScroll: boolean }>`
 
 const LastItemButton = styled.div`
 	line-height: 2;
-	font-size: 12px;
 	margin-top: 5px;
 	max-width: 180px;
-	color: ${theme.color.grayscale.B7C3D4};
+	font-weight: bold;
+	color: ${theme.color.main};
 	text-decoration :underline ;
 	cursor: pointer;
 `;
