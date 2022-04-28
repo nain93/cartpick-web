@@ -112,34 +112,49 @@ function ListItem({ list, listIndex, selectedListIndex, setSelectedListIndex }: 
 				backgroundColor: selectedListIndex === listIndex ? theme.color.grayscale.F5F5F5 : theme.color.grayscale.FFFFF,
 			}}
 		>
-			<div ref={listRef} onClick={() => {
-				if (list.reviewCount === 0) {
-					// * 리뷰 없으면 열리는 ui 비활성화 처리
-					return
-				}
-				if (selectedListIndex === listIndex) {
-					setSelectedListIndex(-1);
-				} else {
-					setSelectedListIndex(listIndex);
-				}
-			}}>
-				{list.reviews.length > 0 &&
-					<img style={{ marginRight: 5, marginBottom: 3 }} src={handleFilterIcon(list.reviews[0]?.satisfaction)} width={15} height={15} alt="reviewIcon" />
-				}
-				<div
-					style={{
-						fontSize: 16,
-						lineHeight: 1.5,
-						color: theme.color.grayscale.C_4C5463,
-						fontWeight: selectedListIndex === listIndex ? 'bold' : 'normal',
-					}}
-				>
-					{list.name}
-					<Tag>{list.reviewCount}</Tag>
+			<div style={{ display: "flex", flexDirection: "column" }}
+				ref={listRef}
+				onClick={() => {
+					if (list.reviewCount === 0) {
+						// * 리뷰 없으면 열리는 ui 비활성화 처리
+						return
+					}
+					if (selectedListIndex === listIndex) {
+						setSelectedListIndex(-1);
+					} else {
+						setSelectedListIndex(listIndex);
+					}
+				}}>
+				<div style={{ display: "flex", alignSelf: "flex-start" }}>
+					{list.reviews.length > 0 &&
+						<img style={{ marginRight: 5, marginBottom: 3 }} src={handleFilterIcon(list.reviews[0]?.satisfaction)}
+							width={15} height={15} alt="reviewIcon" />
+					}
+					<div
+						style={{
+							fontSize: 16,
+							lineHeight: 1.5,
+							color: theme.color.grayscale.C_4C5463,
+							fontWeight: selectedListIndex === listIndex ? 'bold' : 'normal',
+						}}
+					>
+						{list.name}
+						<Tag>{list.reviewCount}</Tag>
+					</div>
+					<UpDownIcon src={downIcon}
+						style={{ transform: selectedListIndex === listIndex ? "rotate(180deg)" : "", objectFit: "cover" }}
+						width={20} height={20} alt="updownIcon" />
 				</div>
-				<UpDownIcon src={downIcon}
-					style={{ transform: selectedListIndex === listIndex ? "rotate(180deg)" : "", objectFit: "cover" }}
-					width={20} height={20} alt="updownIcon" />
+				<div style={{
+					// overflow: "hidden",
+					// textOverflow: "ellipsis",
+					// whiteSpace: "nowrap",
+					lineHeight: 1.1,
+					textAlign: "left", width: "100%", padding: "0 20px",
+					color: theme.color.grayscale.B7C3D4, marginTop: 5
+				}}>
+					<span>{list.reviews[0].content}</span>
+				</div>
 			</div>
 			{
 				(selectedListIndex === listIndex) &&

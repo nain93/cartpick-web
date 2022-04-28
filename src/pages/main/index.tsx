@@ -102,7 +102,7 @@ function Main() {
 								color: theme.color.grayscale.FFFFF,
 								lineHeight: 1.25
 							}}>나만 알기 아까운 <span style={{ fontWeight: "bold" }}>
-									추천템</span><br />여기로 알려주세요!</span>
+									추천템</span><br />서로 오픈 카톡에서 공유해요!</span>
 							<span
 								style={{
 									cursor: "pointer",
@@ -110,7 +110,7 @@ function Main() {
 									color: theme.color.grayscale.FFFFF,
 									marginTop: 10, lineHeight: 2, textDecoration: "underline"
 								}}>
-								{"추천템 공유하기 >"}</span>
+								{"추천템 공유방 입장하기 >"}</span>
 						</div>
 						<img style={{ position: "absolute", bottom: 0, right: 15, maxWidth: 110 }}
 							src={bannerImg} alt="bannerImg" width={"30%"} height={86} />
@@ -122,7 +122,7 @@ function Main() {
 						</span>
 						<LastItemButton onClick={() => navigate("/pastItemList")}
 						>
-							{`지난 추천템 보기 >`}
+							{`추천템 더 보러가기 >`}
 						</LastItemButton>
 					</TextBox>
 				</Header>
