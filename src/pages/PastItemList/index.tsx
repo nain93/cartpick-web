@@ -23,7 +23,7 @@ function PastItemList() {
 
 	const handleGotoPastItem = ({ date, index }: { date: string, index?: number }) => {
 		if (token || (index === 1 && hour > 18)) {
-			navigate(`/list/${date}`)
+			navigate(`/list/${date}`, { state: { ispastItem: true } })
 		}
 		else {
 			setModal({

@@ -39,7 +39,7 @@ function TopHeader({ children, backButton, closeButton, searchButton }: TopHeade
 				searchButton ?
 					<button onClick={() => {
 						if (token) {
-							navigate("/search")
+							navigate("/search", { state: { isSearch: true } })
 						}
 						else {
 							setModal({

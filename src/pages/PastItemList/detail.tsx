@@ -18,7 +18,6 @@ function PastDetail() {
 	const date = Number(params.id?.slice(8, 10))
 	const paramDate = params.id?.replaceAll("-", "")
 
-
 	return (
 		<Cotainer>
 			<TopHeader backButton={() => {

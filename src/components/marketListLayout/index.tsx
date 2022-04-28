@@ -1,6 +1,6 @@
 import { getMarketProduct } from 'api/market'
 import Review from 'components/marketListLayout/review'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import theme from 'styles/theme'
 import { MarketInfoprops, MarketProductType } from 'types/market'
@@ -54,6 +54,7 @@ function MarketListLayout({ isScroll, marketData, date, isPastItem = false, sear
 	const userLogoutMutaion = useMutation(userLogout)
 	const navigate = useNavigate()
 	const setModal = useSetRecoilState(modalState)
+	const slideWrapRef = useRef<HTMLDivElement>(null)
 
 	const marketQuery = useQuery<Array<MarketProductType> | null, Error>("marketData", async () => {
 		// * 검색후 나온 전체 리스트 데이터
@@ -69,6 +70,9 @@ function MarketListLayout({ isScroll, marketData, date, isPastItem = false, sear
 		}
 
 	}, {
+		onSuccess: () => {
+
+		},
 		onError: (error) => {
 			// * 로그인상태에서 토큰 만료되거나 없을시 토큰 삭제시키고 로그인 페이지로 이동
 			if (axios.isAxiosError(error) && error.response) {
@@ -219,9 +223,16 @@ function MarketListLayout({ isScroll, marketData, date, isPastItem = false, sear
 		else {
 			setTopHeight("200px")
 			setBottomPadding("220px")
-			setWebBottomPadding("250px")
+			setWebBottomPadding("295px")
 		}
 	}, [isScroll])
+
+	// * 검색결과에서 상단 슬라이드 높이에따른 padding값 변경
+	useLayoutEffect(() => {
+		if (slideWrapRef.current?.clientHeight && !date) {
+			setWebBottomPadding(`${slideWrapRef.current?.clientHeight + 129}px`)
+		}
+	}, [marketQuery.isLoading])
 
 	if (marketQuery.isLoading) {
 		return (
@@ -231,7 +242,7 @@ function MarketListLayout({ isScroll, marketData, date, isPastItem = false, sear
 
 	return (
 		<>
-			<SlideWrap topHeight={topHeight} style={isScroll ? { transform: "translateY(-180px)" } : {}}>
+			<SlideWrap ref={slideWrapRef} topHeight={topHeight} style={isScroll ? { transform: "translateY(-180px)" } : {}}>
 				<Slide>
 					{React.Children.toArray([{ id: null, name: "전체" }, ...marketData]?.map((v, i) =>
 						<div onClick={async () => {
@@ -283,7 +294,9 @@ function MarketListLayout({ isScroll, marketData, date, isPastItem = false, sear
 						:
 						React.Children.toArray(marketQuery.data.map((arrayItem, arrayIndex) => {
 							return (
-								<ListItem list={arrayItem}
+								<ListItem
+
+									list={arrayItem}
 									listIndex={arrayIndex}
 									selectedListIndex={selectedListIndex}
 									setSelectedListIndex={(selectIndex: number) => setSelectedListIndex(selectIndex)} />

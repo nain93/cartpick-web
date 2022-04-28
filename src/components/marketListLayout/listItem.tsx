@@ -153,7 +153,7 @@ function ListItem({ list, listIndex, selectedListIndex, setSelectedListIndex }: 
 					textAlign: "left", width: "100%", padding: "0 20px",
 					color: theme.color.grayscale.B7C3D4, marginTop: 5
 				}}>
-					<span>{list.reviews[0].content}</span>
+					<span>{list.reviews[0]?.content}</span>
 				</div>
 			</div>
 			{

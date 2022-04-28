@@ -1,5 +1,5 @@
 import TopHeader from 'components/topHeader'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import theme from 'styles/theme'
 import inputSearchIcon from "assets/icon/inputSearchIcon.png"
@@ -20,6 +20,7 @@ function Search() {
 	const [keyword, setKeyWord] = useState("")
 	const [inputKeyword, setInputKeyword] = useState("")
 	const [recentKeywords, setRecentKeyWords] = useState<Array<string>>(JSON.parse(localStorage.getItem("recentKeywords") || "[]"))
+	const location = useLocation()
 
 	const searchMutation = useMutation((mutateKeyword: string) => getSearchMarketList(mutateKeyword, token))
 	const marketQuery = useQuery<Array<MarketProductType> | null, Error>("marketData", () => getSearchMarketData(null, keyword, token), {
@@ -86,7 +87,14 @@ function Search() {
 
 	return (
 		<Container>
-			<TopHeader backButton={() => navigate(-1)}>
+			<TopHeader backButton={() => {
+				if (!!location.state) {
+					navigate(-1)
+				}
+				else {
+					navigate("/")
+				}
+			}}>
 				추천템 검색
 			</TopHeader>
 			<MainWrap>
