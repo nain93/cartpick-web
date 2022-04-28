@@ -5,13 +5,12 @@ import theme from 'styles/theme'
 import inputSearchIcon from "assets/icon/inputSearchIcon.png"
 import lightCloseIcon from "assets/icon/lightCloseIcon.png"
 import React, { KeyboardEvent, useEffect, useRef, useState } from 'react'
-import { getSearchMarketData, getSearchMarketList } from 'api/search'
-import { useMutation, useQuery } from 'react-query'
+import { getSearchMarketList } from 'api/search'
+import { useMutation } from 'react-query'
 import MarketListLayout from 'components/marketListLayout'
 import grinningIcon from "assets/icon/grinningIcon.png"
 import { useRecoilValue } from 'recoil'
 import { tokenState } from 'recoil/atoms'
-import { MarketProductType } from 'types/market'
 
 function Search() {
 	const navigate = useNavigate()
@@ -23,9 +22,7 @@ function Search() {
 	const location = useLocation()
 
 	const searchMutation = useMutation((mutateKeyword: string) => getSearchMarketList(mutateKeyword, token))
-	const marketQuery = useQuery<Array<MarketProductType> | null, Error>("marketData", () => getSearchMarketData(null, keyword, token), {
-		enabled: !!keyword
-	})
+	const [searchLength, setSearchLength] = useState<number | null>(null)
 
 	const handleSearch = async (searchText: string) => {
 		if (inputKeyword === "" && searchText === "") {
@@ -103,13 +100,13 @@ function Search() {
 						<input ref={searchInputRef} onKeyDown={searchEnter}
 							onChange={(e) => setInputKeyword(e.target.value)}
 							value={inputKeyword} placeholder="어떤 후기를 찾아볼까요?" />
-						<button onClick={() => handleSearch(inputKeyword)}>
+						<button style={{ padding: "13px 0" }} onClick={() => handleSearch(inputKeyword)}>
 							<img src={inputSearchIcon} width={19} height={19} alt="searchIcon" />
 						</button>
 					</InputWrap>
-					{marketQuery.data &&
+					{searchLength &&
 						<div style={{ padding: "0 20px 20px 20px", marginTop: 40 }}>
-							<span>총 {marketQuery.data.length}개의 검색결과</span>
+							<span>총 {searchLength}개의 검색 결과</span>
 						</div>}
 				</div>
 				{searchMutation.data ?
@@ -127,7 +124,7 @@ function Search() {
 								<span style={{ color: theme.color.grayscale.C_4C5463 }}>검색 결과가 없습니다.</span>
 							</div>
 							:
-							<MarketListLayout searchKeyword={keyword} marketData={searchMutation.data} />
+							<MarketListLayout setSearchLength={(length: number) => setSearchLength(length)} searchKeyword={keyword} marketData={searchMutation.data} />
 					)
 					:
 					<div style={{ padding: "50px 20px 0px 20px" }}>
@@ -175,10 +172,11 @@ const InputWrap = styled.div`
 	max-width:786px ;
 	height: 45px;
 	border:1px solid ${theme.color.grayscale.DFE4EE};
-	padding:13px 15px;
+	padding:0px 15px;
 	margin: 0 20px;
 	border-radius: 5px;
 	input{
+		width: 100%;
 		padding-right: 15px;
 		::placeholder{
 			color:${theme.color.grayscale.B7C3D4}

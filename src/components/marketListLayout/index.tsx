@@ -36,10 +36,11 @@ interface MarketListLayoutProps {
 	date?: string,
 	isPastItem?: boolean,
 	searchKeyword?: string,
-	isScroll?: boolean
+	isScroll?: boolean,
+	setSearchLength?: (length: number) => void
 }
 
-function MarketListLayout({ isScroll, marketData, date, isPastItem = false, searchKeyword }: MarketListLayoutProps) {
+function MarketListLayout({ isScroll, marketData, date, isPastItem = false, searchKeyword, setSearchLength }: MarketListLayoutProps) {
 	const url = window.location.href
 	const [selectedIndex, setSelectedIndex] = useState(0)
 	const [selectedListIndex, setSelectedListIndex] = useState(-1)
@@ -233,6 +234,12 @@ function MarketListLayout({ isScroll, marketData, date, isPastItem = false, sear
 			setWebBottomPadding(`${slideWrapRef.current?.clientHeight + 129}px`)
 		}
 	}, [marketQuery.isLoading])
+
+	useEffect(() => {
+		if (setSearchLength && marketQuery.data) {
+			setSearchLength(marketQuery.data.length)
+		}
+	}, [marketQuery.data])
 
 	if (marketQuery.isLoading) {
 		return (
