@@ -36,44 +36,44 @@ function App() {
 	})
 	const loginQuery = useQuery("loginQuery", getNewToken)
 
-	useEffect(() => {
-		// * 구글 애널리틱스 추적
-		if (process.env.NODE_ENV === "production") {
-			ReactGA.initialize("UA-199856178-3");
-			ReactGA.pageview(location.pathname + location.search)
-		}
-	}, [location])
+	// useEffect(() => {
+	// 	// * 구글 애널리틱스 추적
+	// 	if (process.env.NODE_ENV === "production") {
+	// 		ReactGA.initialize("UA-199856178-3");
+	// 		ReactGA.pageview(location.pathname + location.search)
+	// 	}
+	// }, [location])
 
-	useEffect(() => {
-		// * 카카오 링크 공유하기
-		//@ts-ignore
-		const { Kakao } = window
-		Kakao.init(process.env.REACT_APP_JAVASCRIPT_KEY)
-	}, [])
+	// useEffect(() => {
+	// 	// * 카카오 링크 공유하기
+	// 	//@ts-ignore
+	// 	const { Kakao } = window
+	// 	Kakao.init(process.env.REACT_APP_JAVASCRIPT_KEY)
+	// }, [])
 
-	useEffect(() => {
-		// * accessToken 새로 발급받아서 setToken에 넣어주기
-		if (loginQuery.data) {
-			setToken(loginQuery.data.accessToken)
-		}
-	}, [loginQuery.data])
+	// useEffect(() => {
+	// 	// * accessToken 새로 발급받아서 setToken에 넣어주기
+	// 	if (loginQuery.data) {
+	// 		setToken(loginQuery.data.accessToken)
+	// 	}
+	// }, [loginQuery.data])
 
-	// * 알림 팝업창 띄웠다 꺼지는 로직
-	useEffect(() => {
-		if (isPopupOpen.isOpen) {
-			setTimeout(() => {
-				setIsPopupOpen({ ...isPopupOpen, isOpen: false })
-			}, 1500)
-		}
-	}, [isPopupOpen])
+	// // * 알림 팝업창 띄웠다 꺼지는 로직
+	// useEffect(() => {
+	// 	if (isPopupOpen.isOpen) {
+	// 		setTimeout(() => {
+	// 			setIsPopupOpen({ ...isPopupOpen, isOpen: false })
+	// 		}, 1500)
+	// 	}
+	// }, [isPopupOpen])
 
-	// * 이벤트 팝업 세팅
-	useEffect(() => {
-		const event = localStorage.getItem("eventpopup")
-		if (eventQuery.data && (Number(event) !== eventQuery.data?.id)) {
-			setIsEventOpen(true)
-		}
-	}, [eventQuery.data])
+	// // * 이벤트 팝업 세팅
+	// useEffect(() => {
+	// 	const event = localStorage.getItem("eventpopup")
+	// 	if (eventQuery.data && (Number(event) !== eventQuery.data?.id)) {
+	// 		setIsEventOpen(true)
+	// 	}
+	// }, [eventQuery.data])
 
 
 	return (
