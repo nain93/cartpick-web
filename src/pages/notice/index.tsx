@@ -1,26 +1,22 @@
 import notice1 from "assets/image/notice/notice1.png"
 import notice2 from "assets/image/notice/notice2.png"
 import notice3 from "assets/image/notice/notice3.png"
-import { useState } from "react"
-import { useSetRecoilState } from "recoil"
+import { useRecoilState } from "recoil"
 import { noticeState } from "recoil/atoms"
 import styled from 'styled-components'
 
 function Notice() {
-	const [noticeClick, isNoticeClick] = useState("")
-	const isNotice = useSetRecoilState(noticeState)
+	const [notice, setNotice] = useRecoilState(noticeState)
 
-	const handleImgClick = (notice: string) => {
-		isNoticeClick(notice)
-		isNotice(true)
+	const handleImgClick = (clickImg: string) => {
+		setNotice({ image: clickImg, isOpen: true })
 	}
 
 	return (
 		<>
-			{noticeClick &&
+			{notice.isOpen &&
 				<BackDrop onClick={() => {
-					isNoticeClick("")
-					isNotice(false)
+					setNotice({ image: "", isOpen: false })
 				}} />}
 			<Container>
 				안녕하세요, 밀링입니다.<br />
@@ -37,7 +33,7 @@ function Notice() {
 				<br />
 				<br /><br />
 				많은 분들이 우려하시는 개인정보데이터가 공유된 해당 사이트는 운영을 자체를 중단하였고 데이터 또한 영구적으로 말소했습니다 (아래 사진 첨부). 오픈카톡에서 나온 내용은 재사용하지 않겠습니다. 마케팅에 문제가 되었던 카트픽 sns와 밀링 sns 계정 모두 삭제 처리하였습니다. 홍보했던 모든 커뮤니티의 경우 카트픽 링크를 클릭하시면 사측 사과문을 확인하실 수 있게 조치하였습니다. <br />
-				<br />
+				<br /><br />
 				또한 지원사업이나 투자는 모두 2022년 2월 전에 받은것으로, 오픈카톡과 아무 관계가 없고, 투자나 지원사업과 관련해 이 데이터를 쓴적도 없습니다.
 				<br /><br />
 				이번 일을 통해 팀이 많이 부족했고 이번 일에 통해 사업에 대해 무게를 많이 느끼게 되었습니다.<br />
@@ -51,14 +47,6 @@ function Notice() {
 					<img onClick={() => handleImgClick(notice2)} src={notice2} alt="notice" width={"30%"} />
 					<img onClick={() => handleImgClick(notice3)} src={notice3} alt="notice" width={"30%"} />
 				</NoticeImg>
-				{noticeClick &&
-					<ImageFocus onClick={() => {
-						isNoticeClick("")
-						isNotice(false)
-					}}>
-						<img src={noticeClick} alt="notice" width={"80%"} />
-					</ImageFocus>
-				}
 			</Container>
 		</>
 	)
@@ -77,6 +65,7 @@ const BackDrop = styled.div`
 const Container = styled.section`
 	padding:20px;
 	line-height: 1.2;
+	position: relative;
 `
 
 const NoticeImg = styled.div`
@@ -86,16 +75,6 @@ const NoticeImg = styled.div`
 		border:1px solid black;
 		margin-right: 10px;
 	}
-`
-
-const ImageFocus = styled.div`
-	position: absolute;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	top: 50px;
-	left: 0;
-	z-index: 2;
 `
 
 export default Notice

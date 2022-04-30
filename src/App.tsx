@@ -27,7 +27,7 @@ function App() {
 	const [token, setToken] = useRecoilState(tokenState)
 	const isModalOpen = useRecoilValue(modalState)
 	const [isPopupOpen, setIsPopupOpen] = useRecoilState(popupState)
-	const isNotice = useRecoilValue(noticeState)
+	const [notice, setNotice] = useRecoilState(noticeState)
 	const [isEventOpen, setIsEventOpen] = useState(false)
 	const location = useLocation()
 
@@ -81,7 +81,7 @@ function App() {
 			<GlobalStyles />
 			<Container
 				// * 팝업창 뜰때 스크롤 고정
-				style={{ overflow: (isEventOpen || isModalOpen.isOpen || isNotice) ? "hidden" : "initial" }}>
+				style={{ overflow: (isEventOpen || isModalOpen.isOpen || notice.isOpen) ? "hidden" : "initial" }}>
 				<Routes>
 					<Route path="/" element={<Notice />} />
 					{/* <Route path='*' element={<NotFound />} />
@@ -101,6 +101,13 @@ function App() {
 						</>
 					} */}
 				</Routes>
+				{notice.isOpen &&
+					<ImageFocus onClick={() => {
+						setNotice({ image: "", isOpen: false })
+					}}>
+						<img src={notice.image} alt="notice" width={"100%"} />
+					</ImageFocus>
+				}
 				{(isEventOpen && eventQuery.data?.id) &&
 					<EventPopup {...eventQuery.data} setIsEventOpen={(isOpen: boolean) => setIsEventOpen(isOpen)} />
 				}
@@ -119,6 +126,17 @@ const Container = styled.section`
 	max-width: 768px;
     height: 100vh;
     margin: 0 auto;
+`
+
+const ImageFocus = styled.div`
+	position: absolute;
+	top:0;
+	z-index: 2;
+	display: flex;
+	align-items: center;
+	width: 100%;
+	max-width: 768px;
+	height: 100%;
 `
 
 export default App;

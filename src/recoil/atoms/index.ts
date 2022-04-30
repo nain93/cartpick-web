@@ -36,7 +36,15 @@ export const popupState = atom<popupStateProps>({
 	}
 })
 
-export const noticeState = atom<boolean>({
+interface noticeStateProps {
+	isOpen: boolean;
+	image: string;
+}
+
+export const noticeState = atom<noticeStateProps>({
 	key: "noticeState",
-	default: false
+	default: {
+		isOpen: false,
+		image: "",
+	}
 })
