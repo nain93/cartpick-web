@@ -11,7 +11,7 @@ import Onboarding from "pages/onboarding";
 import Search from "pages/search";
 import CustomModal from "components/customModal";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { modalState, popupState, tokenState } from "recoil/atoms";
+import { modalState, noticeState, popupState, tokenState } from "recoil/atoms";
 import NotFound from "pages/notFound";
 import { useEffect, useState } from "react";
 import ReactGA from 'react-ga';
@@ -21,11 +21,13 @@ import EventPopup from "components/eventPopup";
 import { useQuery } from "react-query";
 import Main from "pages/main";
 import { EventQueryType } from "types/others";
+import Notice from "pages/notice";
 
 function App() {
 	const [token, setToken] = useRecoilState(tokenState)
 	const isModalOpen = useRecoilValue(modalState)
 	const [isPopupOpen, setIsPopupOpen] = useRecoilState(popupState)
+	const isNotice = useRecoilValue(noticeState)
 	const [isEventOpen, setIsEventOpen] = useState(false)
 	const location = useLocation()
 
@@ -79,9 +81,10 @@ function App() {
 			<GlobalStyles />
 			<Container
 				// * 팝업창 뜰때 스크롤 고정
-				style={{ overflow: (isEventOpen || isModalOpen.isOpen) ? "hidden" : "initial" }}>
+				style={{ overflow: (isEventOpen || isModalOpen.isOpen || isNotice) ? "hidden" : "initial" }}>
 				<Routes>
-					<Route path='*' element={<NotFound />} />
+					<Route path="/" element={<Notice />} />
+					{/* <Route path='*' element={<NotFound />} />
 					<Route path="/" element={<Main />} />
 					<Route path="/pastItemList" element={<PastItemList />} />
 					<Route path="/list/:id" element={<PastDetail />} />
@@ -96,7 +99,7 @@ function App() {
 							<Route path="/mypage/edit" element={<EditMypage />} />
 							<Route path="/search" element={<Search />} />
 						</>
-					}
+					} */}
 				</Routes>
 				{(isEventOpen && eventQuery.data?.id) &&
 					<EventPopup {...eventQuery.data} setIsEventOpen={(isOpen: boolean) => setIsEventOpen(isOpen)} />

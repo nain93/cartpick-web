@@ -35,3 +35,8 @@ export const popupState = atom<popupStateProps>({
 		content: "",
 	}
 })
+
+export const noticeState = atom<boolean>({
+	key: "noticeState",
+	default: false
+})
